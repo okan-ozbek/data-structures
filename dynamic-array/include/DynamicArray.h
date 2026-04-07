@@ -6,12 +6,15 @@
 #define TEMP_CPP_DYNAMICARRAY_H
 
 
+#include <cstddef>
+
 class DynamicArray {
 public:
     DynamicArray();
-    DynamicArray(int capacity);
-    DynamicArray(int capacity, int value);
-    DynamicArray(const DynamicArray& other);
+
+    explicit DynamicArray(int capacity);
+    explicit DynamicArray(int capacity, int value);
+    explicit DynamicArray(const DynamicArray& other);
 
     ~DynamicArray();
 
@@ -20,18 +23,16 @@ public:
     void push_back(int value);
     [[maybe_unused]] int pop_back();
 
-    void resize(int capacity);
-
     void clear();
     [[nodiscard]] constexpr bool empty() const {
         return size_ == 0;
     }
 
-    [[nodiscard]] constexpr int size() const {
+    [[nodiscard]] constexpr std::size_t size() const {
         return size_;
     }
 
-    [[nodiscard]] constexpr int capacity() const {
+    [[nodiscard]] constexpr std::size_t capacity() const {
         return capacity_;
     }
 
@@ -39,8 +40,10 @@ private:
     constexpr static int DEFAULT_CAPACITY = 10;
 
     int* data_{nullptr};
-    int size_{};
-    int capacity_{};
+    std::size_t size_{};
+    std::size_t capacity_{};
+
+    void resize(std::size_t capacity);
 };
 
 

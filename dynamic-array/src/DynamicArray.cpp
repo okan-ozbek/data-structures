@@ -74,7 +74,7 @@ int DynamicArray::pop_back() {
     return data_[size_];
 }
 
-void DynamicArray::resize(const int capacity) {
+void DynamicArray::resize(const std::size_t capacity) {
     auto* data{new int[capacity]};
 
     for (int i{}; i < size_; ++i) {
