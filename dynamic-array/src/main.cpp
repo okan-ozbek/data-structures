@@ -20,11 +20,11 @@ struct Vector2 {
 
         ++i;
 
-        std::cout << "Moving vector: " << "[" << x << ", " << y << "]" << std::endl;
+        // std::cout << "Moving vector: " << "[" << x << ", " << y << "]" << std::endl;
     }
 
     ~Vector2() {
-        std::cout << "Destroying vector" << std::endl;
+        // std::cout << "Destroying vector" << std::endl;
     }
 
     Vector2& operator=(const Vector2&& other) noexcept {
@@ -32,7 +32,7 @@ struct Vector2 {
 
         ++i;
 
-        std::cout << "Assigning vector (move): " << i << "[" << x << ", " << y << "]" << std::endl;
+        // std::cout << "Assigning vector (move): " << i << "[" << x << ", " << y << "]" << std::endl;
 
         x = other.x;
         y = other.y;
@@ -116,26 +116,60 @@ void TestObjectArray() {
     // array.push_back(Vector2(5, 6));
     // array.push_back(Vector2(7, 8));
     // array.push_back(Vector2(9, 10));
-    array.emplace_back(11, 12);
-    array.emplace_back(13);
-    array.emplace_back(11, 12);
-    array.emplace_back(13);
-    array.emplace_back(11, 12);
-    array.emplace_back(13);
+    // array.emplace_back(11, 12);
+    // array.emplace_back(13);
+    // array.emplace_back(11, 12);
+    // array.emplace_back(13);
+    // array.emplace_back(11, 12);
+    // array.emplace_back(13);
+    //
+    // PrintArray(array);
+    //
+    // array.pop_back();
+    // array.pop_back();
+    //
+    // PrintArray(array);
+    //
+    // array.push_back(Vector2(66, 67));
+    // array.push_back(Vector2(77, 78));
+    //
+    // PrintArray(array);
+    //
+    // array.clear();
+    //
+    // PrintArray(array);
+    //
+
+
+    // std::cout << "\nUsing iterators:\n";
+    //
+    // for (const auto& element : array) {
+    //     std::cout << "[" << element.x << ", " << element.y << "]\n";
+    // }
+    //
+    // std::cout << "----------------------\n";
+    //
+    // for (DynamicArray<Vector2>::Iterator it = array.begin(); it != array.end(); ++it) {
+    //     std::cout << "[" << it->x << ", " << it->y << "]\n";
+    // }
+
+    for (std::size_t i{}; i < 10; ++i) {
+        array.emplace_back(i, i + 1);
+    }
+
+    array.erase(array.begin() + 2);
 
     PrintArray(array);
 
-    array.pop_back();
-    array.pop_back();
+    std::cout << "----------------------\n";
+
+    array.erase(array.begin() + 2, array.end());
 
     PrintArray(array);
 
-    array.push_back(Vector2(66, 67));
-    array.push_back(Vector2(77, 78));
+    std::cout << "----------------------\n";
 
-    PrintArray(array);
-
-    array.clear();
+    array.erase(array.begin(), array.end());
 
     PrintArray(array);
 }

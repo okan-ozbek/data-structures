@@ -8,37 +8,116 @@
 
 #include <cstddef>
 
-template<typename T>
+template<typename TDynamicArray>
+class DynamicArrayIterator {
+public:
+    using ValueType = TDynamicArray::ValueType;
+
+    explicit DynamicArrayIterator(ValueType* ptr) : ptr_{ptr} {}
+
+    DynamicArrayIterator& operator++() {
+        ++ptr_;
+        return *this;
+    }
+
+    DynamicArrayIterator& operator--() {
+        --ptr_;
+        return *this;
+    }
+
+    DynamicArrayIterator operator+(const int offset) const {
+        return DynamicArrayIterator{ptr_ + offset};
+    }
+
+    DynamicArrayIterator operator-(const int offset) const {
+        return DynamicArrayIterator{ptr_ - offset};
+    }
+
+    ValueType& operator[](const int index) {
+        return ptr_[index];
+    }
+
+    ValueType& operator[](const int index) const {
+        return ptr_[index];
+    }
+
+    ValueType& operator*() {
+        return *ptr_;
+    }
+
+    ValueType& operator*() const {
+        return *ptr_;
+    }
+
+    ValueType* operator->() {
+        return ptr_;
+    }
+
+    ValueType* operator->() const {
+        return ptr_;
+    }
+
+    bool operator==(const DynamicArrayIterator& other) const {
+        return ptr_ == other.ptr_;
+    }
+
+    bool operator!=(const DynamicArrayIterator& other) const {
+        return ptr_ != other.ptr_;
+    }
+
+    bool operator<(const DynamicArrayIterator& other) const {
+        return ptr_ < other.ptr_;
+    }
+
+    bool operator>(const DynamicArrayIterator& other) const {
+        return ptr_ > other.ptr_;
+    }
+
+    bool operator<=(const DynamicArrayIterator& other) const {
+        return ptr_ <= other.ptr_;
+    }
+
+    bool operator>=(const DynamicArrayIterator& other) const {
+        return ptr_ >= other.ptr_;
+    }
+
+    ValueType* ptr_;
+};
+
+template<typename TValueType>
 class DynamicArray {
 public:
+    using ValueType = TValueType;
+    using Iterator = DynamicArrayIterator<DynamicArray>;
+
     DynamicArray() :
-        data_{static_cast<T*>(::operator new(DEFAULT_CAPACITY * sizeof(T)))},
+        data_{static_cast<ValueType*>(::operator new(DEFAULT_CAPACITY * sizeof(ValueType)))},
         capacity_{DEFAULT_CAPACITY}
     {
     }
 
     explicit DynamicArray(const std::size_t capacity) :
-        data_{static_cast<T*>(::operator new(capacity * sizeof(T)))},
+        data_{static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)))},
         size_{capacity},
         capacity_{capacity}
     {
         for (std::size_t i{}; i < size_; ++i) {
-            new (&data_[i]) T{};
+            new (&data_[i]) ValueType{};
         }
     }
 
-    explicit DynamicArray(const std::size_t capacity, const T& value) :
-        data_{static_cast<T*>(::operator new(capacity * sizeof(T)))},
+    explicit DynamicArray(const std::size_t capacity, const ValueType& value) :
+        data_{static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)))},
         size_{capacity},
         capacity_{capacity}
     {
         for (std::size_t i{}; i < size_; ++i) {
-            new (&data_[i]) T(value);
+            new (&data_[i]) ValueType(value);
         }
     }
 
     DynamicArray(const DynamicArray& other) :
-        data_{static_cast<T*>(::operator new(other.capacity_ * sizeof(T)))},
+        data_{static_cast<ValueType*>(::operator new(other.capacity_ * sizeof(ValueType)))},
         size_{other.size_},
         capacity_{other.capacity_}
     {
@@ -60,12 +139,12 @@ public:
         clear();
         ::operator delete(data_);
 
-        data_ = static_cast<T*>(::operator new(other.capacity_ * sizeof(T)));
+        data_ = static_cast<ValueType*>(::operator new(other.capacity_ * sizeof(ValueType)));
         capacity_ = other.capacity_;
         size_ = other.size_;
 
         for (std::size_t i{}; i < size_; ++i) {
-            new (&data_[i]) T(other.data_[i]);
+            new (&data_[i]) ValueType(other.data_[i]);
         }
 
         return *this;
@@ -90,7 +169,7 @@ public:
         return *this;
     }
 
-    const T& operator[](const int index) const {
+    const ValueType& operator[](const int index) const {
         if (is_out_of_bounds(index)) {
             throw std::out_of_range("Index out of range");
         }
@@ -98,7 +177,7 @@ public:
         return data_[index];
     }
 
-    T& operator[](const int index) {
+    ValueType& operator[](const int index) {
         if (is_out_of_bounds(index)) {
             throw std::out_of_range("Index out of range");
         }
@@ -106,7 +185,7 @@ public:
         return data_[index];
     }
 
-    T& at(int index) {
+    ValueType& at(int index) {
         if (is_out_of_bounds(index)) {
             throw std::out_of_range("Index out of range");
         }
@@ -114,20 +193,20 @@ public:
         return data_[index];
     }
 
-    T& front() {
+    ValueType& front() {
         return data_[0];
     }
 
-    T& back() {
+    ValueType& back() {
         return data_[size_ - 1];
     }
 
-    void push_back(const T& value) {
+    void push_back(const ValueType& value) {
         if (is_full()) {
             resize(capacity_ * 2);
         }
 
-        new (&data_[size_]) T(value);
+        new (&data_[size_]) ValueType(value);
         ++size_;
     }
 
@@ -136,12 +215,12 @@ public:
      * && means that the function takes an rvalue reference, which allows us to move the value instead of copying it.
      * @param value
      */
-    void push_back(T&& value) {
+    void push_back(ValueType&& value) {
         if (is_full()) {
             resize(capacity_ * 2);
         }
 
-        new (&data_[size_]) T(std::move(value));
+        new (&data_[size_]) ValueType(std::move(value));
         ++size_;
     }
 
@@ -151,20 +230,61 @@ public:
             resize(capacity_ * 2);
         }
 
-        new (&data_[size_]) T(std::forward<Args>(args)...);
+        new (&data_[size_]) ValueType(std::forward<Args>(args)...);
         ++size_;
     }
 
     [[maybe_unused]] void pop_back() {
         decrement_size();
-        data_[size_].~T();
+        data_[size_].~ValueType();
     }
 
-    // vector.erase(iterator)
+    Iterator erase(const Iterator& iterator) {
+        if (is_empty()) {
+            return end();
+        }
+
+        if (iterator == end()) {
+            return end();
+        }
+
+        std::size_t index{static_cast<std::size_t>(iterator.ptr_ - data_)};
+
+        iterator->~ValueType();
+
+        for (std::size_t i{index}; i + 1 < size_; ++i) {
+            new (&data_[i]) ValueType(std::move(data_[i + 1]));
+            data_[i + 1].~ValueType();
+        }
+
+        --size_;
+        return Iterator{data_ + index};
+    }
+
+    Iterator erase(const Iterator& first, const Iterator& last) {
+        if (is_empty()) {
+            return end();
+        }
+
+        if (valid_iterator_range(first, last)) {
+            return end();
+        }
+
+        std::size_t first_index{static_cast<std::size_t>(first.ptr_ - data_)};
+        std::size_t last_index{static_cast<std::size_t>(last.ptr_ - data_)};
+
+        for (std::size_t i{first_index}; i < last_index; ++i) {
+            new (&data_[i]) ValueType(std::move(data_[i + 1]));
+            data_[i + 1].~ValueType();
+        }
+
+        size_ -= last_index - first_index;
+        return Iterator{data_ + first_index};
+    }
 
     void clear() {
         for (std::size_t i{}; i < size_; ++i) {
-            data_[i].~T();
+            data_[i].~ValueType();
         }
 
         size_ = 0;
@@ -175,15 +295,15 @@ public:
             ? capacity
             : size_;
 
-        T* data = static_cast<T*>(::operator new(capacity * sizeof(T)));
+        auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
 
         for (std::size_t i{}; i < movable_capacity; ++i) {
-            new (&data[i]) T(std::move(data_[i]));
-            data_[i].~T();
+            new (&data[i]) ValueType(std::move(data_[i]));
+            data_[i].~ValueType();
         }
 
         for (std::size_t i{movable_capacity}; i < capacity_; ++i) {
-            data_[i].~T();
+            data_[i].~ValueType();
         }
 
         ::operator delete(data_);
@@ -198,11 +318,11 @@ public:
             return;
         }
 
-        T* data = static_cast<T*>(::operator new(capacity * sizeof(T)));
+        auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
 
         for (std::size_t i{}; i < capacity; ++i) {
-            new (&data[i]) T(std::move(data_[i]));
-            data_[i].~T();
+            new (&data[i]) ValueType(std::move(data_[i]));
+            data_[i].~ValueType();
         }
 
         ::operator delete(data_);
@@ -220,15 +340,15 @@ public:
             return;
         }
 
-        T* data = static_cast<T*>(::operator new(size_ * sizeof(T)));
+        auto* data = static_cast<ValueType*>(::operator new(size_ * sizeof(ValueType)));
 
         for (std::size_t i{}; i < size_; ++i) {
-            new (&data[i]) T(std::move(data_[i]));
-            data_[i].~T();
+            new (&data[i]) ValueType(std::move(data_[i]));
+            data_[i].~ValueType();
         }
 
         for (std::size_t i{size_}; i < capacity_; ++i) {
-            data_[i].~T();
+            data_[i].~ValueType();
         }
 
         ::operator delete(data_);
@@ -237,10 +357,13 @@ public:
         capacity_ = size_;
     }
 
-    // vector.begin()
-    // vector.end()
-    // vector.rbegin()
-    // vector.rend();
+    Iterator begin() const {
+        return Iterator{data_};
+    }
+
+    Iterator end() const {
+        return Iterator{data_ + size_};
+    }
 
     [[nodiscard]] constexpr bool is_empty() const {
         return size_ == 0;
@@ -248,10 +371,6 @@ public:
 
     [[nodiscard]] constexpr bool is_full() const {
         return size_ == capacity_;
-    }
-
-    [[nodiscard]] constexpr bool is_out_of_bounds(const int index) const {
-        return index < 0 || index >= size_;
     }
 
     [[nodiscard]] constexpr std::size_t size() const {
@@ -265,7 +384,7 @@ public:
 private:
     constexpr static std::size_t DEFAULT_CAPACITY = 10;
 
-    T* data_{nullptr};
+    ValueType* data_{nullptr};
     std::size_t size_{};
     std::size_t capacity_{};
 
@@ -275,6 +394,14 @@ private:
         if (size_ < 0) {
             size_ = 0;
         }
+    }
+
+    [[nodiscard]] constexpr bool is_out_of_bounds(const int index) const {
+        return index < 0 || index >= size_;
+    }
+
+    [[nodiscard]] constexpr bool valid_iterator_range(const Iterator& first, const Iterator& last) const {
+        return (first > last || last > end() || first > end() || first == last);
     }
 };
 
