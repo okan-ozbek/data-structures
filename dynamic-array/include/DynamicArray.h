@@ -515,7 +515,7 @@ private:
     /**
      * Helper function to check if the array is at full capacity.
      *
-     * @return
+     * @return bool
      */
     [[nodiscard]] constexpr bool is_full() const {
         return size_ == capacity_;

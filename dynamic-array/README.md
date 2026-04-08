@@ -15,6 +15,7 @@ A generic, templated dynamic array implementation in C++ that manages raw memory
   - [`std::move`](#stdmove)
   - [`std::forward`](#stdforward)
   - [Variadic Templates: `template<typename... Args>`](#variadic-templates-templatetypename-args)
+  - [Iterators](#iterators)
 - [Implementation](#implementation)
 - [Usage](#usage)
 
@@ -247,6 +248,170 @@ new (&data_[size_]) Vector2(std::forward<int>(5), std::forward<int>(10));
 ```cpp
 arr.push_back(Vector2(5, 10));  // Creates temporary, then moves it into the array
 arr.emplace_back(5, 10);        // Constructs Vector2 directly in the array — faster
+```
+
+---
+
+### Iterators
+
+An **iterator** is an object that points to an element inside a container and lets you traverse the container without knowing its internal structure. It's the bridge between your container and C++ algorithms / range-based `for` loops.
+
+#### What is an iterator?
+
+Think of an iterator as a **generalized pointer**. A raw pointer `T*` already lets you:
+
+- Dereference it (`*ptr`) to access the element
+- Increment it (`++ptr`) to move to the next element
+- Compare it (`ptr1 != ptr2`) to check if you've reached the end
+
+An iterator wraps a raw pointer and exposes the same operations through operator overloads, so it behaves like a pointer but can be customized.
+
+#### How `DynamicArrayIterator` works
+
+The `DynamicArrayIterator<TDynamicArray>` class is templated on the container type. It stores a single `ValueType*` pointer internally:
+
+```cpp
+template<typename TDynamicArray>
+class DynamicArrayIterator {
+public:
+    using ValueType = TDynamicArray::ValueType;
+
+    explicit DynamicArrayIterator(ValueType* ptr) : ptr_{ptr} {}
+
+private:
+    ValueType* ptr_;  // Raw pointer to an element in the array
+};
+```
+
+All iterator behavior comes from **operator overloads** on this pointer:
+
+| Operator          | What it does                                | Example           |
+|-------------------|---------------------------------------------|-------------------|
+| `operator++`      | Move forward to the next element (`++ptr_`) | `++it`            |
+| `operator--`      | Move backward to the previous element       | `--it`            |
+| `operator+`       | Return a new iterator offset forward        | `it + 3`          |
+| `operator-`       | Return a new iterator offset backward       | `it - 2`          |
+| `operator*`       | Dereference — access the element            | `*it`             |
+| `operator->`      | Access a member of the element              | `it->x`           |
+| `operator[]`      | Access element at offset from iterator      | `it[2]`           |
+| `operator==`/`!=` | Compare two iterators for equality          | `it != arr.end()` |
+| `operator<`/`>`   | Compare iterator positions                  | `it < other`      |
+| `operator<=`/`>=` | Compare iterator positions (inclusive)       | `it <= other`     |
+
+#### `const`-qualified operators
+
+Most operators are marked `const` because they **don't modify the iterator itself** (its `ptr_` doesn't change). This is critical — without `const`, you can't use iterators that are passed by `const` reference (e.g., in `erase(const Iterator& first, const Iterator& last)`).
+
+```cpp
+// Without const — only works on non-const iterators
+bool operator==(const DynamicArrayIterator& other) { return ptr_ == other.ptr_; }
+
+// With const — works on both const and non-const iterators ✓
+bool operator==(const DynamicArrayIterator& other) const { return ptr_ == other.ptr_; }
+```
+
+#### `begin()` and `end()`
+
+The container exposes two methods that return iterators:
+
+```cpp
+Iterator begin() const { return Iterator{data_}; }          // Points to first element
+Iterator end()   const { return Iterator{data_ + size_}; }  // Points one-past-last element
+```
+
+**Why one-past-the-end?**
+
+The `end()` iterator does **not** point to a valid element. It serves as a sentinel — a marker that says "you've gone past the last element." This convention enables:
+
+- Empty ranges: when `begin() == end()`, the container is empty
+- Simple loop conditions: `it != end()` naturally stops after the last element
+- Consistent half-open ranges: `[begin, end)` — includes the first, excludes the last
+
+```
+Memory layout (array with 3 elements):
+
+  data_[0]    data_[1]    data_[2]    (one past last)
+  ┌─────┐    ┌─────┐    ┌─────┐    ┌ ─ ─ ─ ┐
+  │  10 │    │  20 │    │  30 │    │  ???  │
+  └─────┘    └─────┘    └─────┘    └ ─ ─ ─ ┘
+    ▲                                  ▲
+  begin()                            end()
+```
+
+#### Range-based `for` loop
+
+When you write a range-based `for` loop, the compiler translates it into iterator calls:
+
+```cpp
+// What you write:
+for (auto& element : arr) {
+    std::cout << element << "\n";
+}
+
+// What the compiler generates (conceptually):
+for (auto it = arr.begin(); it != arr.end(); ++it) {
+    auto& element = *it;
+    std::cout << element << "\n";
+}
+```
+
+For this to work, your container **must** provide `begin()` and `end()` methods that return an iterator type with `operator++`, `operator!=`, and `operator*`.
+
+#### Using iterators with `erase()`
+
+Iterators identify **which element(s) to remove** without ambiguity:
+
+```cpp
+DynamicArray<int> arr;
+arr.push_back(10);
+arr.push_back(20);
+arr.push_back(30);
+arr.push_back(40);
+arr.push_back(50);
+
+// Erase single element (the second element, value 20)
+arr.erase(arr.begin() + 1);
+// arr is now: [10, 30, 40, 50]
+
+// Erase a range [begin+1, begin+3) — removes 30 and 40
+arr.erase(arr.begin() + 1, arr.begin() + 3);
+// arr is now: [10, 50]
+```
+
+**How `erase` works internally:**
+
+```
+Before erase(begin() + 1):    [10, 20, 30, 40, 50]   size = 5
+                                     ▲
+                                  destroy
+
+Step 1: Destroy element at index 1          → data_[1].~T()
+Step 2: Move data_[2] into data_[1]         → new (&data_[1]) T(std::move(data_[2]))
+Step 3: Move data_[3] into data_[2]         → new (&data_[2]) T(std::move(data_[3]))
+Step 4: Move data_[4] into data_[3]         → new (&data_[3]) T(std::move(data_[4]))
+Step 5: --size_
+
+After:                         [10, 30, 40, 50]       size = 4
+```
+
+#### Manual iteration
+
+Besides range-based `for`, you can iterate manually with full control:
+
+```cpp
+// Forward iteration
+for (auto it = arr.begin(); it != arr.end(); ++it) {
+    std::cout << *it << " ";
+}
+
+// Backward iteration (manual, using operator--)
+for (auto it = arr.end() - 1; it >= arr.begin(); --it) {
+    std::cout << *it << " ";
+}
+
+// Random access via operator[]
+auto it = arr.begin();
+std::cout << it[2] << "\n";  // Access 3rd element from iterator position
 ```
 
 ---
