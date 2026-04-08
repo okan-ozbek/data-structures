@@ -49,7 +49,7 @@ public:
 
     ~DynamicArray() {
         clear();
-        ::operator delete(data_, capacity_ * sizeof(T));
+        ::operator delete(data_);
     }
 
     DynamicArray& operator=(const DynamicArray& other) {
@@ -58,7 +58,7 @@ public:
         }
 
         clear();
-        ::operator delete(data_, capacity_ * sizeof(T));
+        ::operator delete(data_);
 
         data_ = static_cast<T*>(::operator new(other.capacity_ * sizeof(T)));
         capacity_ = other.capacity_;
@@ -77,7 +77,7 @@ public:
         }
 
         clear();
-        ::operator delete(data_, capacity_ * sizeof(T));
+        ::operator delete(data_);
 
         data_ = std::move(other.data_);
         size_ = other.size_;
@@ -91,15 +91,39 @@ public:
     }
 
     const T& operator[](const int index) const {
+        if (is_out_of_bounds(index)) {
+            throw std::out_of_range("Index out of range");
+        }
+
         return data_[index];
     }
 
     T& operator[](const int index) {
+        if (is_out_of_bounds(index)) {
+            throw std::out_of_range("Index out of range");
+        }
+
         return data_[index];
     }
 
+    T& at(int index) {
+        if (is_out_of_bounds(index)) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        return data_[index];
+    }
+
+    T& front() {
+        return data_[0];
+    }
+
+    T& back() {
+        return data_[size_ - 1];
+    }
+
     void push_back(const T& value) {
-        if (size_ == capacity_) {
+        if (is_full()) {
             resize(capacity_ * 2);
         }
 
@@ -113,7 +137,7 @@ public:
      * @param value
      */
     void push_back(T&& value) {
-        if (size_ == capacity_) {
+        if (is_full()) {
             resize(capacity_ * 2);
         }
 
@@ -123,7 +147,7 @@ public:
 
     template<typename... Args>
     void emplace_back(Args&&... args) {
-        if (size_ == capacity_) {
+        if (is_full()) {
             resize(capacity_ * 2);
         }
 
@@ -136,6 +160,8 @@ public:
         data_[size_].~T();
     }
 
+    // vector.erase(iterator)
+
     void clear() {
         for (std::size_t i{}; i < size_; ++i) {
             data_[i].~T();
@@ -144,8 +170,88 @@ public:
         size_ = 0;
     }
 
+    void resize(const std::size_t capacity) {
+        const std::size_t movable_capacity = (capacity < size_)
+            ? capacity
+            : size_;
+
+        T* data = static_cast<T*>(::operator new(capacity * sizeof(T)));
+
+        for (std::size_t i{}; i < movable_capacity; ++i) {
+            new (&data[i]) T(std::move(data_[i]));
+            data_[i].~T();
+        }
+
+        for (std::size_t i{movable_capacity}; i < capacity_; ++i) {
+            data_[i].~T();
+        }
+
+        ::operator delete(data_);
+
+        data_ = data;
+        capacity_ = capacity;
+        size_ = movable_capacity;
+    }
+
+    void reserve(const std::size_t capacity) {
+        if (capacity <= capacity_) {
+            return;
+        }
+
+        T* data = static_cast<T*>(::operator new(capacity * sizeof(T)));
+
+        for (std::size_t i{}; i < capacity; ++i) {
+            new (&data[i]) T(std::move(data_[i]));
+            data_[i].~T();
+        }
+
+        ::operator delete(data_);
+
+        data_ = data;
+        capacity_ = capacity;
+    }
+
+    void shrink_to_fit() {
+        if (is_empty()) {
+            return;
+        }
+
+        if (is_full()) {
+            return;
+        }
+
+        T* data = static_cast<T*>(::operator new(size_ * sizeof(T)));
+
+        for (std::size_t i{}; i < size_; ++i) {
+            new (&data[i]) T(std::move(data_[i]));
+            data_[i].~T();
+        }
+
+        for (std::size_t i{size_}; i < capacity_; ++i) {
+            data_[i].~T();
+        }
+
+        ::operator delete(data_);
+
+        data_ = data;
+        capacity_ = size_;
+    }
+
+    // vector.begin()
+    // vector.end()
+    // vector.rbegin()
+    // vector.rend();
+
     [[nodiscard]] constexpr bool is_empty() const {
         return size_ == 0;
+    }
+
+    [[nodiscard]] constexpr bool is_full() const {
+        return size_ == capacity_;
+    }
+
+    [[nodiscard]] constexpr bool is_out_of_bounds(const int index) const {
+        return index < 0 || index >= size_;
     }
 
     [[nodiscard]] constexpr std::size_t size() const {
@@ -162,29 +268,6 @@ private:
     T* data_{nullptr};
     std::size_t size_{};
     std::size_t capacity_{};
-
-    void resize(const std::size_t capacity) {
-        T* data = static_cast<T*>(::operator new(capacity * sizeof(T)));
-
-        const std::size_t new_size = (capacity < size_)
-            ? capacity
-            : size_;
-
-        for (std::size_t i{}; i < new_size; ++i) {
-            new (&data[i]) T(std::move(data_[i]));
-            data_[i].~T();
-        }
-
-        for (std::size_t i{new_size}; i < size_; ++i) {
-            data_[i].~T();
-        }
-
-        ::operator delete(data_, capacity_ * sizeof(T));
-
-        data_ = data;
-        size_ = new_size;
-        capacity_ = capacity;
-    }
 
     void decrement_size() {
         --size_;
