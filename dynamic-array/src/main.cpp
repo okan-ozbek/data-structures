@@ -3,83 +3,146 @@
 //
 
 #include <iostream>
+#include <vector>
 
 #include "../include/DynamicArray.h"
 
-int main() {
-    /**
-     * This is mainly for testing use cases until I find a way to create proper tests. I am currently still
-     * reading up on C++ and how it works, so not everything is as optimal as it could be but I am happy
-     * with the result so far. I will revisit this sometime in the future.
-     */
+struct Vector2 {
+    int x{};
+    int y{};
 
-    std::cout << "[PART 1]" << std::endl;
-    DynamicArray dynamicArray(15);
+    Vector2() = default;
+    explicit Vector2(const int scalar) : x{scalar}, y{scalar} {}
+    explicit Vector2(const int x, const int y) : x{x}, y{y} {}
 
-    std::cout << dynamicArray.size() << std::endl;
-    if (dynamicArray.empty() == false) {
-        for (int i{}; i < dynamicArray.size(); ++i) {
-            std::cout << i + 1 << ". " << dynamicArray[i] << std::endl;
+    Vector2(const Vector2&& other) noexcept : x{other.x}, y{other.y} {
+        static int i{};
+
+        ++i;
+
+        std::cout << "Moving vector: " << "[" << x << ", " << y << "]" << std::endl;
+    }
+
+    ~Vector2() {
+        std::cout << "Destroying vector" << std::endl;
+    }
+
+    Vector2& operator=(const Vector2&& other) noexcept {
+        static int i{};
+
+        ++i;
+
+        std::cout << "Assigning vector (move): " << i << "[" << x << ", " << y << "]" << std::endl;
+
+        x = other.x;
+        y = other.y;
+        return *this;
+    }
+};
+
+template<typename T>
+void PrintArray(const DynamicArray<T>& array) {
+    std::cout << "[";
+
+    for (std::size_t i{}; i < array.size(); ++i) {
+        if (i + 1 == array.size()) {
+            std::cout << array[i];
+            break;
         }
+
+        std::cout << array[i] << ", ";
     }
 
-    std::cout << std::endl;
-    std::cout << "[PART 2]" << std::endl;
+    std::cout << "]\n";
+}
 
-    dynamicArray.push_back(1);
-    dynamicArray.push_back(2);
+template<>
+void PrintArray(const DynamicArray<Vector2>& array) {
+    std::cout << "[";
 
-    std::cout << "Pushed 2 elements with values 1 and 2" << std::endl;
-    std::cout << "Size: " << dynamicArray.size() << ", capacity: " << dynamicArray.capacity() << std::endl;
+    for (std::size_t i{}; i < array.size(); ++i) {
+        if (i + 1 == array.size()) {
+            std::cout << "[" << array[i].x << ", " << array[i].y << "]";
+            break;
+        }
 
-    const auto value = dynamicArray.pop_back();
-
-    std::cout << "Popped element with value: " << value << std::endl;
-    std::cout << "Size: " << dynamicArray.size() << std::endl;
-
-    std::cout << std::endl;
-    std::cout << "[PART 3]" << std::endl;
-
-    for (int i{}; i < 10; i++) {
-        dynamicArray.push_back(i);
+        std::cout << "[" << array[i].x << ", " << array[i].y << "], ";
     }
 
-    std::cout << "Pushed 10 elements with values 0 to 9" << std::endl;
-    std::cout << "Size: " << dynamicArray.size() << ", capacity: " << dynamicArray.capacity() << std::endl;
+    std::cout << "]\n";
+}
 
-    dynamicArray[3] = 10;
-    std::cout << "Value at index 3: " << dynamicArray[3] << std::endl;
+void TestIntArray() {
+    std::cout << "Testing object array" << std::endl;
 
-    std::cout << std::endl;
-    std::cout << "[PART 4]" << std::endl;
+    DynamicArray<int> array{};
 
-    dynamicArray.clear();
-    std::cout << "Cleared the dynamic array" << std::endl;
-    std::cout << "Size: " << dynamicArray.size() << ", capacity: " << dynamicArray.capacity() << std::endl;
-    std::cout << "Dynamic array is empty: " << (dynamicArray.empty() ? "true" : "false") << std::endl;
+    array.push_back(1);
+    array.push_back(2);
+    array.push_back(3);
+    array.push_back(4);
+    array.push_back(5);
+    array.emplace_back(6);
+    array.emplace_back(7);
 
-    std::cout << std::endl;
-    std::cout << "[PART 5]" << std::endl;
+    PrintArray(array);
 
-    DynamicArray dynamicArray2(10, 10);
+    array.pop_back();
+    array.pop_back();
 
-    std::cout << "Created a dynamic array with 10 elements initialized with value 10" << std::endl;
-    std::cout << "Size: " << dynamicArray2.size() << ", capacity: " << dynamicArray2.capacity() << std::endl;
+    PrintArray(array);
 
-    for (int i{}; i < dynamicArray2.size(); ++i) {
-        std::cout << i + 1 << ". " << dynamicArray2[i] << std::endl;
-    }
+    array.push_back(8);
+    array.push_back(9);
 
-    dynamicArray2.push_back(1);
+    PrintArray(array);
 
-    std::cout << "Pushed 1 element with value 1" << std::endl;
-    std::cout << "Size: " << dynamicArray2.size() << ", capacity: " << dynamicArray2.capacity() << std::endl;
+    array.clear();
 
-    for (int i{}; i < dynamicArray2.size(); ++i) {
-        std::cout << i + 1 << ". " << dynamicArray2[i] << std::endl;
-    }
+    PrintArray(array);
+}
 
-    std::cout << std::endl;
+void TestBoolArray() {
+
+}
+
+void TestObjectArray() {
+    std::cout << "Testing object array" << std::endl;
+
+    DynamicArray<Vector2> array{};
+
+    // array.push_back(Vector2());
+    // array.push_back(Vector2(3));
+    // array.push_back(Vector2(5, 6));
+    // array.push_back(Vector2(7, 8));
+    // array.push_back(Vector2(9, 10));
+    array.emplace_back(11, 12);
+    array.emplace_back(13);
+    array.emplace_back(11, 12);
+    array.emplace_back(13);
+    array.emplace_back(11, 12);
+    array.emplace_back(13);
+
+    PrintArray(array);
+
+    array.pop_back();
+    array.pop_back();
+
+    PrintArray(array);
+
+    array.push_back(Vector2(66, 67));
+    array.push_back(Vector2(77, 78));
+
+    PrintArray(array);
+
+    array.clear();
+
+    PrintArray(array);
+}
+
+int main() {
+    TestObjectArray();
+    //TestIntArray();
 
     return 0;
 }

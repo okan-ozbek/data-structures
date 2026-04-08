@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(dynamic-array
     src/main.cpp
-    src/DynamicArray.cpp
     include/DynamicArray.h
 )
 
