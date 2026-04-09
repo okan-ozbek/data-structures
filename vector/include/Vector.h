@@ -183,7 +183,7 @@ public:
      * Time complexity: O(1)
      * @return Iterator
      */
-    Iterator begin() const {
+    [[nodiscard]] Iterator begin() const {
         return Iterator{data_};
     }
 
@@ -193,7 +193,7 @@ public:
      * Time complexity: O(1)
      * @return Iterator
      */
-    Iterator end() const {
+    [[nodiscard]] Iterator end() const {
         return Iterator{data_ + size_};
     }
 

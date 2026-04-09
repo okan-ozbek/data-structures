@@ -183,6 +183,7 @@ public:
     ValueType* ptr() const {
         return ptr_;
     }
+
 private:
     ValueType* ptr_;
 };

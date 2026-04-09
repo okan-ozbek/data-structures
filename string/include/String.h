@@ -7,11 +7,14 @@
 
 
 #include <cstddef>
-#include <cstring>
 #include <iostream>
+
+#include "StringIterator.h"
 
 class String {
 public:
+    using Iterator = StringIterator;
+
     String() : data_{nullptr}, size_{0}, capacity_{0} {}
 
     String(const char* string) {
@@ -95,19 +98,31 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const String& string);
 
     // TODO iterators
-    // begin()
-    // end()
+    [[nodiscard]] Iterator begin() const {
+        return Iterator{data_};
+    }
 
-    // TODO indexing
-    // at()
-    // back()
-    // front()
+    [[nodiscard]] Iterator end() const {
+        return Iterator{data_ + size_};
+    }
+
+    [[nodiscard]] char at(const int index) const {
+        return data_[index];
+    }
+
+    [[nodiscard]] char back() const {
+        return data_[size_ - 1];
+    }
+
+    [[nodiscard]] char front() const {
+        return data_[0];
+    }
 
     // TODO finding
     // find(String& str) -> position of first element of found substr
     // replace()
     // substr(index, ?length_of_substr = optional, else to the end of string)
-    
+
     [[nodiscard]] std::size_t size() const {
         return size_;
     }

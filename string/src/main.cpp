@@ -22,9 +22,13 @@ int main() {
     }
 
     std::cout << "str capacity: " << str.capacity() << std::endl;
-    String str3 = " WHasdhashdahsdhashdhashdhashdhashdhashdhashdahshd ";
-    str += str3;
+    // String str3 = " WHasdhashdahsdhashdhashdhashdhashdhashdhashdahshd ";
+    // str += str3;
     std::cout << str.capacity() << std::endl;
+
+    for (char c : str) {
+        std::cout << c << c;
+    }
 
     // std::cout << "Is str == str2: " << (str == str2) << std::endl;
 
