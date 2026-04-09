@@ -9,7 +9,6 @@
 #include <cstddef>
 #include "VectorIterator.h"
 
-template<typename TValueType>
 /**
  * A resizable dynamic array implementation that provides capabilities for
  * storing and managing a collection of objects similar to std::vector, with
@@ -17,6 +16,7 @@ template<typename TValueType>
  *
  * @tparam TValueType Type of elements stored in the array.
  */
+template<typename TValueType>
 class Vector {
 public:
     using ValueType = TValueType;
