@@ -1,4 +1,4 @@
-<div align="center">
+
 
 ```
  █████                                                    █████████                         
@@ -7,7 +7,7 @@
  ▒███        ███▒▒███ ▒▒▒▒▒███ ▒▒███▒▒███▒▒███▒▒███    ▒███          ███████████ ███████████
  ▒███       ▒███████   ███████  ▒███ ▒▒▒  ▒███ ▒███    ▒███         ▒▒▒▒▒███▒▒▒ ▒▒▒▒▒███▒▒▒ 
  ▒███      █▒███▒▒▒   ███▒▒███  ▒███      ▒███ ▒███    ▒▒███     ███    ▒███        ▒███    
- ███████████▒▒██████ ▒▒████████ █████     ████ █████    ▒▒█████████     ▒▒▒         ▒▒▒     
+▒███████████▒▒██████ ▒▒████████ █████     ████ █████    ▒▒█████████     ▒▒▒         ▒▒▒     
 ▒▒▒▒▒▒▒▒▒▒▒  ▒▒▒▒▒▒   ▒▒▒▒▒▒▒▒ ▒▒▒▒▒     ▒▒▒▒ ▒▒▒▒▒      ▒▒▒▒▒▒▒▒▒                                                                                               
 ```
 
@@ -22,7 +22,7 @@
 
 ---
 
-## 📖 About
+## About
 
 This project is a **self-learning initiative** to gain a deeper understanding of the fundamental data structures that power not only C++, but programming as a whole. Every structure in the standard library — vectors, strings, maps, smart pointers — is built on top of core concepts like dynamic memory management, pointer arithmetic, and object lifetimes.
 
@@ -32,7 +32,7 @@ By implementing each data structure from scratch using raw memory management (`:
 
 ---
 
-## 🤖 Use of AI
+## Use of AI
 
 This project uses **AI as an assistant** — not as the author. The code itself is **~90% hand-written**. AI is used when stuck on a concept, to debug tricky issues, or to get unstuck on C++ nuances (template linker errors, move semantics edge cases, etc.).
 
@@ -42,16 +42,16 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 
 ---
 
-## 📦 Data Structures
+## Data Structures
 
-### ✅ Implemented
+### Implemented
 
 | Structure | Description | Docs |
 |-----------|-------------|------|
 | **[Vector](vector/)** | A generic, templated dynamic array (`DynamicArray<T>`) with raw memory management, iterators, and move semantics | [README](vector/README.md) |
 | **[String](string/)** | A custom string class managing a `char*` buffer with copy/move semantics, operator overloading, and iterators | [README](string/README.md) |
 
-### 🚧 Planned
+### Planned
 
 | Structure | Description |
 |-----------|-------------|
@@ -64,7 +64,7 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 
 ---
 
-## 🛠️ Built With
+## Built With
 
 - **Language:** C++17
 - **Build System:** CMake
@@ -73,7 +73,7 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 data-structures/
@@ -96,7 +96,7 @@ data-structures/
 
 ---
 
-## 📄 License
+## License
 
 Copyright © 2026 Okan Ozbek. All rights reserved.
 
