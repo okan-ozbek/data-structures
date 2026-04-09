@@ -12,7 +12,7 @@ public:
     using ValueType = TVector::ValueType;
 
     /**
-     * Initialize a dynamic array iterator, pointing to the provided pointer.
+     * Initialize a vector iterator, pointing to the provided pointer.
      *
      * @param ptr
      */
