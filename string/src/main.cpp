@@ -30,6 +30,8 @@ int main() {
         std::cout << c << c;
     }
 
+    std::cout << str.substr(3) << std::endl;
+
     // std::cout << "Is str == str2: " << (str == str2) << std::endl;
 
     // std::cout << "Length of Hello world!: " << String::strlen("Hello world!") << std::endl;

@@ -15,7 +15,11 @@ class String {
 public:
     using Iterator = StringIterator;
 
-    String() : data_{nullptr}, size_{0}, capacity_{0} {}
+    String() :
+        data_{static_cast<char*>(::operator new(DEFAULT_CAPACITY * sizeof(char)))},
+        size_{0},
+        capacity_{DEFAULT_CAPACITY}
+    {}
 
     String(const char* string) {
         const std::size_t capacity = (strlen(string) < DEFAULT_CAPACITY)
@@ -31,6 +35,32 @@ public:
         }
 
         data_[size_] = '\0';
+    }
+
+    String(const String& string) {
+        const std::size_t capacity = (string.size() < DEFAULT_CAPACITY)
+            ? DEFAULT_CAPACITY
+            : string.size();
+
+        data_ = static_cast<char*>(::operator new(capacity * sizeof(char)));
+        capacity_ = capacity;
+        size_ = string.size();
+
+        for (std::size_t i{}; i < size_; ++i) {
+            new (&data_[i]) char(string.data_[i]);
+        }
+
+        data_[size_] = '\0';
+    }
+
+    String(String&& string) noexcept :
+        data_{string.data_},
+        size_{string.size_},
+        capacity_{string.capacity_}
+    {
+        string.data_ = nullptr;
+        string.size_ = 0;
+        string.capacity_ = 0;
     }
 
     ~String() {
@@ -66,16 +96,17 @@ public:
     }
 
     String& operator+=(const String& string) {
-        std::cout << "string: " << string.data() << std::endl;
         append(string.data());
-        std::cout << "string: " << data() << std::endl;
-
         return *this;
     }
 
     String& operator+=(const char* string) {
         append(string);
+        return *this;
+    }
 
+    String& operator+=(const char character) {
+        append(character);
         return *this;
     }
 
@@ -97,7 +128,6 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const String& string);
 
-    // TODO iterators
     [[nodiscard]] Iterator begin() const {
         return Iterator{data_};
     }
@@ -118,10 +148,53 @@ public:
         return data_[0];
     }
 
-    // TODO finding
-    // find(String& str) -> position of first element of found substr
-    // replace()
-    // substr(index, ?length_of_substr = optional, else to the end of string)
+    // TODO: add replace() aswel
+
+    [[nodiscard]] String find(const char* string) const {
+        if (strlen(string) > size_) {
+            return {};
+        }
+
+        for (std::size_t i{}; i < size_; ++i) {
+            if (substr(static_cast<int>(i)).is_equal(string)) {
+                return substr(static_cast<int>(i));
+            }
+        }
+
+        return {};
+    }
+
+    [[nodiscard]] String find(const String& string) const {
+        if (string.size() > size_) {
+            return {};
+        }
+
+        for (std::size_t i{}; i < size_; ++i) {
+            if (string.is_equal(substr(static_cast<int>(i)))) {
+                return substr(static_cast<int>(i));
+            }
+        }
+
+        return {};
+    }
+
+    [[nodiscard]] String substr(const int index, int length = -1) const {
+        String result{};
+
+        if (length == 0 || index >= size_) {
+            return {};
+        }
+
+        if (length <= -1 || length > size_ - index) {
+            length = static_cast<int>(size_) - index;
+        }
+
+        for (int i{}; i < length; ++i) {
+            result += data_[index + i];
+        }
+
+        return result;
+    }
 
     [[nodiscard]] std::size_t size() const {
         return size_;
@@ -216,6 +289,17 @@ private:
         }
 
         size_ = new_size;
+        data_[size_] = '\0';
+    }
+
+    void append(const char character) {
+        if (size_ + 1 > capacity_) {
+            resize(capacity_ * 2 + 1);
+        }
+
+        new (&data_[size_]) char(character);
+        ++size_;
+
         data_[size_] = '\0';
     }
 
