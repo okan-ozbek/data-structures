@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../include/DynamicArray.h"
+#include "../include/Vector.h"
 
 struct Vector2 {
     int x{};
@@ -41,7 +41,7 @@ struct Vector2 {
 };
 
 template<typename T>
-void PrintArray(const DynamicArray<T>& array) {
+void PrintArray(const Vector<T>& array) {
     std::cout << "[";
 
     for (std::size_t i{}; i < array.size(); ++i) {
@@ -57,7 +57,7 @@ void PrintArray(const DynamicArray<T>& array) {
 }
 
 template<>
-void PrintArray(const DynamicArray<Vector2>& array) {
+void PrintArray(const Vector<Vector2>& array) {
     std::cout << "[";
 
     for (std::size_t i{}; i < array.size(); ++i) {
@@ -75,7 +75,7 @@ void PrintArray(const DynamicArray<Vector2>& array) {
 void TestIntArray() {
     std::cout << "Testing object array" << std::endl;
 
-    DynamicArray<int> array{};
+    Vector<int> array{};
 
     array.push_back(1);
     array.push_back(2);
@@ -109,7 +109,7 @@ void TestBoolArray() {
 void TestObjectArray() {
     std::cout << "Testing object array" << std::endl;
 
-    DynamicArray<Vector2> array{};
+    Vector<Vector2> array{};
 
     // array.push_back(Vector2());
     // array.push_back(Vector2(3));
@@ -149,7 +149,7 @@ void TestObjectArray() {
     //
     // std::cout << "----------------------\n";
     //
-    // for (DynamicArray<Vector2>::Iterator it = array.begin(); it != array.end(); ++it) {
+    // for (Vector<Vector2>::Iterator it = array.begin(); it != array.end(); ++it) {
     //     std::cout << "[" << it->x << ", " << it->y << "]\n";
     // }
 

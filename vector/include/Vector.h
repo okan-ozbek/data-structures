@@ -2,12 +2,12 @@
 // Created by Dorza on 4/7/2026.
 //
 
-#ifndef TEMP_CPP_DYNAMICARRAY_H
-#define TEMP_CPP_DYNAMICARRAY_H
+#ifndef TEMP_CPP_VECTOR_H
+#define TEMP_CPP_VECTOR_H
 
 
 #include <cstddef>
-#include "DynamicArrayIterator.h"
+#include "VectorIterator.h"
 
 template<typename TValueType>
 /**
@@ -17,17 +17,17 @@ template<typename TValueType>
  *
  * @tparam TValueType Type of elements stored in the array.
  */
-class DynamicArray {
+class Vector {
 public:
     using ValueType = TValueType;
-    using Iterator = DynamicArrayIterator<DynamicArray>;
+    using Iterator = VectorIterator<Vector>;
 
     /**
      * Initialize a dynamic array with default capacity
      *
      * Time complexity: O(1) since it only involves allocating memory for the default capacity, without initializing any elements.
      */
-    DynamicArray() :
+    Vector() :
         data_{static_cast<ValueType*>(::operator new(DEFAULT_CAPACITY * sizeof(ValueType)))},
         capacity_{DEFAULT_CAPACITY}
     {
@@ -39,7 +39,7 @@ public:
      * Time complexity: O(n) due to having to default-construct each element.
      * @param capacity
      */
-    explicit DynamicArray(const std::size_t capacity) :
+    explicit Vector(const std::size_t capacity) :
         data_{static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)))},
         size_{capacity},
         capacity_{capacity}
@@ -56,7 +56,7 @@ public:
      * @param capacity
      * @param value
      */
-    explicit DynamicArray(const std::size_t capacity, const ValueType& value) :
+    explicit Vector(const std::size_t capacity, const ValueType& value) :
         data_{static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)))},
         size_{capacity},
         capacity_{capacity}
@@ -72,7 +72,7 @@ public:
      * Time complexity: O(n) due to having to copy-construct each element.
      * @param other
      */
-    DynamicArray(const DynamicArray& other) :
+    Vector(const Vector& other) :
         data_{static_cast<ValueType*>(::operator new(other.capacity_ * sizeof(ValueType)))},
         size_{other.size_},
         capacity_{other.capacity_}
@@ -88,7 +88,7 @@ public:
      *
      * Time complexity: O(n) due to the need to destruct each element in the array before deallocating memory.
      */
-    ~DynamicArray() {
+    ~Vector() {
         clear();
         ::operator delete(data_);
     }
@@ -98,9 +98,9 @@ public:
      *
      * Time complexity: O(n) due to the need to copy each element from the other array.
      * @param other
-     * @return DynamicArray&
+     * @return Vector&
      */
-    DynamicArray& operator=(const DynamicArray& other) {
+    Vector& operator=(const Vector& other) {
         if (&other == this) {
             return *this;
         }
@@ -126,9 +126,9 @@ public:
      *
      * Time complexity: O(1) since it only involves moving pointers and size/capacity values, without copying individual elements.
      * @param other
-     * @return DynamicArray&
+     * @return Vector&
      */
-    DynamicArray& operator=(DynamicArray&& other) noexcept {
+    Vector& operator=(Vector&& other) noexcept {
         if (&other == this) {
             return *this;
         }
@@ -307,7 +307,7 @@ public:
             return end();
         }
 
-        std::size_t index{static_cast<std::size_t>(iterator.ptr_ - data_)};
+        std::size_t index{static_cast<std::size_t>(iterator.ptr() - data_)};
 
         iterator->~ValueType();
 
@@ -337,8 +337,8 @@ public:
             return end();
         }
 
-        const std::size_t first_index{static_cast<std::size_t>(first.ptr_ - data_)};
-        const std::size_t last_index{static_cast<std::size_t>(last.ptr_ - data_)};
+        const std::size_t first_index{static_cast<std::size_t>(first.ptr() - data_)};
+        const std::size_t last_index{static_cast<std::size_t>(last.ptr() - data_)};
 
         for (std::size_t i{first_index}; i < last_index; ++i) {
             new (&data_[i]) ValueType(std::move(data_[i + 1]));
@@ -523,4 +523,4 @@ private:
 };
 
 
-#endif //TEMP_CPP_DYNAMICARRAY_H
+#endif //TEMP_CPP_VECTOR_H

@@ -418,7 +418,7 @@ std::cout << it[2] << "\n";  // Access 3rd element from iterator position
 
 ## Implementation
 
-The full implementation lives in a single header file: [`include/DynamicArray.h`](include/DynamicArray.h)
+The full implementation lives in a single header file: [`include/DynamicArray.h`](include/Vector.h)
 
 ### Memory Lifecycle
 

@@ -2,28 +2,28 @@
 // Created by Dorza on 4/7/2026.
 //
 
-#ifndef TEMP_CPP_DYNAMICARRAYITERATOR_H
-#define TEMP_CPP_DYNAMICARRAYITERATOR_H
+#ifndef TEMP_CPP_VECTORITERATOR_H
+#define TEMP_CPP_VECTORITERATOR_H
 
 
-template<typename TDynamicArray>
-class DynamicArrayIterator {
+template<typename TVector>
+class VectorIterator {
 public:
-    using ValueType = TDynamicArray::ValueType;
+    using ValueType = TVector::ValueType;
 
     /**
      * Initialize a dynamic array iterator, pointing to the provided pointer.
      *
      * @param ptr
      */
-    explicit DynamicArrayIterator(ValueType* ptr) : ptr_{ptr} {}
+    explicit VectorIterator(ValueType* ptr) : ptr_{ptr} {}
 
     /**
      * Move the iterator to the next element in the array.
      *
-     * @return DynamicArrayIterator&
+     * @return VectorIterator&
      */
-    DynamicArrayIterator& operator++() {
+    VectorIterator& operator++() {
         ++ptr_;
         return *this;
     }
@@ -31,9 +31,9 @@ public:
     /**
      * Move the iterator to the previous element in the array.
      *
-     * @return DynamicArrayIterator&
+     * @return VectorIterator&
      */
-    DynamicArrayIterator& operator--() {
+    VectorIterator& operator--() {
         --ptr_;
         return *this;
     }
@@ -43,10 +43,10 @@ public:
      * Increase the iterator by the specified offset, moving it forward in the array.
      * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
      *
-     * @return DynamicArrayIterator
+     * @return VectorIterator
      */
-    DynamicArrayIterator operator+(const int offset) const {
-        return DynamicArrayIterator{ptr_ + offset};
+    VectorIterator operator+(const int offset) const {
+        return VectorIterator{ptr_ + offset};
     }
 
     /**
@@ -55,10 +55,10 @@ public:
      * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
      *
      * @param offset
-     * @return DynamicArrayIterator
+     * @return VectorIterator
      */
-    DynamicArrayIterator operator-(const int offset) const {
-        return DynamicArrayIterator{ptr_ - offset};
+    VectorIterator operator-(const int offset) const {
+        return VectorIterator{ptr_ - offset};
     }
 
     /**
@@ -126,7 +126,7 @@ public:
      *
      * @return bool
      */
-    bool operator==(const DynamicArrayIterator& other) const {
+    bool operator==(const VectorIterator& other) const {
         return ptr_ == other.ptr_;
     }
 
@@ -136,7 +136,7 @@ public:
      *
      * @return bool
      */
-    bool operator!=(const DynamicArrayIterator& other) const {
+    bool operator!=(const VectorIterator& other) const {
         return ptr_ != other.ptr_;
     }
 
@@ -146,7 +146,7 @@ public:
      *
      * @return bool
      */
-    bool operator<(const DynamicArrayIterator& other) const {
+    bool operator<(const VectorIterator& other) const {
         return ptr_ < other.ptr_;
     }
 
@@ -156,7 +156,7 @@ public:
      *
      * @return bool
      */
-    bool operator>(const DynamicArrayIterator& other) const {
+    bool operator>(const VectorIterator& other) const {
         return ptr_ > other.ptr_;
     }
 
@@ -166,7 +166,7 @@ public:
      *
      * @return bool
      */
-    bool operator<=(const DynamicArrayIterator& other) const {
+    bool operator<=(const VectorIterator& other) const {
         return ptr_ <= other.ptr_;
     }
 
@@ -176,12 +176,15 @@ public:
      *
      * @return bool
      */
-    bool operator>=(const DynamicArrayIterator& other) const {
+    bool operator>=(const VectorIterator& other) const {
         return ptr_ >= other.ptr_;
     }
 
+    ValueType* ptr() const {
+        return ptr_;
+    }
 private:
     ValueType* ptr_;
 };
 
-#endif //TEMP_CPP_DYNAMICARRAYITERATOR_H
+#endif //TEMP_CPP_VECTORITERATOR_H
