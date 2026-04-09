@@ -148,7 +148,7 @@ public:
         return data_[0];
     }
 
-    // TODO: add replace() aswel
+    // TODO: add replace() as wel
 
     [[nodiscard]] String find(const char* string) const {
         if (strlen(string) > size_) {
