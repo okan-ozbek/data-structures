@@ -157,7 +157,7 @@ public:
      * @param index
      * @return ValueType&
      */
-    const ValueType& operator[](const int index) const {
+    const ValueType& operator[](const std::size_t index) const {
         if (is_out_of_bounds(index)) {
             throw std::out_of_range("Index out of range");
         }
@@ -172,7 +172,7 @@ public:
      * @param index
      * @return ValueType&
      */
-    ValueType& operator[](const int index) {
+    ValueType& operator[](const std::size_t index) {
         if (is_out_of_bounds(index)) {
             throw std::out_of_range("Index out of range");
         }
@@ -207,7 +207,7 @@ public:
      * @param index
      * @return ValueType&
      */
-    ValueType& at(int index) {
+    ValueType& at(const std::size_t index) {
         if (is_out_of_bounds(index)) {
             throw std::out_of_range("Index out of range");
         }
@@ -310,7 +310,7 @@ public:
             return end();
         }
 
-        std::size_t index{iterator.ptr() - data_};
+        std::size_t index{static_cast<std::size_t>(iterator.ptr() - data_)};
         iterator->~ValueType();
 
         for (std::size_t i{index}; i + 1 < size_; ++i) {
@@ -331,24 +331,30 @@ public:
      * @return
      */
     Iterator erase(const Iterator& first, const Iterator& last) {
+        // Erase everything between first and last
+
         if (is_empty()) {
             return end();
         }
 
-        if (valid_iterator_range(first, last)) {
+        if (is_invalid_iterator_range(first, last)) {
             return end();
         }
 
-        const std::size_t first_index{first.ptr() - data_};
-        const std::size_t last_index{last.ptr() - data_};
+        const std::size_t index{static_cast<std::size_t>(first.ptr() - data_)};
+        std::size_t count{static_cast<std::size_t>(last.ptr() - first.ptr())};
 
-        for (std::size_t i{first_index}; i < last_index; ++i) {
-            new (&data_[i]) ValueType(std::move(data_[i + 1]));
-            data_[i + 1].~ValueType();
+        if (last != end()) {
+            ++count;
         }
 
-        size_ -= last_index - first_index;
-        return Iterator{data_ + first_index};
+        for (std::size_t i{index}; i + count < size_; ++i) {
+            new (&data_[i]) ValueType(std::move(data_[i + count]));
+            data_[i + count].~ValueType();
+        }
+
+        size_ -= count;
+        return Iterator{data_ + index};
     }
 
     /**
@@ -375,7 +381,7 @@ public:
             ? capacity
             : size_;
 
-        char* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
+        auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
 
         for (std::size_t i{}; i < movable_capacity; ++i) {
             new (&data[i]) ValueType(std::move(data_[i]));
@@ -404,9 +410,9 @@ public:
             return;
         }
 
-        char* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
+        auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
 
-        for (std::size_t i{}; i < capacity; ++i) {
+        for (std::size_t i{}; i < size_; ++i) {
             new (&data[i]) ValueType(std::move(data_[i]));
             data_[i].~ValueType();
         }
@@ -431,7 +437,7 @@ public:
             return;
         }
 
-        char* data = static_cast<ValueType*>(::operator new(size_ * sizeof(ValueType)));
+        auto* data = static_cast<ValueType*>(::operator new(size_ * sizeof(ValueType)));
 
         for (std::size_t i{}; i < size_; ++i) {
             new (&data[i]) ValueType(std::move(data_[i]));
@@ -486,9 +492,9 @@ private:
      * Helper function to decrement size_ to a minimum of 0.
      */
     void decrement_size() {
-        --size_;
-
-        size_ = (size_ < 0) ? 0 : size_;
+        if (size_ > 0) {
+            --size_;
+        }
     }
 
     /**
@@ -497,8 +503,8 @@ private:
      * @param index
      * @return bool
      */
-    [[nodiscard]] constexpr bool is_out_of_bounds(const int index) const {
-        return index < 0 || index >= size_;
+    [[nodiscard]] constexpr bool is_out_of_bounds(const std::size_t index) const {
+        return index >= size_;
     }
 
     /**
@@ -508,8 +514,8 @@ private:
      * @param last
      * @return bool
      */
-    [[nodiscard]] constexpr bool valid_iterator_range(const Iterator& first, const Iterator& last) const {
-        return (first > last || last > end() || first > end() || first == last);
+    [[nodiscard]] constexpr bool is_invalid_iterator_range(const Iterator& first, const Iterator& last) const {
+        return first > last || last > end() || first > end() || first == last;
     }
 
     /**
