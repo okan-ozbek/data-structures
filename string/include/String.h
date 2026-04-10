@@ -302,8 +302,9 @@ public:
         return data_[0];
     }
 
-    // TODO: add replace() as wel
+    // TODO: add replace() as wel (maybe we can use iterators to make it more efficient)
 
+    // TODO: check for improvements... (use iterators maybe? instead of having a O(n^2) speed
     /**
      * Return a copy of the found string or an empty string if nothing is found.
      *
@@ -325,6 +326,7 @@ public:
         return {};
     }
 
+    // TODO: check for improvements... (use iterators maybe? instead of having a O(n^2) speed
     /**
      * Return a copy of the found string or an empty string if nothing is found.
      *
@@ -346,6 +348,7 @@ public:
         return {};
     }
 
+    // TODO: check for improvements... Check if we can use iterators or something else so we don't have to copy it over like this, maybe copying is the only way..
     /**
      * Get a substring of the current string starting from the given index and with the given length, or until the end of the string if the length is not provided or exceeds the remaining characters.
      *
