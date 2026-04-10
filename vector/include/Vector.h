@@ -6,7 +6,10 @@
 #define TEMP_CPP_VECTOR_H
 
 
+#include <algorithm>
 #include <cstddef>
+#include <stdexcept>
+
 #include "VectorIterator.h"
 
 /**
@@ -307,8 +310,7 @@ public:
             return end();
         }
 
-        std::size_t index{static_cast<std::size_t>(iterator.ptr() - data_)};
-
+        std::size_t index{iterator.ptr() - data_};
         iterator->~ValueType();
 
         for (std::size_t i{index}; i + 1 < size_; ++i) {
@@ -337,8 +339,8 @@ public:
             return end();
         }
 
-        const std::size_t first_index{static_cast<std::size_t>(first.ptr() - data_)};
-        const std::size_t last_index{static_cast<std::size_t>(last.ptr() - data_)};
+        const std::size_t first_index{first.ptr() - data_};
+        const std::size_t last_index{last.ptr() - data_};
 
         for (std::size_t i{first_index}; i < last_index; ++i) {
             new (&data_[i]) ValueType(std::move(data_[i + 1]));
@@ -373,7 +375,7 @@ public:
             ? capacity
             : size_;
 
-        auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
+        char* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
 
         for (std::size_t i{}; i < movable_capacity; ++i) {
             new (&data[i]) ValueType(std::move(data_[i]));
@@ -402,7 +404,7 @@ public:
             return;
         }
 
-        auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
+        char* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
 
         for (std::size_t i{}; i < capacity; ++i) {
             new (&data[i]) ValueType(std::move(data_[i]));
@@ -429,7 +431,7 @@ public:
             return;
         }
 
-        auto* data = static_cast<ValueType*>(::operator new(size_ * sizeof(ValueType)));
+        char* data = static_cast<ValueType*>(::operator new(size_ * sizeof(ValueType)));
 
         for (std::size_t i{}; i < size_; ++i) {
             new (&data[i]) ValueType(std::move(data_[i]));
@@ -486,9 +488,7 @@ private:
     void decrement_size() {
         --size_;
 
-        if (size_ < 0) {
-            size_ = 0;
-        }
+        size_ = (size_ < 0) ? 0 : size_;
     }
 
     /**
