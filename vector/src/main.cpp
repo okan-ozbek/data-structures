@@ -36,7 +36,7 @@ private:
 };
 
 template<typename T>
-void assert_true(T a, T b, std::string error_message) {
+void assert_true(T a, T b, const std::string error_message) {
     if (a != b) {
         std::cout << "Assertion failed: " << error_message << std::endl;
         ++TEST_ERRORS;

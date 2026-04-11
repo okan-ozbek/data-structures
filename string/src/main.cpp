@@ -3,8 +3,46 @@
 //
 
 #include <iostream>
-
+#include <chrono>
 #include "../include/String.h"
+
+constexpr std::size_t TEST_DEFAULT_CAPACITY = 10;
+static int TEST_ERRORS = 0;
+static int TEST_RAN = 0;
+
+class Timer {
+public:
+    Timer() {
+        start_time_ = std::chrono::high_resolution_clock::now();
+    }
+
+    ~Timer() {
+        stop();
+    }
+
+    void stop() const {
+        const auto end_time_point = std::chrono::high_resolution_clock::now();
+
+        const auto start_time = std::chrono::time_point_cast<std::chrono::microseconds>(start_time_).time_since_epoch().count();
+        const auto end_time = std::chrono::time_point_cast<std::chrono::microseconds>(end_time_point).time_since_epoch().count();
+
+        const auto duration = end_time - start_time;
+        std::cout << "Completion in: " << duration << "us, (" << duration * 0.001 << "ms)." << std::endl;
+    }
+
+private:
+    std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+};
+
+template<typename T>
+void assert_true(T a, T b, const std::string error_message) {
+    if (a != b) {
+        std::cout << "Assertion failed: " << error_message << std::endl;
+        ++TEST_ERRORS;
+    }
+
+    ++TEST_RAN;
+}
 
 // TODO add tests here
 
