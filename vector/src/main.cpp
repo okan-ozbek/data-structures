@@ -1,14 +1,39 @@
 //
-// Created by Dorza on 4/11/2026.
+// Created by Okan Ozbek on 4/11/2026.
 //
 
 #include <assert.h>
 #include <iostream>
+#include <chrono>
 #include "../include/Vector.h"
 
 constexpr std::size_t TEST_DEFAULT_CAPACITY = 10;
 static int TEST_ERRORS = 0;
 static int TEST_RAN = 0;
+
+class Timer {
+public:
+    Timer() {
+        start_time_ = std::chrono::high_resolution_clock::now();
+    }
+
+    ~Timer() {
+        stop();
+    }
+
+    void stop() const {
+        const auto end_time_point = std::chrono::high_resolution_clock::now();
+
+        const auto start_time = std::chrono::time_point_cast<std::chrono::microseconds>(start_time_).time_since_epoch().count();
+        const auto end_time = std::chrono::time_point_cast<std::chrono::microseconds>(end_time_point).time_since_epoch().count();
+
+        const auto duration = end_time - start_time;
+        std::cout << "Completion in: " << duration << "us, (" << duration * 0.001 << "ms)." << std::endl;
+    }
+
+private:
+    std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+};
 
 template<typename T>
 void assert_true(T a, T b, std::string error_message) {
@@ -336,40 +361,43 @@ void test_shrink_to_fit() {
 }
 
 int main() {
-    // Constructors
-    test_default_constructor();
-    test_capacity_constructor();
-    test_capacity_value_constructor();
-    test_copy_constructor();
-    test_move_constructor();
+    {
+        Timer timer{};
 
-    // Operators
-    test_assignment_operator_copy();
-    test_assignment_operator_move();
-    test_index_operator();
-    test_index_operator_out_of_bounds();
+        // Constructors
+        test_default_constructor();
+        test_capacity_constructor();
+        test_capacity_value_constructor();
+        test_copy_constructor();
+        test_move_constructor();
 
-    // Iterators
-    test_iterators();
+        // Operators
+        test_assignment_operator_copy();
+        test_assignment_operator_move();
+        test_index_operator();
+        test_index_operator_out_of_bounds();
 
-    // Functions
-    test_at();
-    test_at_out_of_bounds();
-    test_front();
-    test_back();
-    test_push_back();
-    test_emplace_back();
-    test_pop_back();
-    test_erase_single();
-    test_erase_range();
+        // Iterators
+        test_iterators();
 
-    // Allocation / Deallocation
-    test_clear();
-    test_resize();
-    test_reserve();
-    test_shrink_to_fit();
+        // Functions
+        test_at();
+        test_at_out_of_bounds();
+        test_front();
+        test_back();
+        test_push_back();
+        test_emplace_back();
+        test_pop_back();
+        test_erase_single();
+        test_erase_range();
 
-    std::cout << "TESTS completed!" << "\n";
+        // Allocation / Deallocation
+        test_clear();
+        test_resize();
+        test_reserve();
+        test_shrink_to_fit();
+    }
+
     std::cout << "Successful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n";
 }
 

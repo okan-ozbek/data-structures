@@ -1,10 +1,12 @@
 //
-// Created by Dorza on 4/9/2026.
+// Created by Okan Ozbek on 4/9/2026.
 //
 
 #include <iostream>
 
 #include "../include/String.h"
+
+// TODO add tests here
 
 int main() {
     // String str{"Hello world!"};
