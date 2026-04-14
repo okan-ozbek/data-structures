@@ -54,8 +54,6 @@ void assert_true(const bool a, const std::string& error_message) {
     ++TEST_RAN;
 }
 
-// TODO add tests here
-
 void test_default_constructor() {
     const String str{};
     constexpr std::size_t zero{0};
@@ -133,28 +131,10 @@ void test_index_operator() {
     assert_true(str[4], 'o', "Index operator value is not equal to value");
 }
 
-void test_string_append_operator() {
-    String str{"Hello"};
-    const String str2{"world!"};
-
-    str += str2;
-
-    assert_true(str == "Helloworld!", "String is not equal to Hello world!");
-    assert_true(str.size(), String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
-}
-
-void test_c_string_append_operator() {
+void test_append_operator() {
     String str{"Hello"};
     const char* c_string = "world!";
-
-    str += c_string;
-
-    assert_true(str == "Helloworld!", "String is not equal to Hello world!");
-    assert_true(str.size(), String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
-}
-
-void test_char_append_operator() {
-    String str{"Hello"};
+    const String str2{"world!"};
 
     str += 'w';
     str += 'o';
@@ -165,34 +145,36 @@ void test_char_append_operator() {
 
     assert_true(str == "Helloworld!", "String is not equal to Hello world!");
     assert_true(str.size(), String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
+
+    str = "Hello";
+    str += c_string;
+
+    assert_true(str == "Helloworld!", "String is not equal to Hello world!");
+    assert_true(str.size(), String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
+
+    str = "Hello";
+    str += str2;
+
+    assert_true(str == "Helloworld!", "String is not equal to Hello world!");
+    assert_true(str.size(), String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
 }
 
-void test_string_is_equal_operator() {
+void test_is_equal_operator() {
     const String str{"Hello"};
+    const char* c_string = "Hello";
     const String str2{"Hello"};
 
+    assert_true(str == c_string, "String is not equal to c_string");
     assert_true(str == str2, "String is not equal to str2");
 }
 
-void test_c_string_is_equal_operator() {
-    const String str{"Hello"};
-    const char* c_string = "Hello";
-
-    assert_true(str == c_string, "String is not equal to c_string");
-}
-
-void test_string_is_not_equal_operator() {
-    const String str{"Hello"};
-    const String str2{"Hello world!"};
-
-    assert_true(str != str2, "String is equal to str2");
-}
-
-void test_c_string_is_not_equal_operator() {
+void test_is_not_equal_operator() {
     const String str{"Hello"};
     const char* c_string = "Hello world!";
+    const String str2{"Hello world!"};
 
     assert_true(str != c_string, "String is equal to c_string");
+    assert_true(str != str2, "String is equal to str2");
 }
 
 void test_begin_iterator() {
@@ -238,24 +220,37 @@ void test_front() {
     assert_true(str.front(), 'H', "Front operator value is not equal to value");
 }
 
-// TODO void test_replace()
+void test_replace() {
+    String str{"Hello world!"};
+    const String str2{"world"};
+    const String str3{"other world!"};
 
-// TODO fix, broken atm
-void test_c_string_find() {
-    // const String str{"Hello world!"};
-    // const char* c_string = "world";
-    //
-    // assert_true(str.find(c_string) == "world", "Find operator value is not equal to value");
+    str.replace(str2, str3);
+    assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
+
+    str = "Hello world!";
+
+    str.replace("world", "other world!");
+    assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
+
+    str = "Hello world!";
+
+    str.replace(str2, "other world!");
+    assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
+
+    str = "Hello world!";
+
+    str.replace("world", str3);
+    assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
 }
 
-// TODO fix, broken atm
-void test_string_find() {
-    // const String str{"Hello world!"};
-    // const String str2{"world"};
-    //
-    // std::cout << str.find(str2) << std::endl;
-    //
-    // assert_true(str.find(str2) == "world", "Find operator value is not equal to value");
+void test_find() {
+    const String str{"Hello world!"};
+    const String str2{"world"};
+    const char* c_string = "world";
+
+    assert_true(str.find(str2) == "world", "Find operator value is not equal to value");
+    assert_true(str.find(c_string) == "world", "Find operator value is not equal to value");
 }
 
 void test_substr() {
@@ -319,13 +314,9 @@ int main() {
         test_copy_assignment_operator();
         test_move_assignment_operator();
         test_index_operator();
-        test_string_append_operator();
-        test_c_string_append_operator();
-        test_char_append_operator();
-        test_string_is_equal_operator();
-        test_c_string_is_equal_operator();
-        test_string_is_not_equal_operator();
-        test_c_string_is_not_equal_operator();
+        test_append_operator();
+        test_is_equal_operator();
+        test_is_not_equal_operator();
 
         // Iterators
         test_begin_iterator();
@@ -337,8 +328,7 @@ int main() {
         test_front();
 
         // Searching
-        test_c_string_find();
-        test_string_find();
+        test_replace();
         test_substr();
 
         // Memory allocation
