@@ -8,6 +8,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <iostream>
 #include <stdexcept>
 
 #include "VectorIterator.h"
@@ -83,6 +84,21 @@ public:
         for (std::size_t i{}; i < size_; ++i) {
             new (&data_[i]) ValueType(other.data_[i]);
         }
+    }
+
+    /**
+     * Move other dynamic data over to the current dynamic array.
+     *
+     * Time complexity: O(n) due to having to move each element.
+     * @param other
+     */
+    Vector(Vector&& other) noexcept :
+        data_{std::move(other.data_)},
+        size_{other.size_},
+        capacity_{other.capacity_}
+    {
+        other.data_ = nullptr;
+        other.size_ = 0;
     }
 
     /**

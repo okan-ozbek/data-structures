@@ -66,13 +66,14 @@ void test_capacity_value_constructor() {
     constexpr std::size_t capacity = 100;
     constexpr int value = 5;
 
-    const Vector<int> int_array{capacity, value};
+    const Vector int_array{capacity, value};
 
     assert_true(int_array.capacity(), capacity, "Capacity and value constructor capacity is not equal to capacity");
 
     for (std::size_t i{}; i < int_array.size(); ++i) {
         assert_true(int_array[i], value, "Capacity and value constructor value is not equal to value");
         if (int_array[i] != value) {
+            // TODO dont we want to assert failed?
             break;
         }
     }
@@ -190,7 +191,7 @@ void test_at_out_of_bounds() {
 }
 
 void test_front() {
-    Vector<int> int_array{10, 1};
+    Vector int_array{10, 1};
 
     int_array.front() = 5;
 
@@ -198,7 +199,7 @@ void test_front() {
 }
 
 void test_back() {
-    Vector<int> int_array{10, 1};
+    Vector int_array{10, 1};
 
     int_array.back() = 5;
 
@@ -399,5 +400,11 @@ int main() {
     }
 
     std::cout << "Successful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n";
+
+    std::cout << "--- END OF BENCHMARK ---" << "\n";
+
+    std::cout << "Sizeof std::string: " << sizeof(std::vector<int>) << ", sizeof String: " << sizeof(Vector<int>) << "\n";
+
+    return 0;
 }
 

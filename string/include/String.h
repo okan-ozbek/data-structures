@@ -41,7 +41,7 @@ public:
     String(const char* string) {
         const std::size_t capacity = (strlen(string) < DEFAULT_CAPACITY)
             ? DEFAULT_CAPACITY
-            : strlen(string);
+            : strlen(string) + DEFAULT_CAPACITY;
 
         data_ = static_cast<char*>(::operator new(capacity * sizeof(char)));
         capacity_ = capacity;
@@ -60,14 +60,15 @@ public:
      * Time complexity: O(n) due to the need to copy each character from the provided String& into the new string.
      * @param string
      */
-    String(const String& string) {
+    String(const String& string) :
+        data_{static_cast<char*>(::operator new(string.capacity_ * sizeof(char)))},
+        size_{string.size()}
+    {
         const std::size_t capacity = (string.size() < DEFAULT_CAPACITY)
             ? DEFAULT_CAPACITY
-            : string.size();
+            : strlen(string.data()) + DEFAULT_CAPACITY;
 
-        data_ = static_cast<char*>(::operator new(capacity * sizeof(char)));
         capacity_ = capacity;
-        size_ = string.size();
 
         for (std::size_t i{}; i < size_; ++i) {
             new (&data_[i]) char(string.data_[i]);
@@ -83,10 +84,17 @@ public:
      * @param string
      */
     String(String&& string) noexcept :
-        data_{string.data_},
+        data_{static_cast<char*>(::operator new(string.capacity_ * sizeof(char)))},
         size_{string.size_},
         capacity_{string.capacity_}
     {
+        for (std::size_t i{}; i < size_; ++i) {
+            new (&data_[i]) char(string.data_[i]);
+        }
+
+        data_[size_] = '\0';
+
+        ::operator delete(string.data_);
         string.data_ = nullptr;
         string.size_ = 0;
         string.capacity_ = 0;
@@ -443,7 +451,7 @@ public:
      * @return bool
      */
     [[nodiscard]] bool is_equal(const String& string) const {
-        if (size_ != string.size_) {
+        if (size_ != string.size()) {
             return false;
         }
 
