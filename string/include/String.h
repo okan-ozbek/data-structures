@@ -310,50 +310,146 @@ public:
         return data_[0];
     }
 
-    // TODO: add replace() as wel (maybe we can use iterators to make it more efficient)
-
-    // TODO: check for improvements... (use iterators maybe? instead of having a O(n^2) speed
     /**
-     * Return a copy of the found string or an empty string if nothing is found.
+     * Replace the first occurrence of `pattern` with `replacement`.
      *
-     * Time complexity: O(n^2) due to the need to compare each character in the string for equality, and then create a new string for the found substring.
-     * @param string
-     * @return String
+     * Uses Rabin-Karp (via find_index) to locate the pattern, then reconstructs the
+     * string as: [prefix] + [replacement] + [suffix].
+     *
+     * Time complexity: O(n + m) average for the search, O(n + r) for reconstruction,
+     *                  where n = string length, m = pattern length, r = replacement length.
+     *
+     * @param pattern     The substring to search for.
+     * @param replacement The string to substitute in place of the pattern.
+     * @return Reference to the modified string, or unmodified if pattern not found.
      */
-    [[nodiscard]] String find(const char* string) const {
-        if (strlen(string) > size_) {
-            return {};
+    String& replace(const char* pattern, const char* replacement) {
+        const int index = find_index(pattern);
+        if (index == -1) {
+            return *this;
         }
 
-        for (std::size_t i{}; i < size_; ++i) {
-            if (substr(static_cast<int>(i)).is_equal(string)) {
-                return substr(static_cast<int>(i));
-            }
+        const std::size_t pattern_length = strlen(pattern);
+        const std::size_t replacement_length = strlen(replacement);
+
+        const std::size_t new_size = size_ - pattern_length + replacement_length;
+        const std::size_t new_capacity = (capacity_ * 2 > new_size + 1)
+            ? capacity_ * 2
+            : new_size + 1;
+
+        auto* new_data = static_cast<char*>(::operator new(new_capacity * sizeof(char)));
+
+        for (int i{}; i < index; ++i) {
+            new (&new_data[i]) char(data_[i]);
         }
 
-        return {};
+        for (std::size_t i{}; i < replacement_length; ++i) {
+            new (&new_data[index + i]) char(replacement[i]);
+        }
+
+        for (std::size_t i{}; i < size_ - index - pattern_length; ++i) {
+            new (&new_data[index + replacement_length + i]) char(data_[index + pattern_length + i]);
+        }
+
+        new_data[new_size] = '\0';
+
+        ::operator delete(data_);
+        data_ = new_data;
+        size_ = new_size;
+        capacity_ = new_capacity;
+
+        return *this;
     }
 
-    // TODO: check for improvements... (use iterators maybe? instead of having a O(n^2) speed
     /**
-     * Return a copy of the found string or an empty string if nothing is found.
+     * Replace the first occurrence of `pattern` with `replacement`.
      *
-     * Time complexity: O(n^2) due to the need to compare each character in the string for equality, and then create a new string for the found substring.
-     * @param string
+     * Uses Rabin-Karp (via find_index) to locate the pattern, then reconstructs the
+     * string as: [prefix] + [replacement] + [suffix].
+     *
+     * Time complexity: O(n + m) average for the search, O(n + r) for reconstruction,
+     *                  where n = string length, m = pattern length, r = replacement length.
+     *
+     * @param pattern     The substring to search for.
+     * @param replacement The string to substitute in place of the pattern.
+     * @return Reference to the modified string, or unmodified if pattern not found.
+     */
+    String& replace(const String& pattern, const String& replacement) {
+        return replace(pattern.data(), replacement.data());
+    }
+
+    /**
+     * Replace the first occurrence of `pattern` with `replacement`.
+     *
+     * Uses Rabin-Karp (via find_index) to locate the pattern, then reconstructs the
+     * string as: [prefix] + [replacement] + [suffix].
+     *
+     * Time complexity: O(n + m) average for the search, O(n + r) for reconstruction,
+     *                  where n = string length, m = pattern length, r = replacement length.
+     *
+     * @param pattern     The substring to search for.
+     * @param replacement The string to substitute in place of the pattern.
+     * @return Reference to the modified string, or unmodified if pattern not found.
+     */
+    String& replace(const char* pattern, const String& replacement) {
+        return replace(pattern, replacement.data());
+    }
+
+    /**
+     * Replace the first occurrence of `pattern` with `replacement`.
+     *
+     * Uses Rabin-Karp (via find_index) to locate the pattern, then reconstructs the
+     * string as: [prefix] + [replacement] + [suffix].
+     *
+     * Time complexity: O(n + m) average for the search, O(n + r) for reconstruction,
+     *                  where n = string length, m = pattern length, r = replacement length.
+     *
+     * @param pattern     The substring to search for.
+     * @param replacement The string to substitute in place of the pattern.
+     * @return Reference to the modified string, or unmodified if pattern not found.
+     */
+    String& replace(const String& pattern, const char* replacement) {
+        return replace(pattern.data(), replacement);
+    }
+
+    /**
+     * Get the first occurrence of the given pattern within this string, returning a substring starting from the
+     * found index and with the same length as the pattern, or an empty string if the pattern is not found.
+     *
+     * Time complexity: O(n + m) or O(n * m) in the worst case due to the need to search for the pattern within the
+     * string, which involves iterating through the string and comparing characters for matches and then creating
+     * a new substring if a match is found.
+     * @param pattern
      * @return String
      */
-    [[nodiscard]] String find(const String& string) const {
-        if (string.size() > size_) {
+    [[nodiscard]] String find(const String& pattern) const {
+        const int index = find_index(pattern.data());
+
+        if (index == -1) {
             return {};
         }
 
-        for (std::size_t i{}; i < size_; ++i) {
-            if (string.is_equal(substr(static_cast<int>(i)))) {
-                return substr(static_cast<int>(i));
-            }
+        return substr(index, static_cast<int>(pattern.size()));
+    }
+
+    /**
+     * Get the first occurrence of the given pattern within this string, returning a substring starting from the
+     * found index and with the same length as the pattern, or an empty string if the pattern is not found.
+     *
+     * Time complexity: O(n + m) or O(n * m) in the worst case due to the need to search for the pattern within the
+     * string, which involves iterating through the string and comparing characters for matches and then creating
+     * a new substring if a match is found.
+     * @param pattern
+     * @return String
+     */
+    [[nodiscard]] String find(const char* pattern) const {
+        const int index = find_index(pattern);
+
+        if (index == -1) {
+            return {};
         }
 
-        return {};
+        return substr(index, static_cast<int>(strlen(pattern)));
     }
 
     // TODO: check for improvements... Check if we can use iterators or something else so we don't have to copy it over like this, maybe copying is the only way..
@@ -456,7 +552,7 @@ public:
         }
 
         for (std::size_t i{}; i < size_; ++i) {
-            if (data_[i] != string.data_[i]) {
+            if (data_[i] != string[i]) {
                 return false;
             }
         }
@@ -572,6 +668,67 @@ private:
 
         data_ = new_data;
         capacity_ = capacity;
+    }
+
+    /**
+     * Find the first occurrence of the given pattern within this string using the Rabin-Karp algorithm.
+     *
+     * The algorithm works by computing a rolling hash over a sliding window of the text:
+     * 1. Compute the hash of the pattern and the first window of the text (both of length m).
+     * 2. Slide the window one character at a time, updating the hash in O(1) by removing the
+     *    contribution of the outgoing character and adding the incoming character.
+     * 3. When the window hash matches the pattern hash, verify character-by-character to
+     *    guard against hash collisions.
+     *
+     * Uses base-256 (one value per byte) and a large prime modulus (10^9 + 7) to minimize
+     * collision probability. The precomputed value `hash` = base^(m-1) mod m allows the
+     * leading character to be stripped from the rolling hash in constant time.
+     *
+     * Time complexity:  O(n + m) average case; O(n * m) worst case (many hash collisions).
+     *
+     * @param pattern The string to search for.
+     * @return A copy of the matched substring starting at the first occurrence, or an empty
+     *         String if the pattern is not found.
+     *
+     * @see https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
+     */
+    [[nodiscard]] int find_index(const char* pattern) const {
+        const std::size_t pattern_size = strlen(pattern);
+
+        if (pattern_size == 0 || pattern_size > size_)
+            return -1;
+
+        constexpr std::size_t base{256}, mod{1000000007};
+        std::size_t hash{1}, pattern_hash{0}, text_window_hash{0};
+
+        for (std::size_t i{}; i < pattern_size - 1; ++i) {
+            hash = (hash * base) % mod;
+        }
+
+        for (std::size_t i{}; i < pattern_size; ++i) {
+            pattern_hash = (base * pattern_hash + pattern[i]) % mod;
+            text_window_hash = (base * text_window_hash + data_[i]) % mod;
+        }
+
+        for (std::size_t i{}; i <= size_ - pattern_size; ++i) {
+            if (pattern_hash == text_window_hash) {
+                std::size_t j{};
+
+                while (j < pattern_size && data_[i + j] == pattern[j]) {
+                    ++j;
+                }
+
+                if (j == pattern_size) {
+                    return static_cast<int>(i);
+                }
+            }
+
+            if (i < size_ - pattern_size) {
+                text_window_hash = (base * (text_window_hash + mod - (data_[i] * hash) % mod) + data_[i + pattern_size]) % mod;
+            }
+        }
+
+        return -1;
     }
 };
 
