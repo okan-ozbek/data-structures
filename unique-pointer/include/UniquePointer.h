@@ -19,7 +19,9 @@ namespace dsa {
         * 
         * @param pointer
         */
-        explicit UniquePointer(TValueType* pointer) : pointer_{pointer} {}
+        explicit UniquePointer(TValueType* pointer) 
+            : pointer_{ pointer } 
+        {}
 
         /**
         * Construct with a pointer and a custom deleter.
@@ -27,7 +29,10 @@ namespace dsa {
         * @param pointer
         * @param deleter
         */
-        UniquePointer(TValueType* pointer, TDeleter deleter) : TDeleter{std::move(deleter)}, pointer_{pointer} {}
+        UniquePointer(TValueType* pointer, TDeleter deleter) 
+            : TDeleter{ std::move(deleter) }
+            , pointer_{ pointer } 
+        {}
 
         /**
         * Delete the copy constructor.
@@ -45,7 +50,9 @@ namespace dsa {
         * Time complexity: O(1)
         * @param other
         */
-        UniquePointer(UniquePointer&& other) noexcept : pointer_{other.pointer_} {
+        UniquePointer(UniquePointer&& other) noexcept 
+            : pointer_{ other.pointer_ } 
+        {
             other.pointer_ = nullptr;
         }
 
