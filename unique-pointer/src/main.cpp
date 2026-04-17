@@ -64,30 +64,30 @@ struct Vector2D {
 };
 
 void test_default_constructor() {
-    UniquePointer<int> pointer{};
+    dsa::UniquePointer<int> pointer{};
 
     assert_true(pointer.get() == nullptr, "Default constructed pointer should be nullptr");
 }
 
 void test_explicit_value_constructor() {
-    const UniquePointer pointer(new Vector2D{10, 10});
+    const dsa::UniquePointer pointer(new Vector2D{10, 10});
 
     assert_true(pointer->x == 10, "Explicit constructor: x should be 10");
     assert_true(pointer->y == 10, "Explicit constructor: y should be 10");
 }
 
 void test_factory_constructor() {
-    UniquePointer<Vector2D> pointer = make_unique<Vector2D>(10, 10);
+    dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(10, 10);
 
     assert_true(pointer->x == 10, "Factory constructor: x should be 10");
     assert_true(pointer->y == 10, "Factory constructor: y should be 10");
 }
 
 void test_move_constructor() {
-    UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(10, 10);
+    dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(10, 10);
     const Vector2D* temp_pointer = pointer_1.get();
 
-    const UniquePointer pointer_2{std::move(pointer_1)};
+    const dsa::UniquePointer pointer_2{std::move(pointer_1)};
 
     assert_true(pointer_2.get() == temp_pointer, "Move constructor: pointer_2 should own the original resource");
     assert_true(pointer_1.get() == nullptr, "Move constructor: pointer_1 should be nullptr after move");
@@ -102,7 +102,7 @@ void test_destructor() {
             deleted = true;
         };
 
-        UniquePointer pointer(new Vector2D(10, 10), deleter);
+        dsa::UniquePointer pointer(new Vector2D(10, 10), deleter);
         assert_true(!deleted, "Destruction: should not be deleted yet");
     }
 
@@ -110,9 +110,9 @@ void test_destructor() {
 }
 
 void test_move_assignment_operator() {
-    UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(10, 10);
+    dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(10, 10);
     const Vector2D* temp_pointer = pointer_1.get();
-    UniquePointer<Vector2D> pointer_2{};
+    dsa::UniquePointer<Vector2D> pointer_2{};
 
     pointer_2 = std::move(pointer_1);
 
@@ -123,7 +123,7 @@ void test_move_assignment_operator() {
 void test_arrow_operator() {
     int x{10};
     int y{15};
-    const UniquePointer<Vector2D> pointer = make_unique<Vector2D>(x, y);
+    const dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(x, y);
 
     assert_true(pointer->x == x, "Arrow operator: x does not match expected value");
     assert_true(pointer->y == y, "Arrow operator: y does not match expected value");
@@ -132,14 +132,14 @@ void test_arrow_operator() {
 void test_dereference_operator() {
     int x{10};
     int y{15};
-    const UniquePointer<Vector2D> pointer = make_unique<Vector2D>(x, y);
+    const dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(x, y);
 
     assert_true((*pointer).x == x, "Dereference operator: x does not match expected value");
     assert_true((*pointer).y == y, "Dereference operator: y does not match expected value");
 }
 
 void test_boolean_operator() {
-    if (UniquePointer<Vector2D> pointer = make_unique<Vector2D>(10, 10)) {
+    if (dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(10, 10)) {
         assert_true(true, "Boolean operator: should not fail");
     } else {
         assert_true(false, "Boolean operator: valid pointer should evaluate to true");
@@ -148,7 +148,7 @@ void test_boolean_operator() {
 
 void test_release() {
     int n{10};
-    UniquePointer<Vector2D> pointer = make_unique<Vector2D>(n);
+    dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(n);
 
     const Vector2D* stale = pointer.release();
 
@@ -162,7 +162,7 @@ void test_reset() {
     bool deleted{false};
     auto deleter = [&deleted](const Vector2D* pointer) { delete pointer; deleted = true; };
 
-    UniquePointer pointer_1(new Vector2D(n), deleter);
+    dsa::UniquePointer pointer_1(new Vector2D(n), deleter);
 
     pointer_1.reset(new Vector2D(n * 2));
 
@@ -180,7 +180,7 @@ void test_reset() {
 
 void test_get() {
     int n{10};
-    const UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(n);
+    const dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(n);
 
     assert_true(pointer_1.get() != nullptr, "Get: pointer should not be nullptr");
     assert_true(pointer_1.get()->x == n, "Get: x does not match expected value");
@@ -189,8 +189,8 @@ void test_get() {
 
 void test_swap() {
     int n{10};
-    UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(n);
-    UniquePointer<Vector2D> pointer_2 = make_unique<Vector2D>(n * 2);
+    dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(n);
+    dsa::UniquePointer<Vector2D> pointer_2 = dsa::make_unique<Vector2D>(n * 2);
 
     pointer_1.swap(pointer_2);
 

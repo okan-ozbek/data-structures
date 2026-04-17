@@ -48,7 +48,7 @@ void assert_true(T a, T b, const std::string error_message) {
 void test_default_constructor() {
     constexpr std::size_t zero = 0;
 
-    const Vector<int> int_array{};
+    const dsa::Vector<int> int_array{};
 
     assert_true(int_array.size(), zero, "Default constructor size is not equal to default capacity");
     assert_true(int_array.capacity(), TEST_DEFAULT_CAPACITY, "Default constructor capacity is not equal to default capacity");
@@ -57,7 +57,7 @@ void test_default_constructor() {
 void test_capacity_constructor() {
     constexpr std::size_t capacity = 100;
 
-    const Vector<int> int_array{capacity};
+    const dsa::Vector<int> int_array{capacity};
 
     assert_true(int_array.capacity(), capacity, "Capacity constructor capacity is not equal to capacity");
 }
@@ -66,7 +66,7 @@ void test_capacity_value_constructor() {
     constexpr std::size_t capacity = 100;
     constexpr int value = 5;
 
-    const Vector int_array{capacity, value};
+    const dsa::Vector int_array{capacity, value};
 
     assert_true(int_array.capacity(), capacity, "Capacity and value constructor capacity is not equal to capacity");
 
@@ -80,8 +80,8 @@ void test_capacity_value_constructor() {
 }
 
 void test_copy_constructor() {
-    const Vector<int> int_array{};
-    const Vector int_array_copy{int_array};
+    const dsa::Vector<int> int_array{};
+    const dsa::Vector int_array_copy{int_array};
 
     assert_true(*int_array.begin(), *int_array_copy.begin(), "Copy constructor begin is not equal to original begin");
     assert_true(int_array_copy.size(), int_array.size(), "Copy constructor size is not equal to original size");
@@ -89,8 +89,8 @@ void test_copy_constructor() {
 }
 
 void test_move_constructor() {
-    Vector<int> int_array{};
-    const Vector int_array_move{std::move(int_array)};
+    dsa::Vector<int> int_array{};
+    const dsa::Vector int_array_move{std::move(int_array)};
 
     constexpr std::size_t zero = 0;
 
@@ -102,8 +102,8 @@ void test_assignment_operator_copy() {
     constexpr std::size_t capacity = 100;
     constexpr int value = 5;
 
-    const Vector int_array{capacity, value};
-    Vector<int> int_array_copy{};
+    const dsa::Vector int_array{capacity, value};
+    dsa::Vector<int> int_array_copy{};
 
     int_array_copy = int_array;
 
@@ -116,9 +116,9 @@ void test_assignment_operator_move() {
     constexpr std::size_t capacity = 100;
     constexpr int value = 5;
 
-    Vector int_array{capacity, value};
+    dsa::Vector int_array{capacity, value};
 
-    Vector<int> int_array_move{};
+    dsa::Vector<int> int_array_move{};
     int_array_move = std::move(int_array);
 
     constexpr std::size_t zero = 0;
@@ -130,7 +130,7 @@ void test_assignment_operator_move() {
 }
 
 void test_index_operator() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
 
@@ -142,7 +142,7 @@ void test_index_operator() {
 }
 
 void test_index_operator_out_of_bounds() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     try {
         int_array[100] = 10;
@@ -155,7 +155,7 @@ void test_iterators() {
     constexpr std::size_t capacity = 20;
     constexpr int value = 5;
 
-    Vector int_array{capacity, value};
+    dsa::Vector int_array{capacity, value};
 
     for (int& x : int_array) {
         x = 10;
@@ -163,7 +163,7 @@ void test_iterators() {
 
     assert_true(int_array[0], 10, "Iterators value is not equal to value");
 
-    for (Vector<int>::Iterator it = int_array.begin(); it != int_array.end(); ++it) {
+    for (dsa::Vector<int>::Iterator it = int_array.begin(); it != int_array.end(); ++it) {
         *it = 15;
     }
 
@@ -171,7 +171,7 @@ void test_iterators() {
 }
 
 void test_at() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
     int_array.push_back(10);
@@ -181,7 +181,7 @@ void test_at() {
 }
 
 void test_at_out_of_bounds() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     try {
         int_array.at(100);
@@ -191,7 +191,7 @@ void test_at_out_of_bounds() {
 }
 
 void test_front() {
-    Vector int_array{10, 1};
+    dsa::Vector int_array{10, 1};
 
     int_array.front() = 5;
 
@@ -199,7 +199,7 @@ void test_front() {
 }
 
 void test_back() {
-    Vector int_array{10, 1};
+    dsa::Vector int_array{10, 1};
 
     int_array.back() = 5;
 
@@ -207,7 +207,7 @@ void test_back() {
 }
 
 void test_push_back() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
     int_array.push_back(10);
@@ -226,7 +226,7 @@ void test_emplace_back() {
         explicit Vector2D(const int x, const int y) : x{x}, y{y} {}
     };
 
-    Vector<Vector2D> int_array{};
+    dsa::Vector<Vector2D> int_array{};
 
     int_array.emplace_back(5, 10);
     int_array.emplace_back(5);
@@ -241,7 +241,7 @@ void test_emplace_back() {
 }
 
 void test_pop_back() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
     int_array.push_back(10);
@@ -253,7 +253,7 @@ void test_pop_back() {
 }
 
 void test_erase_single() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
     int_array.push_back(10);
@@ -267,7 +267,7 @@ void test_erase_single() {
 }
 
 void test_erase_range() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
     int_array.push_back(10); //
@@ -307,7 +307,7 @@ void test_erase_range() {
 }
 
 void test_clear() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
     int_array.push_back(10);
@@ -320,7 +320,7 @@ void test_clear() {
 }
 
 void test_resize() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.resize(30);
     assert_true<int>(int_array.capacity(), 30, "Resize operator size is not equal to value");
@@ -333,7 +333,7 @@ void test_resize() {
 }
 
 void test_reserve() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.reserve(30);
     assert_true<int>(int_array.capacity(), 30, "Reserve operator size is not equal to value 1");
@@ -347,7 +347,7 @@ void test_reserve() {
 }
 
 void test_shrink_to_fit() {
-    Vector<int> int_array{};
+    dsa::Vector<int> int_array{};
 
     int_array.push_back(5);
     int_array.push_back(10);
@@ -403,7 +403,7 @@ int main() {
 
     std::cout << "--- END OF BENCHMARK ---" << "\n";
 
-    std::cout << "Sizeof std::string: " << sizeof(std::vector<int>) << ", sizeof String: " << sizeof(Vector<int>) << "\n";
+    std::cout << "Sizeof std::string: " << sizeof(std::vector<int>) << ", sizeof String: " << sizeof(dsa::Vector<int>) << "\n";
 
     return 0;
 }
