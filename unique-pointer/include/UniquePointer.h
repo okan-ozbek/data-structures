@@ -6,6 +6,24 @@
 
 
 template<typename T>
+class UniqueDeleter {
+public:
+    void operator()(const T* pointer) noexcept {
+        delete pointer;
+
+        deleted_ = true;
+    }
+
+    [[nodiscard]] bool deleted() const noexcept {
+        return deleted_;
+    }
+
+private:
+    bool deleted_{false};
+};
+
+
+template<typename T, typename D = UniqueDeleter<T>>
 class UniquePointer {
 public:
     /**
@@ -64,7 +82,7 @@ public:
      * Destructor. Deletes the owned pointer if not null.
      */
     ~UniquePointer() {
-        delete pointer_;
+        deleter(pointer_);
     }
 
     /**
@@ -76,20 +94,12 @@ public:
         return pointer_;
     }
 
-    const T* operator->() const noexcept {
-        return pointer_;
-    }
-
     /** 
      * Dereference operator. Returns a reference to the managed object.
      * 
      * @return T&
      */
     T& operator*() const noexcept {
-        return *pointer_;
-    }
-
-    const T& operator*() const noexcept {
         return *pointer_;
     }
 
@@ -129,7 +139,7 @@ public:
         auto* stale = pointer_;
         pointer_ = other;
         
-        delete stale;
+        deleter(stale);
     }
 
     /**
@@ -137,6 +147,13 @@ public:
      */
     T* get() const noexcept {
         return pointer_;
+    }
+
+    /**
+     * Return the deleter
+     */
+    D get_deleter() const noexcept {
+        return deleter;
     }
 
     /**
@@ -154,6 +171,7 @@ private:
      * The pointer we are protecting ownership of.
      */
     T* pointer_{nullptr};
+    D deleter{};
 };
 
 /**

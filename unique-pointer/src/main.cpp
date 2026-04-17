@@ -33,7 +33,7 @@ class Timer {
 
     private:
         std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
-}
+};
 
 template<typename T>
 void assert_true(T a, T b, const std::string& error_message) {
@@ -61,95 +61,82 @@ struct Vector2D {
     Vector2D() : x{0}, y{0} {}
     explicit Vector2D(const int scalar) : x{scalar}, y{scalar} {}
     explicit Vector2D(const int x, const int y) : x{x}, y{y} {}
-}
+};
 
 void test_default_constructor() {
     UniquePointer<int> pointer{};
 
-    assert_true(pointer.get() == nullptr, "message");
+    assert_true(pointer.get() == nullptr, "Default constructed pointer should be nullptr");
 }
 
 void test_explicit_value_constructor() {
-    UniquePointer<Vector2D> pointer{new Vector2D(10, 10)};
+    const UniquePointer pointer(new Vector2D{10, 10});
 
-    // Assert that the value is 10 10
+    assert_true(pointer->x == 10, "Explicit constructor: x should be 10");
+    assert_true(pointer->y == 10, "Explicit constructor: y should be 10");
 }
 
-void test_factory_construtor() {
+void test_factory_constructor() {
     UniquePointer<Vector2D> pointer = make_unique<Vector2D>(10, 10);
 
-    // Assert that the value is 10 10
-}
-
-void test_deleted_copy_constructor() {
-
+    assert_true(pointer->x == 10, "Factory constructor: x should be 10");
+    assert_true(pointer->y == 10, "Factory constructor: y should be 10");
 }
 
 void test_move_constructor() {
     UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(10, 10);
-    Vector2D* temp_pointer = pointer_1.get();
+    const Vector2D* temp_pointer = pointer_1.get();
 
-    UniquePointer<Vector2D> pointer_2{std::move(pointer_1)};
+    const UniquePointer pointer_2{std::move(pointer_1)};
 
-    assert_true(pointer_2 == temp_pointer, "message");
-    assert_true(pointer_1 == nullptr, "message");
+    assert_true(pointer_2.get() == temp_pointer, "Move constructor: pointer_2 should own the original resource");
+    assert_true(pointer_1.get() == nullptr, "Move constructor: pointer_1 should be nullptr after move");
 }
 
 void test_destructor() {
+    auto pointer = make_unique<Vector2D>(10, 10);
 
-}
+    assert_true(!pointer.get_deleter().deleted(), "Destruction: should not be deleted yet");
 
-void test_deleted_copy_assignment_operator() {
+    pointer.reset();
 
+    assert_true(pointer.get_deleter().deleted(), "Destruction: memory was not deallocated");
 }
 
 void test_move_assignment_operator() {
     UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(10, 10);
-    Vector2D* temp_pointer = pointer_1.get();
-
+    const Vector2D* temp_pointer = pointer_1.get();
     UniquePointer<Vector2D> pointer_2{};
 
     pointer_2 = std::move(pointer_1);
 
-    assert_true(pointer_2 == temp_pointer, "message");
-    assert_true(pointer_1 == nullptr, "message");
+    assert_true(pointer_2.get() == temp_pointer, "Move assignment: pointer_2 should own the original resource");
+    assert_true(pointer_1.get() == nullptr, "Move assignment: pointer_1 should be nullptr after move");
 }
 
 void test_arrow_operator() {
     int x{10};
     int y{15};
-    UniquePointer<Vector2D> pointer = make_unique<Vector2D>(x, y);
+    const UniquePointer<Vector2D> pointer = make_unique<Vector2D>(x, y);
 
-    assert_true(pointer->x == x, "message");
-    assert_true(pointer->y == y, "message");
-
-    const UniquePointer<Vector2D> const_pointer = make_unique<Vector2D>(x, y);
-
-    assert_true(const_pointer->x == x, "message");
-    assert_true(const_pointer->y == y, "message");
+    assert_true(pointer->x == x, "Arrow operator: x does not match expected value");
+    assert_true(pointer->y == y, "Arrow operator: y does not match expected value");
 }
 
 void test_dereference_operator() {
     int x{10};
     int y{15};
-    UniquePointer<Vector2D> pointer = make_unique<Vector2D>(x, y);
+    const UniquePointer<Vector2D> pointer = make_unique<Vector2D>(x, y);
 
-    assert_true(*pointer.x == x, "message");
-    assert_true(*pointer.y == y, "message");
-
-    const UniquePointer<Vector2D> const_pointer = make_unique<Vector2D>(x, y);
-
-    assert_true(*const_pointer.x == x, "message");
-    assert_true(*const_pointer.y == y, "message");
+    assert_true((*pointer).x == x, "Dereference operator: x does not match expected value");
+    assert_true((*pointer).y == y, "Dereference operator: y does not match expected value");
 }
 
 void test_boolean_operator() {
-    UniquePointer<Vector2D> pointer = make_unique<Vector2D>(10, 10);
-
-    if (pointer) {
-        assert_true(true, "message");
+    if (UniquePointer<Vector2D> pointer = make_unique<Vector2D>(10, 10)) {
+        assert_true(true, "Boolean operator: should not fail");
     } else {
-        assert_true(false, "message");
+        assert_true(false, "Boolean operator: valid pointer should evaluate to true");
     }
 }
 
@@ -157,35 +144,35 @@ void test_release() {
     int n{10};
     UniquePointer<Vector2D> pointer = make_unique<Vector2D>(n);
 
-    Vector2D* stale = pointer.release();
+    const Vector2D* stale = pointer.release();
 
-    assert_true(stale->x == n, "message");
-    assert_true(stale->y == n, "message");
-    assert_true(!pointer, "message");
+    assert_true(stale->x == n, "Release: x should still be accessible after release");
+    assert_true(stale->y == n, "Release: y should still be accessible after release");
+    assert_true(!pointer, "Release: pointer should be nullptr after release");
 }
 
 void test_reset() {
     int n{10};
     UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(n);
-    Vector2D* pointer_2 = new Vector2D(n * 2);
 
-    pointer_1.reset(pointer_2);
+    pointer_1.reset(new Vector2D(n * 2));
 
-    assert_true(pointer_1->x == n * 2, "message");
-    assert_true(pointer_1->y == n * 2, "message");
-    
+    assert_true(pointer_1->x == n * 2, "Reset: x should be n*2 after reset with new object");
+    assert_true(pointer_1->y == n * 2, "Reset: y should be n*2 after reset with new object");
+
     pointer_1.reset(pointer_1.get());
 
-    assert_true(pointer_1->x == n * 2, "message");
-    assert_true(pointer_1->y == n * 2, "message");
+    assert_true(pointer_1->x == n * 2, "Reset self: x should survive self-reset");
+    assert_true(pointer_1->y == n * 2, "Reset self: y should survive self-reset");
 }
 
 void test_get() {
     int n{10};
-    UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(n);
+    const UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(n);
 
-    assert_true(pointer_1.get()->x == n, "message");
-    assert_True(pointer_1.get()->y == n, "message");
+    assert_true(pointer_1.get() != nullptr, "Get: pointer should not be nullptr");
+    assert_true(pointer_1.get()->x == n, "Get: x does not match expected value");
+    assert_true(pointer_1.get()->y == n, "Get: y does not match expected value");
 }
 
 void test_swap() {
@@ -195,26 +182,24 @@ void test_swap() {
 
     pointer_1.swap(pointer_2);
 
-    assert_true(pointer_1->x == n * 2, "message");
-    assert_true(pointer_2->x == n, "message");
-    assert_true(pointer_1->y == n * 2, "message");
-    assert_true(pointer_2->y == n, "message");
+    assert_true(pointer_1->x == n * 2, "Swap: pointer_1 x should be n*2 after swap");
+    assert_true(pointer_2->x == n, "Swap: pointer_2 x should be n after swap");
+    assert_true(pointer_1->y == n * 2, "Swap: pointer_1 y should be n*2 after swap");
+    assert_true(pointer_2->y == n, "Swap: pointer_2 y should be n after swap");
 }
 
 int main() {
     {
-        Timer timer();
+        Timer timer{};
 
         // Constructors
         test_default_constructor();
         test_explicit_value_constructor();
-        test_factory_construtor();
-        test_deleted_copy_constructor();
+        test_factory_constructor();
         test_move_constructor();
         test_destructor();
 
         // Operators
-        test_deleted_copy_assignment_operator();
         test_move_assignment_operator();
         test_arrow_operator();
         test_dereference_operator();
