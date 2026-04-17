@@ -2,7 +2,7 @@
 // Created by Okan Ozbek on 4/17/2026
 //
 
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <chrono>
 #include "../include/UniquePointer.h"
@@ -21,14 +21,14 @@ class Timer {
             stop();
         }
 
-        void stop() {
+        void stop() const {
             const auto end_time_point = std::chrono::high_resolution_clock::now();
 
             const auto start_time = std::chrono::time_point_cast<std::chrono::microseconds>(start_time_).time_since_epoch().count();
             const auto end_time = std::chrono::time_point_cast<std::chrono::microseconds>(end_time_point).time_since_epoch().count();
 
             const auto duration = end_time - start_time;
-            std::cout << "Completion in: " << duration << "us, (" << duration * 0.001 << "ms)." << std::endl;
+            std::cout << "Completion in: " << duration << "us, (" << duration * 0.001L << "ms)." << std::endl;
         }
 
     private:
@@ -94,13 +94,19 @@ void test_move_constructor() {
 }
 
 void test_destructor() {
-    auto pointer = make_unique<Vector2D>(10, 10);
+    bool deleted{false};
 
-    assert_true(!pointer.get_deleter().deleted(), "Destruction: should not be deleted yet");
+    {
+        auto deleter = [&deleted](const Vector2D* pointer) {
+            delete pointer;
+            deleted = true;
+        };
 
-    pointer.reset();
+        UniquePointer pointer(new Vector2D(10, 10), deleter);
+        assert_true(!deleted, "Destruction: should not be deleted yet");
+    }
 
-    assert_true(pointer.get_deleter().deleted(), "Destruction: memory was not deallocated");
+    assert_true(deleted, "Destruction: memory was not deallocated");
 }
 
 void test_move_assignment_operator() {
@@ -153,15 +159,21 @@ void test_release() {
 
 void test_reset() {
     int n{10};
-    UniquePointer<Vector2D> pointer_1 = make_unique<Vector2D>(n);
+    bool deleted{false};
+    auto deleter = [&deleted](const Vector2D* pointer) { delete pointer; deleted = true; };
+
+    UniquePointer pointer_1(new Vector2D(n), deleter);
 
     pointer_1.reset(new Vector2D(n * 2));
 
+    assert_true(deleted, "Reset: memory was not deallocated");
     assert_true(pointer_1->x == n * 2, "Reset: x should be n*2 after reset with new object");
     assert_true(pointer_1->y == n * 2, "Reset: y should be n*2 after reset with new object");
 
+    deleted = false;
     pointer_1.reset(pointer_1.get());
 
+    assert_true(!deleted, "Reset self: memory was not deallocated");
     assert_true(pointer_1->x == n * 2, "Reset self: x should survive self-reset");
     assert_true(pointer_1->y == n * 2, "Reset self: y should survive self-reset");
 }

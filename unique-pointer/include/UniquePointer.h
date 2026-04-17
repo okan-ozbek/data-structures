@@ -5,38 +5,28 @@
 #include <utility>
 
 
-template<typename T>
-class UniqueDeleter {
-public:
-    void operator()(const T* pointer) noexcept {
-        delete pointer;
-
-        deleted_ = true;
-    }
-
-    [[nodiscard]] bool deleted() const noexcept {
-        return deleted_;
-    }
-
-private:
-    bool deleted_{false};
-};
-
-
-template<typename T, typename D = UniqueDeleter<T>>
+template<typename TValueType, typename TDeleter = std::default_delete<TValueType>>
 class UniquePointer {
 public:
     /**
      * Default constructor. Initializes with nullptr (no ownership).
      */
-    UniquePointer() {}
+    UniquePointer() = default;
 
     /**
-     * Assign pointer of value T* to our UniquePointer.
+     * Assign pointer of value TValueType* to our UniquePointer.
      * 
      * @param pointer
      */
-    explicit UniquePointer(T* pointer) : pointer_{pointer} {}
+    explicit UniquePointer(TValueType* pointer) : pointer_{pointer} {}
+
+    /**
+     * Construct with a pointer and a custom deleter.
+     *
+     * @param pointer
+     * @param deleter
+     */
+    UniquePointer(TValueType* pointer, TDeleter deleter) : pointer_{pointer}, deleter_{std::move(deleter)} {}
 
     /**
      * Delete the copy constructor.
@@ -55,7 +45,8 @@ public:
      * @param other
      */
     UniquePointer(UniquePointer&& other) noexcept 
-        : pointer_{other.pointer_} 
+        : pointer_{other.pointer_}
+        , deleter_{std::move(other.deleter_)}
     { 
         other.pointer_ = nullptr;
     }
@@ -74,6 +65,7 @@ public:
         }
 
         reset(other.release());
+        deleter_ = std::move(other.deleter_);
 
         return *this;
     }
@@ -82,24 +74,29 @@ public:
      * Destructor. Deletes the owned pointer if not null.
      */
     ~UniquePointer() {
-        deleter(pointer_);
+        if (pointer_ == nullptr) {
+            delete pointer_;
+            return;
+        }
+
+        deleter_(pointer_);
     }
 
     /**
      * Arrow operator. Provides access to the underlying pointer.
      * 
-     * @return T*
+     * @return TValueType*
      */
-    T* operator->() const noexcept {
+    TValueType* operator->() const noexcept {
         return pointer_;
     }
 
     /** 
      * Dereference operator. Returns a reference to the managed object.
      * 
-     * @return T&
+     * @return TValueType&
      */
-    T& operator*() const noexcept {
+    TValueType& operator*() const noexcept {
         return *pointer_;
     }
 
@@ -116,9 +113,9 @@ public:
      * Removes ownership from this object, and returns the pointer to transfer ownership.
      *
      * Time complexity: O(1).
-     * @return T*
+     * @return TValueType*
      */
-    T* release() {
+    TValueType* release() {
         auto* stale = pointer_;
         pointer_ = nullptr;
 
@@ -131,29 +128,37 @@ public:
      * Time complexity: O(1).
      * @param other
      */
-    void reset(T* other = nullptr) noexcept {
+    void reset(TValueType* other = nullptr) noexcept {
         if (pointer_ == other) {
             return;
         }
 
         auto* stale = pointer_;
         pointer_ = other;
-        
-        deleter(stale);
+
+        if (stale == nullptr) {
+            return;
+        }
+
+        deleter_(stale);
     }
 
     /**
      * Return the pointer
      */
-    T* get() const noexcept {
+    TValueType* get() const noexcept {
         return pointer_;
     }
 
     /**
      * Return the deleter
      */
-    D get_deleter() const noexcept {
-        return deleter;
+    TDeleter& get_deleter() noexcept {
+        return deleter_;
+    }
+
+    const TDeleter& get_deleter() const noexcept {
+        return deleter_;
     }
 
     /**
@@ -164,14 +169,15 @@ public:
      */
     void swap(UniquePointer& other) noexcept {
         std::swap(pointer_, other.pointer_);
+        std::swap(deleter_, other.deleter_);
     }
 
 private:
     /**
      * The pointer we are protecting ownership of.
      */
-    T* pointer_{nullptr};
-    D deleter{};
+    TValueType* pointer_{nullptr};
+    TDeleter deleter_{};
 };
 
 /**
@@ -179,12 +185,12 @@ private:
  * Uses perfect forwarding and avoids manual new usage.
  *
  * Time complexity: O(1).
- * @param ...args
- * @return UniquePointer<T>
+ * @param args
+ * @return UniquePointer<TValueType>
  */
-template<typename T, typename... Args>
-UniquePointer<T> make_unique(Args&&... args) {
-    return UniquePointer<T>(new T(std::forward<Args>(args)...));
+template<typename TValueType, typename... TArgs>
+UniquePointer<TValueType> make_unique(TArgs&&... args) {
+    return UniquePointer<TValueType>(new TValueType(std::forward<TArgs>(args)...));
 }
 
 
