@@ -5,6 +5,8 @@
 #include <cassert>
 #include <iostream>
 #include <chrono>
+
+#include "../../vector/include/Vector.h"
 #include "../include/UniquePointer.h"
 
 constexpr std::size_t TEST_DEFAULT_CAPACITY = 10;
@@ -103,6 +105,7 @@ void test_destructor() {
         };
 
         dsa::UniquePointer pointer(new Vector2D(10, 10), deleter);
+
         assert_true(!deleted, "Destruction: should not be deleted yet");
     }
 
@@ -227,6 +230,8 @@ int main() {
     std::cout << "Successful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n";
 
     std::cout << "--- END OF BENCHMARK ---" << "\n";
+
+    std::cout << "Sizeof std::unique_ptr: " << sizeof(std::unique_ptr<int>) << ", sizeof UniquePointer: " << sizeof(dsa::UniquePointer<int>) << "\n";
 
     return 0;
 }

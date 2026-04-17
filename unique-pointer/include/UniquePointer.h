@@ -7,7 +7,7 @@
 
 namespace dsa {
     template<typename TValueType, typename TDeleter = std::default_delete<TValueType>>
-    class UniquePointer {
+    class UniquePointer : TDeleter {
     public:
         /**
         * Default constructor. Initializes with nullptr (no ownership).
@@ -27,7 +27,7 @@ namespace dsa {
         * @param pointer
         * @param deleter
         */
-        UniquePointer(TValueType* pointer, TDeleter deleter) : pointer_{pointer}, deleter_{std::move(deleter)} {}
+        UniquePointer(TValueType* pointer, TDeleter deleter) : TDeleter{std::move(deleter)}, pointer_{pointer} {}
 
         /**
         * Delete the copy constructor.
@@ -45,10 +45,7 @@ namespace dsa {
         * Time complexity: O(1)
         * @param other
         */
-        UniquePointer(UniquePointer&& other) noexcept 
-            : pointer_{other.pointer_}
-            , deleter_{std::move(other.deleter_)}
-        { 
+        UniquePointer(UniquePointer&& other) noexcept : pointer_{other.pointer_} {
             other.pointer_ = nullptr;
         }
 
@@ -66,7 +63,6 @@ namespace dsa {
             }
 
             reset(other.release());
-            deleter_ = std::move(other.deleter_);
 
             return *this;
         }
@@ -80,7 +76,7 @@ namespace dsa {
                 return;
             }
 
-            deleter_(pointer_);
+            get_deleter()(pointer_);
         }
 
         /**
@@ -141,7 +137,7 @@ namespace dsa {
                 return;
             }
 
-            deleter_(stale);
+            get_deleter()(stale);
         }
 
         /**
@@ -152,14 +148,14 @@ namespace dsa {
         }
 
         /**
-        * Return the deleter
+        * Return the deleter (access the base class)
         */
         TDeleter& get_deleter() noexcept {
-            return deleter_;
+            return static_cast<TDeleter&>(*this);
         }
 
         const TDeleter& get_deleter() const noexcept {
-            return deleter_;
+            return static_cast<const TDeleter&>(*this);
         }
 
         /**
@@ -170,7 +166,6 @@ namespace dsa {
         */
         void swap(UniquePointer& other) noexcept {
             std::swap(pointer_, other.pointer_);
-            std::swap(deleter_, other.deleter_);
         }
 
     private:
@@ -178,7 +173,6 @@ namespace dsa {
         * The pointer we are protecting ownership of.
         */
         TValueType* pointer_{nullptr};
-        TDeleter deleter_{};
     };
 
     /**
