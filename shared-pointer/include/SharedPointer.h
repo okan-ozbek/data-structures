@@ -13,18 +13,14 @@ namespace dsa {
     struct ControlBlock {
         std::size_t count;
 
-        ControlBlock() {
-            count = 1;
-        }
+        ControlBlock() : count{1} {}
+        ~ControlBlock() = default;
     };
 
     template<typename TValueType>
     class SharedPointer {
     public:
-        SharedPointer() 
-            : pointer_{ nullptr }
-            , control_{ nullptr }
-        {}
+        SharedPointer() = default;
 
         explicit SharedPointer(TValueType* pointer)
             : pointer_{ pointer } 
@@ -65,8 +61,9 @@ namespace dsa {
             remove_shared();
         }
 
-        void reset(TValueType* pointer = nullptr) {
-            remove_shared();
+        template<typename TDeleter = std::default_delete<TValueType>>
+        void reset(TValueType* pointer = nullptr, TDeleter deleter = TDeleter{}) {
+            remove_shared<TDeleter>(deleter);
 
             if (pointer) {
                 pointer_ = pointer;
@@ -77,7 +74,7 @@ namespace dsa {
             }
         }
 
-        void swap(SharedPointer& other) {
+        void swap(SharedPointer& other) noexcept {
             std::swap(pointer_, other.pointer_);
             std::swap(control_, other.control_);
         }
@@ -86,11 +83,11 @@ namespace dsa {
             return pointer_;
         }
 
-        bool is_unique() const {
+        [[nodiscard]] bool is_unique() const {
             return control_ && control_->count == 1;
         }
 
-        std::size_t share_count() const {
+        [[nodiscard]] std::size_t share_count() const {
             return control_ 
                 ? control_->count
                 : 0;
@@ -100,13 +97,14 @@ namespace dsa {
         TValueType* pointer_{nullptr};
         ControlBlock* control_{nullptr};
 
-        void remove_shared() {
+        template<typename TDeleter = std::default_delete<TValueType>>
+        void remove_shared(TDeleter deleter = TDeleter{}) const {
             if (!control_) {
                 return;
             }
 
             if (--control_->count == 0) {
-                delete pointer_;
+                deleter(pointer_);
                 delete control_;
             }
         }
