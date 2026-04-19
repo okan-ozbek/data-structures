@@ -15,8 +15,6 @@
 ![Status](https://img.shields.io/badge/Status-In%20Progress-yellow)
 ![Purpose](https://img.shields.io/badge/Purpose-Self%20Learning-brightgreen)
 
-</div>
-
 ---
 
 ## About
@@ -41,29 +39,33 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 
 ## Data Structures
 
-### Implemented
+### ✅ Implemented
 
-| Structure | Description | Docs |
-|-----------|-------------|------|
-| **[Vector](vector/)** | A generic, templated dynamic array (`DynamicArray<T>`) with raw memory management, iterators, and move semantics | [README](vector/VECTOR.md) |
-| **[String](string/)** | A custom string class managing a `char*` buffer with copy/move semantics, operator overloading, and iterators | [README](string/STRING.md) |
+| # | Structure | std:: Equivalent | Header | Docs |
+|---|-----------|-----------------|--------|------|
+| 1 | **Vector** | `std::vector` | [`Vector.h`](include/Vector.h) | [📄 VECTOR.md](readme/VECTOR.md) |
+| 2 | **String** | `std::string` | [`String.h`](include/String.h) | [📄 STRING.md](readme/STRING.md) |
+| 3 | **UniquePointer** | `std::unique_ptr` | [`UniquePointer.h`](include/UniquePointer.h) | [📄 UNIQUE_POINTER.md](readme/UNIQUE_POINTER.md) |
+| 4 | **SharedPointer** | `std::shared_ptr` | [`SharedPointer.h`](include/SharedPointer.h) | [📄 SHARED_POINTER.md](readme/SHARED_POINTER.md) |
 
-### Planned
+### 🚧 Upcoming
 
-| Structure | Description |
-|-----------|-------------|
-| **Deque** | Double-ended queue with efficient insertion/removal at both ends |
-| **Map** | Key-value associative container (likely a binary search tree or hash map) |
-| **Set** | Unique-element container with fast lookup |
-| **Smart Pointer** | Base smart pointer with automatic memory management |
-| **Unique Pointer** | Exclusive-ownership smart pointer (non-copyable, movable) |
-| **Shared Pointer** | Reference-counted smart pointer with shared ownership |
+| # | Structure | Description |
+|---|-----------|-------------|
+| 5 | **Set** | Unique-element container with fast lookup |
+| 6 | **Map** | Key-value associative container |
+| 7 | **Queue** | FIFO container |
+| 8 | **Stack** | LIFO container |
+| 9 | **Linked List** | Node-based sequential container |
+| 10 | **Binary Tree** | Hierarchical node-based structure |
+| 11 | **Graph** | Vertex and edge-based structure |
+| 12 | **Heap** | Priority-based tree structure |
 
 ---
 
 ## Built With
 
-- **Language:** C++17
+- **Language:** C++23
 - **Build System:** CMake
 - **IDE:** CLion
 - **Compiler:** MinGW (GCC)
@@ -74,21 +76,29 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 
 ```
 data-structures/
-├── vector/              # DynamicArray<T> — generic dynamic array
-│   ├── include/         # Header files (DynamicArray.h, DynamicArrayIterator.h)
-│   ├── src/             # Main / test file
-│   └── README.md        # Documentation
-├── string/              # String — custom string class
-│   ├── include/         # Header files (String.h, StringIterator.h)
-│   ├── src/             # Main / test file
-│   └── README.md        # Documentation
-├── deque/               # (planned)
-├── map/                 # (planned)
-├── set/                 # (planned)
-├── smart-pointer/       # (planned)
-├── unique-pointer/      # (planned)
-├── shared-pointer/      # (planned)
-└── README.md            # This file
+├── include/                # All header files
+│   ├── Vector.h            # Generic dynamic array
+│   ├── VectorIterator.h    # Iterator for Vector
+│   ├── String.h            # Custom string class
+│   ├── StringIterator.h    # Iterator for String
+│   ├── UniquePointer.h     # Exclusive-ownership smart pointer
+│   ├── SharedPointer.h     # Reference-counted smart pointer
+│   ├── tests/              # Test headers
+│   │   ├── TestVector.h
+│   │   ├── TestString.h
+│   │   ├── TestUniquePointer.h
+│   │   └── TestSharedPointer.h
+│   └── utils/              # Utility headers
+│       ├── TempAssert.h    # Lightweight test assertions
+│       └── Timer.h         # Benchmark timer
+├── readme/                 # Documentation per data structure
+│   ├── VECTOR.md
+│   ├── STRING.md
+│   ├── UNIQUE_POINTER.md
+│   └── SHARED_POINTER.md
+├── src/
+│   └── main.cpp            # Test runner
+└── README.md               # This file
 ```
 
 ---
@@ -96,4 +106,3 @@ data-structures/
 ## License
 
 Copyright © 2026 Okan Ozbek. All rights reserved.
-

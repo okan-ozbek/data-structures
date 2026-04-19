@@ -9,18 +9,21 @@
 #include "../include/tests/TestVector.h"
 
 int main() {
+    std::cout << "--- START OF BENCHMARK ---" << "\n\n";
+
+    // Test suite
     {
         Timer timer{};
 
-        TestSharedPointer test_shared_pointer{};
-        TestUniquePointer test_unique_pointer{};
-        TestString test_string{};
-        TestVector test_vector{};
+        TestSharedPointer{};
+        TestUniquePointer{};
+        TestString{};
+        TestVector{};
     }
 
-    std::cout << "Successful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n";
+    std::cout << "\nSuccessful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n\n";
 
-    std::cout << "--- END OF BENCHMARK ---" << "\n";
+    std::cout << "--- END OF BENCHMARK ---" << "\n\n";
 
     std::cout << "Sizeof std::shared_ptr: " << sizeof(std::shared_ptr<int>) << ", sizeof dsa::SharedPointer: " << sizeof(dsa::SharedPointer<int>) << "\n";
     std::cout << "Sizeof std::unique_ptr: " << sizeof(std::unique_ptr<int>) << ", sizeof dsa::UniquePointer: " << sizeof(dsa::UniquePointer<int>) << "\n";
