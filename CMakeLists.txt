@@ -4,5 +4,9 @@ project(data-structures)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(vector)
-add_subdirectory(string)
+add_executable(data-structures
+    src/main.cpp
+)
+
+# add_subdirectory(vector)
+# add_subdirectory(string)

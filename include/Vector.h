@@ -8,9 +8,7 @@
 
 #include <algorithm>
 #include <cstddef>
-#include <iostream>
 #include <stdexcept>
-
 #include "VectorIterator.h"
 
 namespace dsa {
