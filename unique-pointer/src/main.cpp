@@ -231,7 +231,7 @@ int main() {
 
     std::cout << "--- END OF BENCHMARK ---" << "\n";
 
-    std::cout << "Sizeof std::unique_ptr: " << sizeof(std::unique_ptr<int>) << ", sizeof UniquePointer: " << sizeof(dsa::UniquePointer<int>) << "\n";
+    std::cout << "Sizeof std::unique_ptr: " << sizeof(std::unique_ptr<int>) << ", sizeof dsa::UniquePointer: " << sizeof(dsa::UniquePointer<int>) << "\n";
 
     return 0;
 }

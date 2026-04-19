@@ -22,18 +22,18 @@ namespace dsa {
     class SharedPointer {
     public:
         SharedPointer() 
-            : control_{ nullptr }
-            , pointer_{ nullptr }
+            : pointer_{ nullptr }
+            , control_{ nullptr }
         {}
 
-        SharedPointer(TValueType* pointer) 
+        explicit SharedPointer(TValueType* pointer)
             : pointer_{ pointer } 
             , control_{ pointer ? new ControlBlock() : nullptr }
         {}
 
         SharedPointer(const SharedPointer& other) 
-            : control_{ other.control_ }
-            , pointer_{ other.pointer_ }
+            : pointer_{ other.pointer_ }
+            , control_{ other.control_ }
         {
             if (control_) {
                 ++control_->count;

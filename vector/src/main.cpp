@@ -403,7 +403,7 @@ int main() {
 
     std::cout << "--- END OF BENCHMARK ---" << "\n";
 
-    std::cout << "Sizeof std::string: " << sizeof(std::vector<int>) << ", sizeof String: " << sizeof(dsa::Vector<int>) << "\n";
+    std::cout << "Sizeof std::vector: " << sizeof(std::vector<int>) << ", sizeof dsa::Vector: " << sizeof(dsa::Vector<int>) << "\n";
 
     return 0;
 }
