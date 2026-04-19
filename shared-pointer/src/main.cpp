@@ -33,7 +33,7 @@ public:
 
 private:
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
-};
+}; 
 
 template<typename T>
 void assert_true(T a, T b, const std::string& error_message) {
@@ -55,43 +55,114 @@ void assert_true(const bool a, const std::string& error_message) {
 }
 
 void test_default_constructor() {
+    dsa::SharedPointer<int> shared_pointer{};
 
+    assert_true(shared_pointer.get() == nullptr, "message");
+    assert_true(shared_pointer.share_count() == 0, "message");
 }
 
 void test_value_constructor() {
+    dsa::SharedPointer<int> shared_pointer{10};
 
+    assert_true(shared_pointer.get() == 10, "message");
+    assert_true(shared_pointer.share_count() == 1, "message");
 }
 
 void test_copy_constructor() {
+    dsa::SharedPointer<int> shared_pointer_1{10};
+    dsa::SharedPointer<int> shared_pointer_2{shared_pointer_1};
 
+    assert_true(shared_pointer_2.get() == 10, "message");
+    assert_true(shared_pointer_2.share_count() == 2, "message");
 }
 
 void test_destructor() {
-
+    // TODO add deleter
 }
 
 void test_copy_assignment_operator() {
+    dsa::SharedPointer<int> shared_pointer_1{10};
 
+    {
+        dsa::SharedPointer<int> shared_pointer_2{};
+
+        shared_pointer_2 = shared_pointer_1;
+
+        assert_true(shared_pointer_2.get() == 10, "message");
+        assert_true(shared_pointer_2.share_count() == 2, "message");
+    }
+
+    assert_true(shared_pointer_1.share_count() == 1, "message");
 }
 
 void test_reset() {
+    /**
+     * Reset with default parameter value
+     */
+    dsa::SharedPointer<int> shared_pointer_1{10};
 
+    shared_pointer.reset();
+
+    assert_true(shared_pointer.get() == nullptr, "message");
+    assert_true(shared_pointer.share_count() == 0, "message");
+
+    /**
+     * Reset with value
+     */
+    dsa::SharedPointer<int> shared_pointer_2{10};
+
+    int* raw_pointer = new int(20);
+    shared_pointer_2.reset(raw_pointer);
+
+    assert_true(shared_pointer_2.get() == 20, "message");
+    assert_true(shared_pointer_2.share_count() == 1, "message");
+
+    delete raw_pointer;
 }
 
 void test_swap() {
+    dsa::SharedPointer<int> shared_pointer_1{10};
+    dsa::SharedPointer<int> shared_pointer_1_cp{shared_pointer_1};
+    dsa::SharedPointer<int> shared_pointer_2{30};
 
+    shared_pointer_1.swap(shared_pointer_2);
+
+    assert_true(shared_pointer_1.get() == 30, "message");
+    assert_true(shared_pointer_1.share_count() == 1, "message");
+    assert_true(shared_pointer_2.get() == 10, "message");
+    assert_true(shared_pointer_2.share_count() == 2, "message");
 }
 
 void test_get() {
+    dsa::SharedPointer<int> shared_pointer{10};
 
+    assert_true(shared_pointer.get() == 10);
 }
 
 void test_is_unique() {
+    dsa::SharedPointer<int> shared_pointer_1{10};
 
+    assert_true(shared_pointer_1.share_count() == 1, "message");
+
+    dsa::SharedPointer<int> shared_pointer_2{share_pointer_1};
+
+    assert_true(shared_pointer_1.share_count() == 2, "message");
 }
 
 void test_share_count() {
+    dsa::SharedPointer<int> shared_pointer_1{10};
+    dsa::SharedPointer<int> shared_pointer_2{shared_pointer_1};
+    dsa::SharedPointer<int> shared_pointer_3{shared_pointer_1};
+    
+    assert_true(shared_pointer_1.share_count() == 3, "message");
 
+    shared_pointer_3.reset();
+
+    assert_true(shared_pointer_1.share_count() == 2, "message");
+
+    shared_pointer_2.reset();
+
+    assert_true(shared_pointer_1.share_count() == 1, "message");
 }
 
 int main() {
