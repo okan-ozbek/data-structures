@@ -8,7 +8,6 @@
 
 #include <cstddef>
 #include <iostream>
-
 #include "StringIterator.h"
 
 namespace dsa {

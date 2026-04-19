@@ -45,8 +45,8 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 
 | Structure | Description | Docs |
 |-----------|-------------|------|
-| **[Vector](vector/)** | A generic, templated dynamic array (`DynamicArray<T>`) with raw memory management, iterators, and move semantics | [README](vector/README.md) |
-| **[String](string/)** | A custom string class managing a `char*` buffer with copy/move semantics, operator overloading, and iterators | [README](string/README.md) |
+| **[Vector](vector/)** | A generic, templated dynamic array (`DynamicArray<T>`) with raw memory management, iterators, and move semantics | [README](vector/VECTOR.md) |
+| **[String](string/)** | A custom string class managing a `char*` buffer with copy/move semantics, operator overloading, and iterators | [README](string/STRING.md) |
 
 ### Planned
 
