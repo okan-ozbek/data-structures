@@ -39,7 +39,7 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 
 ## Data Structures
 
-### ✅ Implemented
+### Implemented
 
 | # | Structure | std:: Equivalent | Header | Docs |
 |---|-----------|-----------------|--------|------|
@@ -48,7 +48,7 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 | 3 | **UniquePointer** | `std::unique_ptr` | [`UniquePointer.h`](include/UniquePointer.h) | [📄 UNIQUE_POINTER.md](readme/UNIQUE_POINTER.md) |
 | 4 | **SharedPointer** | `std::shared_ptr` | [`SharedPointer.h`](include/SharedPointer.h) | [📄 SHARED_POINTER.md](readme/SHARED_POINTER.md) |
 
-### 🚧 Upcoming
+### Upcoming
 
 | # | Structure | Description |
 |---|-----------|-------------|
