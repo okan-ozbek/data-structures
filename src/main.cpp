@@ -7,6 +7,8 @@
 #include "../include/tests/TestUniquePointer.h"
 #include "../include/tests/TestString.h"
 #include "../include/tests/TestVector.h"
+#include "../include/tests/TestQueue.h"
+#include "../include/tests/TestStack.h"
 
 int main() {
     std::cout << "--- START OF BENCHMARK ---" << "\n\n";
@@ -19,6 +21,9 @@ int main() {
         TestUniquePointer{};
         TestString{};
         TestVector{};
+
+        TestQueue{};
+        TestStack{};
     }
 
     std::cout << "\nSuccessful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n\n";
