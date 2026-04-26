@@ -187,7 +187,7 @@ namespace dsa {
         /**
          * If the queue is empty, it will return true. Otherwise, it will return false.
          * It does this by comparing the location of the m_front and m_back pointer. If they are both
-         * pointing to the same adress it means it's currently empty.
+         * pointing to the same address it means it's currently empty.
          *
          * @return bool
          */

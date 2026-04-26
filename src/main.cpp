@@ -19,11 +19,10 @@ int main() {
     {
         Timer timer{};
 
-        // TestSharedPointer{};
-        // TestUniquePointer{};
-        // TestString{};
-        // TestVector{};
-
+        TestSharedPointer{};
+        TestUniquePointer{};
+        TestString{};
+        TestVector{};
         TestRingBufferQueue{};
         // TestStack{};
     }
