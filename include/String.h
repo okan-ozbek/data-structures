@@ -27,9 +27,9 @@ namespace dsa {
         * Time complexity: O(1) since it only involves allocating memory for the default capacity, without initializing any characters.
         */
         String() :
-            data_{static_cast<char*>(::operator new(DEFAULT_CAPACITY * sizeof(char)))},
-            size_{0},
-            capacity_{DEFAULT_CAPACITY}
+            m_data{ static_cast<char*>(::operator new(DEFAULT_CAPACITY * sizeof(char))) },
+            m_size{ 0 },
+            m_capacity{ DEFAULT_CAPACITY }
         {}
 
         /**
@@ -39,19 +39,19 @@ namespace dsa {
         * @param string
         */
         String(const char* string) {
-            const std::size_t capacity = (strlen(string) < DEFAULT_CAPACITY)
+            const std::size_t capacity = (Strlen(string) < DEFAULT_CAPACITY)
                 ? DEFAULT_CAPACITY
-                : strlen(string) + DEFAULT_CAPACITY;
+                : Strlen(string) + DEFAULT_CAPACITY;
 
-            data_ = static_cast<char*>(::operator new(capacity * sizeof(char)));
-            capacity_ = capacity;
-            size_ = strlen(string);
+            m_data = static_cast<char*>(::operator new(capacity * sizeof(char)));
+            m_capacity = capacity;
+            m_size = Strlen(string);
 
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data_[i]) char(string[i]);
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) char(string[i]);
             }
 
-            data_[size_] = '\0';
+            m_data[m_size] = '\0';
         }
 
         /**
@@ -61,20 +61,20 @@ namespace dsa {
         * @param string
         */
         String(const String& string) :
-            data_{static_cast<char*>(::operator new(string.capacity_ * sizeof(char)))},
-            size_{string.size()}
+            m_data{ static_cast<char*>(::operator new(string.m_capacity * sizeof(char))) },
+            m_size{ string.Size() }
         {
-            const std::size_t capacity = (string.size() < DEFAULT_CAPACITY)
+            const std::size_t capacity = (string.Size() < DEFAULT_CAPACITY)
                 ? DEFAULT_CAPACITY
-                : strlen(string.data()) + DEFAULT_CAPACITY;
+                : Strlen(string.Data()) + DEFAULT_CAPACITY;
 
-            capacity_ = capacity;
+            m_capacity = capacity;
 
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data_[i]) char(string.data_[i]);
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) char(string.m_data[i]);
             }
 
-            data_[size_] = '\0';
+            m_data[m_size] = '\0';
         }
 
         /**
@@ -84,20 +84,20 @@ namespace dsa {
         * @param string
         */
         String(String&& string) noexcept :
-            data_{static_cast<char*>(::operator new(string.capacity_ * sizeof(char)))},
-            size_{string.size_},
-            capacity_{string.capacity_}
+            m_data{ static_cast<char*>(::operator new(string.m_capacity * sizeof(char))) },
+            m_size{ string.m_size },
+            m_capacity{ string.m_capacity }
         {
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data_[i]) char(string.data_[i]);
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) char(string.m_data[i]);
             }
 
-            data_[size_] = '\0';
+            m_data[m_size] = '\0';
 
-            ::operator delete(string.data_);
-            string.data_ = nullptr;
-            string.size_ = 0;
-            string.capacity_ = 0;
+            ::operator delete(string.m_data);
+            string.m_data = nullptr;
+            string.m_size = 0;
+            string.m_capacity = 0;
         }
 
         /**
@@ -106,11 +106,11 @@ namespace dsa {
         * Time complexity: O(1) since it only involves deallocating memory and resetting size and capacity values, without the need to destruct individual characters.
         */
         ~String() {
-            ::operator delete(data_);
+            ::operator delete(m_data);
 
-            data_ = nullptr;
-            size_ = 0;
-            capacity_ = 0;
+            m_data = nullptr;
+            m_size = 0;
+            m_capacity = 0;
         }
 
         /**
@@ -121,7 +121,7 @@ namespace dsa {
         * @return char
         */
         char operator[](const std::size_t index) const {
-            return data_[index];
+            return m_data[index];
         }
 
         /**
@@ -132,7 +132,7 @@ namespace dsa {
         * @return String&
         */
         String& operator=(const char* string) {
-            assign(string);
+            Assign(string);
 
             return *this;
         }
@@ -145,7 +145,7 @@ namespace dsa {
         * @return String&
         */
         String& operator=(const String& string) {
-            assign(string.data());
+            Assign(string.Data());
 
             return *this;
         }
@@ -158,13 +158,13 @@ namespace dsa {
         * @return String&
         */
         String& operator=(String&& string) noexcept {
-            ::operator delete(data_);
+            ::operator delete(m_data);
 
-            data_ = string.data_;
-            size_ = string.size_;
+            m_data = string.m_data;
+            m_size = string.m_size;
 
-            string.data_ = nullptr;
-            string.size_ = 0;
+            string.m_data = nullptr;
+            string.m_size = 0;
 
             return *this;
         }
@@ -177,7 +177,7 @@ namespace dsa {
         * @return String&
         */
         String& operator+=(const String& string) {
-            append(string.data());
+            Append(string.Data());
             return *this;
         }
 
@@ -189,7 +189,7 @@ namespace dsa {
         * @return String&
         */
         String& operator+=(const char* string) {
-            append(string);
+            Append(string);
             return *this;
         }
 
@@ -201,7 +201,7 @@ namespace dsa {
         * @return String&
         */
         String& operator+=(const char character) {
-            append(character);
+            Append(character);
             return *this;
         }
 
@@ -213,7 +213,7 @@ namespace dsa {
         * @return bool
         */
         bool operator==(const String& string) const {
-            return is_equal(string);
+            return IsEqual(string);
         }
 
         /**
@@ -224,7 +224,7 @@ namespace dsa {
         * @return bool
         */
         bool operator==(const char* string) const {
-            return is_equal(string);
+            return IsEqual(string);
         }
 
         /**
@@ -235,7 +235,7 @@ namespace dsa {
         * @return bool
         */
         bool operator!=(const String& string) const {
-            return is_equal(string) == false;
+            return IsEqual(string) == false;
         }
 
         /**
@@ -246,7 +246,7 @@ namespace dsa {
         * @return bool
         */
         bool operator!=(const char* string) const {
-            return is_equal(string) == false;
+            return IsEqual(string) == false;
         }
 
         /**
@@ -265,8 +265,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return Iterator
         */
-        [[nodiscard]] Iterator begin() const {
-            return Iterator{data_};
+        [[nodiscard]] Iterator Begin() const {
+            return Iterator{ m_data };
         }
 
         /**
@@ -275,8 +275,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return Iterator
         */
-        [[nodiscard]] Iterator end() const {
-            return Iterator{data_ + size_};
+        [[nodiscard]] Iterator End() const {
+            return Iterator{ m_data + m_size };
         }
 
         /**
@@ -286,8 +286,8 @@ namespace dsa {
         * @param index
         * @return char
         */
-        [[nodiscard]] char at(const int index) const {
-            return data_[index];
+        [[nodiscard]] char At(const int index) const {
+            return m_data[index];
         }
 
         /**
@@ -296,8 +296,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return char
         */
-        [[nodiscard]] char back() const {
-            return data_[size_ - 1];
+        [[nodiscard]] char Back() const {
+            return m_data[m_size - 1];
         }
 
         /**
@@ -306,8 +306,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return char
         */
-        [[nodiscard]] char front() const {
-            return data_[0];
+        [[nodiscard]] char Front() const {
+            return m_data[0];
         }
 
         /**
@@ -323,40 +323,40 @@ namespace dsa {
         * @param replacement The string to substitute in place of the pattern.
         * @return Reference to the modified string, or unmodified if pattern not found.
         */
-        String& replace(const char* pattern, const char* replacement) {
-            const int index = find_index(pattern);
+        String& Replace(const char* pattern, const char* replacement) {
+            const int index = FindIndex(pattern);
             if (index == -1) {
                 return *this;
             }
 
-            const std::size_t pattern_length = strlen(pattern);
-            const std::size_t replacement_length = strlen(replacement);
+            const std::size_t patternLength = Strlen(pattern);
+            const std::size_t replacementLength = Strlen(replacement);
 
-            const std::size_t new_size = size_ - pattern_length + replacement_length;
-            const std::size_t new_capacity = (capacity_ * 2 > new_size + 1)
-                ? capacity_ * 2
-                : new_size + 1;
+            const std::size_t newSize = m_size - patternLength + replacementLength;
+            const std::size_t newCapacity = (m_capacity * 2 > newSize + 1)
+                ? m_capacity * 2
+                : newSize + 1;
 
-            auto* new_data = static_cast<char*>(::operator new(new_capacity * sizeof(char)));
+            auto* newData = static_cast<char*>(::operator new(newCapacity * sizeof(char)));
 
             for (int i{}; i < index; ++i) {
-                new (&new_data[i]) char(data_[i]);
+                new (&newData[i]) char(m_data[i]);
             }
 
-            for (std::size_t i{}; i < replacement_length; ++i) {
-                new (&new_data[index + i]) char(replacement[i]);
+            for (std::size_t i{}; i < replacementLength; ++i) {
+                new (&newData[index + i]) char(replacement[i]);
             }
 
-            for (std::size_t i{}; i < size_ - index - pattern_length; ++i) {
-                new (&new_data[index + replacement_length + i]) char(data_[index + pattern_length + i]);
+            for (std::size_t i{}; i < m_size - index - patternLength; ++i) {
+                new (&newData[index + replacementLength + i]) char(m_data[index + patternLength + i]);
             }
 
-            new_data[new_size] = '\0';
+            newData[newSize] = '\0';
 
-            ::operator delete(data_);
-            data_ = new_data;
-            size_ = new_size;
-            capacity_ = new_capacity;
+            ::operator delete(m_data);
+            m_data = newData;
+            m_size = newSize;
+            m_capacity = newCapacity;
 
             return *this;
         }
@@ -374,8 +374,8 @@ namespace dsa {
         * @param replacement The string to substitute in place of the pattern.
         * @return Reference to the modified string, or unmodified if pattern not found.
         */
-        String& replace(const String& pattern, const String& replacement) {
-            return replace(pattern.data(), replacement.data());
+        String& Replace(const String& pattern, const String& replacement) {
+            return Replace(pattern.Data(), replacement.Data());
         }
 
         /**
@@ -391,8 +391,8 @@ namespace dsa {
         * @param replacement The string to substitute in place of the pattern.
         * @return Reference to the modified string, or unmodified if pattern not found.
         */
-        String& replace(const char* pattern, const String& replacement) {
-            return replace(pattern, replacement.data());
+        String& Replace(const char* pattern, const String& replacement) {
+            return Replace(pattern, replacement.Data());
         }
 
         /**
@@ -408,8 +408,8 @@ namespace dsa {
         * @param replacement The string to substitute in place of the pattern.
         * @return Reference to the modified string, or unmodified if pattern not found.
         */
-        String& replace(const String& pattern, const char* replacement) {
-            return replace(pattern.data(), replacement);
+        String& Replace(const String& pattern, const char* replacement) {
+            return Replace(pattern.Data(), replacement);
         }
 
         /**
@@ -422,14 +422,14 @@ namespace dsa {
         * @param pattern
         * @return String
         */
-        [[nodiscard]] String find(const String& pattern) const {
-            const int index = find_index(pattern.data());
+        [[nodiscard]] String Find(const String& pattern) const {
+            const int index = FindIndex(pattern.Data());
 
             if (index == -1) {
                 return {};
             }
 
-            return substr(index, static_cast<int>(pattern.size()));
+            return Substr(index, static_cast<int>(pattern.Size()));
         }
 
         /**
@@ -442,14 +442,14 @@ namespace dsa {
         * @param pattern
         * @return String
         */
-        [[nodiscard]] String find(const char* pattern) const {
-            const int index = find_index(pattern);
+        [[nodiscard]] String Find(const char* pattern) const {
+            const int index = FindIndex(pattern);
 
             if (index == -1) {
                 return {};
             }
 
-            return substr(index, static_cast<int>(strlen(pattern)));
+            return Substr(index, static_cast<int>(Strlen(pattern)));
         }
 
         // TODO: check for improvements... Check if we can use iterators or something else so we don't have to copy it over like this, maybe copying is the only way..
@@ -461,18 +461,18 @@ namespace dsa {
         * @param length
         * @return String
         */
-        [[nodiscard]] String substr(const int index, int length = -1) const {
-            if (length == 0 || index >= size_) {
+        [[nodiscard]] String Substr(const int index, int length = -1) const {
+            if (length == 0 || index >= m_size) {
                 return {};
             }
 
-            if (length <= -1 || length > size_ - index) {
-                length = static_cast<int>(size_) - index;
+            if (length <= -1 || length > m_size - index) {
+                length = static_cast<int>(m_size) - index;
             }
 
             String result{};
             for (int i{}; i < length; ++i) {
-                result += data_[index + i];
+                result += m_data[index + i];
             }
 
             return result;
@@ -484,8 +484,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return std::size_t
         */
-        [[nodiscard]] std::size_t size() const {
-            return size_;
+        [[nodiscard]] std::size_t Size() const {
+            return m_size;
         }
 
         /**
@@ -494,8 +494,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return std::size_t
         */
-        [[nodiscard]] std::size_t capacity() const {
-            return capacity_;
+        [[nodiscard]] std::size_t Capacity() const {
+            return m_capacity;
         }
 
         /**
@@ -504,8 +504,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return const char*
         */
-        [[nodiscard]] const char* data() const {
-            return data_;
+        [[nodiscard]] const char* Data() const {
+            return m_data;
         }
 
         /**
@@ -514,8 +514,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return bool
         */
-        [[nodiscard]] bool is_empty() const {
-            return size_ == 0;
+        [[nodiscard]] bool IsEmpty() const {
+            return m_size == 0;
         }
 
         /**
@@ -525,13 +525,13 @@ namespace dsa {
         * @param string
         * @return bool
         */
-        [[nodiscard]] bool is_equal(const char* string) const {
-            if (size_ != strlen(string)) {
+        [[nodiscard]] bool IsEqual(const char* string) const {
+            if (m_size != Strlen(string)) {
                 return false;
             }
 
-            for (std::size_t i{}; i < size_; ++i) {
-                if (data_[i] != string[i]) {
+            for (std::size_t i{}; i < m_size; ++i) {
+                if (m_data[i] != string[i]) {
                     return false;
                 }
             }
@@ -546,13 +546,13 @@ namespace dsa {
         * @param string
         * @return bool
         */
-        [[nodiscard]] bool is_equal(const String& string) const {
-            if (size_ != string.size()) {
+        [[nodiscard]] bool IsEqual(const String& string) const {
+            if (m_size != string.Size()) {
                 return false;
             }
 
-            for (std::size_t i{}; i < size_; ++i) {
-                if (data_[i] != string[i]) {
+            for (std::size_t i{}; i < m_size; ++i) {
+                if (m_data[i] != string[i]) {
                     return false;
                 }
             }
@@ -567,8 +567,9 @@ namespace dsa {
         * @param string
         * @return std::size_t
         */
-        [[nodiscard]] static std::size_t strlen(const char* string) {
-            std::size_t length{0};
+        [[nodiscard]] static std::size_t Strlen(const char* string) {
+            std::size_t length{ 0 };
+
             while (string[length] != '\0') {
                 ++length;
             }
@@ -579,9 +580,9 @@ namespace dsa {
     private:
         constexpr static std::size_t DEFAULT_CAPACITY = 10;
 
-        char* data_;
-        std::size_t size_;
-        std::size_t capacity_;
+        char* m_data;
+        std::size_t m_size;
+        std::size_t m_capacity;
 
         /**
         * Assign characters to our C-style string, if the we don't have enough memory allocated, we will resize the array and reserve enough memory to fit the new string.
@@ -589,23 +590,23 @@ namespace dsa {
         * Time complexity: O(n + m) when we need to resize, else it is O(n)
         * @param string
         */
-        void assign(const char* string) {
-            const std::size_t string_length = strlen(string);
+        void Assign(const char* string) {
+            const std::size_t stringLength = Strlen(string);
 
-            if (string_length + 1 > capacity_) {
-                const std::size_t new_capacity = (capacity_ * 2 > string_length + 1)
-                    ? capacity_ * 2
-                    : string_length + 1;
+            if (stringLength + 1 > m_capacity) {
+                const std::size_t newCapacity = (m_capacity * 2 > stringLength + 1)
+                    ? m_capacity * 2
+                    : stringLength + 1;
 
-                resize(new_capacity);
+                Resize(newCapacity);
             }
 
-            for (std::size_t i{}; i < string_length; ++i) {
-                data_[i] = string[i];
+            for (std::size_t i{}; i < stringLength; ++i) {
+                m_data[i] = string[i];
             }
 
-            size_ = string_length;
-            data_[size_] = '\0';
+            m_size = stringLength;
+            m_data[m_size] = '\0';
         }
 
         /**
@@ -614,20 +615,20 @@ namespace dsa {
         * Time complexity: O(n + m) when we need to resize, else it is O(n)
         * @param string
         */
-        void append(const char* string) {
-            const std::size_t string_length = strlen(string);
-            const std::size_t new_size = size_ + strlen(string);
+        void Append(const char* string) {
+            const std::size_t stringLength = Strlen(string);
+            const std::size_t newSize = m_size + Strlen(string);
 
-            if (new_size + 1 > capacity_) {
-                resize(capacity_ * 2 + string_length);
+            if (newSize + 1 > m_capacity) {
+                Resize(m_capacity * 2 + stringLength);
             }
 
-            for (std::size_t i{}; i < string_length; ++i) {
-                new (&data_[size_ + i]) char(string[i]);
+            for (std::size_t i{}; i < stringLength; ++i) {
+                new (&m_data[m_size + i]) char(string[i]);
             }
 
-            size_ = new_size;
-            data_[size_] = '\0';
+            m_size = newSize;
+            m_data[m_size] = '\0';
         }
 
         /**
@@ -636,15 +637,15 @@ namespace dsa {
         * Time complexity: O(n) when we need to resize, else it would be O(1)
         * @param character
         */
-        void append(const char character) {
-            if (size_ + 1 > capacity_) {
-                resize(capacity_ * 2 + 1);
+        void Append(const char character) {
+            if (m_size + 1 > m_capacity) {
+                Resize(m_capacity * 2 + 1);
             }
 
-            new (&data_[size_]) char(character);
-            ++size_;
+            new (&m_data[m_size]) char(character);
+            ++m_size;
 
-            data_[size_] = '\0';
+            m_data[m_size] = '\0';
         }
 
         /**
@@ -653,21 +654,21 @@ namespace dsa {
         * Time complexity: O(n) due to the need to copy each character from the old array to the new array, and then deallocate the old array.
         * @param capacity
         */
-        void resize(const std::size_t capacity) {
-            char* new_data = static_cast<char*>(::operator new(capacity * sizeof(char)));
+        void Resize(const std::size_t capacity) {
+            char* newData = static_cast<char*>(::operator new(capacity * sizeof(char)));
 
-            const std::size_t movable_capacity = (capacity < size_)
+            const std::size_t movableCapacity = (capacity < m_size)
                 ? capacity
-                : size_;
+                : m_size;
 
-            for (std::size_t i{}; i < movable_capacity; ++i) {
-                new (&new_data[i]) char(data_[i]);
+            for (std::size_t i{}; i < movableCapacity; ++i) {
+                new (&newData[i]) char(m_data[i]);
             }
 
-            ::operator delete(data_);
+            ::operator delete(m_data);
 
-            data_ = new_data;
-            capacity_ = capacity;
+            m_data = newData;
+            m_capacity = capacity;
         }
 
         /**
@@ -692,39 +693,39 @@ namespace dsa {
         *
         * @see https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
         */
-        [[nodiscard]] int find_index(const char* pattern) const {
-            const std::size_t pattern_size = strlen(pattern);
+        [[nodiscard]] int FindIndex(const char* pattern) const {
+            const std::size_t patternSize = Strlen(pattern);
 
-            if (pattern_size == 0 || pattern_size > size_)
+            if (patternSize == 0 || patternSize > m_size)
                 return -1;
 
-            constexpr std::size_t base{256}, mod{1000000007};
-            std::size_t hash{1}, pattern_hash{0}, text_window_hash{0};
+            constexpr std::size_t base{ 256 }, mod{ 1000000007 };
+            std::size_t hash{ 1 }, patternHash{ 0 }, textWindowHash{ 0 };
 
-            for (std::size_t i{}; i < pattern_size - 1; ++i) {
+            for (std::size_t i{}; i < patternSize - 1; ++i) {
                 hash = (hash * base) % mod;
             }
 
-            for (std::size_t i{}; i < pattern_size; ++i) {
-                pattern_hash = (base * pattern_hash + pattern[i]) % mod;
-                text_window_hash = (base * text_window_hash + data_[i]) % mod;
+            for (std::size_t i{}; i < patternSize; ++i) {
+                patternHash = (base * patternHash + pattern[i]) % mod;
+                textWindowHash = (base * textWindowHash + m_data[i]) % mod;
             }
 
-            for (std::size_t i{}; i <= size_ - pattern_size; ++i) {
-                if (pattern_hash == text_window_hash) {
+            for (std::size_t i{}; i <= m_size - patternSize; ++i) {
+                if (patternHash == textWindowHash) {
                     std::size_t j{};
 
-                    while (j < pattern_size && data_[i + j] == pattern[j]) {
+                    while (j < patternSize && m_data[i + j] == pattern[j]) {
                         ++j;
                     }
 
-                    if (j == pattern_size) {
+                    if (j == patternSize) {
                         return static_cast<int>(i);
                     }
                 }
 
-                if (i < size_ - pattern_size) {
-                    text_window_hash = (base * (text_window_hash + mod - (data_[i] * hash) % mod) + data_[i + pattern_size]) % mod;
+                if (i < m_size - patternSize) {
+                    textWindowHash = (base * (textWindowHash + mod - (m_data[i] * hash) % mod) + m_data[i + patternSize]) % mod;
                 }
             }
 
@@ -740,7 +741,7 @@ namespace dsa {
     * @return std::ostream&
     */
     inline std::ostream& operator<<(std::ostream& os, const String& string) {
-        for (std::size_t i{}; i < string.size(); ++i) {
+        for (std::size_t i{}; i < string.Size(); ++i) {
             os << string[i];
         }
 

@@ -23,16 +23,16 @@ private:
         const dsa::String str{};
         constexpr std::size_t zero{0};
 
-        assert_true(str.size(), zero, "Size is not expected size of 0");
-        assert_true(str.capacity(), TEST_DEFAULT_CAPACITY, "Capacity is not expected capacity of 10");
+        assert_true(str.Size(), zero, "Size is not expected size of 0");
+        assert_true(str.Capacity(), TEST_DEFAULT_CAPACITY, "Capacity is not expected capacity of 10");
     }
 
     void test_c_string_constructor() {
         const char* c_string = "Hello world!";
         const dsa::String str{c_string};
 
-        assert_true(str.size(), dsa::String::strlen(c_string), "Size is not expected size of strlen(c_string)");
-        assert_true(str.capacity(), dsa::String::strlen(c_string) + TEST_DEFAULT_CAPACITY, "Capacity is not expected capacity of 10");
+        assert_true(str.Size(), dsa::String::Strlen(c_string), "Size is not expected size of strlen(c_string)");
+        assert_true(str.Capacity(), dsa::String::Strlen(c_string) + TEST_DEFAULT_CAPACITY, "Capacity is not expected capacity of 10");
         assert_true(str == c_string, "dsa::String is not equal to c_string");
     }
 
@@ -41,8 +41,8 @@ private:
         const dsa::String str2{str};
 
         assert_true(str2 == str, "dsa::String is not equal to str");
-        assert_true(str2.size(), str.size(), "Size is not equal to str size");
-        assert_true(str2.capacity(), str.capacity(), "Capacity is not equal to str capacity");
+        assert_true(str2.Size(), str.Size(), "Size is not equal to str size");
+        assert_true(str2.Capacity(), str.Capacity(), "Capacity is not equal to str capacity");
     }
 
     void test_move_constructor() {
@@ -50,8 +50,8 @@ private:
         const dsa::String str2{std::move(str)};
 
         assert_true(str != str2, "dsa::String is equal to str");
-        assert_true(str.capacity() != str2.capacity(), "Capacity is equal to str capacity");
-        assert_true(str.size() != str2.size(), "Size is equal to str size");
+        assert_true(str.Capacity() != str2.Capacity(), "Capacity is equal to str capacity");
+        assert_true(str.Size() != str2.Size(), "Size is equal to str size");
     }
 
     void test_c_string_assignment_operator() {
@@ -60,8 +60,8 @@ private:
         str = "Hello other world!";
 
         assert_true(str == "Hello other world!", "dsa::String is not equal to Hello other world!");
-        assert_true(str.size(), dsa::String::strlen("Hello other world!"), "Size is not equal to strlen(Hello other world!)");
-        assert_true(str.capacity(), dsa::String::strlen("Hello world!") + TEST_DEFAULT_CAPACITY, "Capacity is not equal to strlen(Hello world!) + TEST_DEFAULT_CAPACITY");
+        assert_true(str.Size(), dsa::String::Strlen("Hello other world!"), "Size is not equal to strlen(Hello other world!)");
+        assert_true(str.Capacity(), dsa::String::Strlen("Hello world!") + TEST_DEFAULT_CAPACITY, "Capacity is not equal to strlen(Hello world!) + TEST_DEFAULT_CAPACITY");
     }
 
     void test_copy_assignment_operator() {
@@ -71,8 +71,8 @@ private:
         str = str2;
 
         assert_true(str == str2, "dsa::String is not equal to str2");
-        assert_true(str.size(), str2.size(), "Size is not equal to str2 size");
-        assert_true(str.capacity() != str2.capacity(), "Capacity is equal to str2 capacity");
+        assert_true(str.Size(), str2.Size(), "Size is not equal to str2 size");
+        assert_true(str.Capacity() != str2.Capacity(), "Capacity is equal to str2 capacity");
     }
 
     void test_move_assignment_operator() {
@@ -82,8 +82,8 @@ private:
         str = std::move(str2);
 
         assert_true(str != str2, "dsa::String is equal to str2");
-        assert_true(str.capacity() != str2.capacity(), "Capacity is equal to str2 capacity");
-        assert_true(str.size() != str2.size(), "Size is equal to str2 size");
+        assert_true(str.Capacity() != str2.Capacity(), "Capacity is equal to str2 capacity");
+        assert_true(str.Size() != str2.Size(), "Size is equal to str2 size");
     }
 
     void test_index_operator() {
@@ -109,19 +109,19 @@ private:
         str += '!';
 
         assert_true(str == "Helloworld!", "dsa::String is not equal to Hello world!");
-        assert_true(str.size(), dsa::String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
+        assert_true(str.Size(), dsa::String::Strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
 
         str = "Hello";
         str += c_string;
 
         assert_true(str == "Helloworld!", "dsa::String is not equal to Hello world!");
-        assert_true(str.size(), dsa::String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
+        assert_true(str.Size(), dsa::String::Strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
 
         str = "Hello";
         str += str2;
 
         assert_true(str == "Helloworld!", "dsa::String is not equal to Hello world!");
-        assert_true(str.size(), dsa::String::strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
+        assert_true(str.Size(), dsa::String::Strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
     }
 
     void test_is_equal_operator() {
@@ -145,44 +145,44 @@ private:
     void test_begin_iterator() {
         const dsa::String str{"Hello"};
 
-        assert_true(*str.begin(), 'H', "Begin iterator value is not equal to value");
-        assert_true(*(str.begin() + 1), 'e', "Begin iterator value is not equal to value");
-        assert_true(*(str.begin() + 2), 'l', "Begin iterator value is not equal to value");
-        assert_true(*(str.begin() + 3), 'l', "Begin iterator value is not equal to value");
-        assert_true(*(str.begin() + 4), 'o', "Begin iterator value is not equal to value");
+        assert_true(*str.Begin(), 'H', "Begin iterator value is not equal to value");
+        assert_true(*(str.Begin() + 1), 'e', "Begin iterator value is not equal to value");
+        assert_true(*(str.Begin() + 2), 'l', "Begin iterator value is not equal to value");
+        assert_true(*(str.Begin() + 3), 'l', "Begin iterator value is not equal to value");
+        assert_true(*(str.Begin() + 4), 'o', "Begin iterator value is not equal to value");
     }
 
     void test_end_iterator() {
         const dsa::String str{"Hello"};
 
-        assert_true(*(str.end()), '\0', "End iterator value is not equal to value");
-        assert_true(*(str.end() - 1), 'o', "End iterator value is not equal to value");
-        assert_true(*(str.end() - 2), 'l', "End iterator value is not equal to value");
-        assert_true(*(str.end() - 3), 'l', "End iterator value is not equal to value");
-        assert_true(*(str.end() - 4), 'e', "End iterator value is not equal to value");
-        assert_true(*(str.end() - 5), 'H', "End iterator value is not equal to value");
+        assert_true(*(str.End()), '\0', "End iterator value is not equal to value");
+        assert_true(*(str.End() - 1), 'o', "End iterator value is not equal to value");
+        assert_true(*(str.End() - 2), 'l', "End iterator value is not equal to value");
+        assert_true(*(str.End() - 3), 'l', "End iterator value is not equal to value");
+        assert_true(*(str.End() - 4), 'e', "End iterator value is not equal to value");
+        assert_true(*(str.End() - 5), 'H', "End iterator value is not equal to value");
     }
 
     void test_at() {
         const dsa::String str{"Hello"};
 
-        assert_true(str.at(0), 'H', "At operator value is not equal to value");
-        assert_true(str.at(1), 'e', "At operator value is not equal to value");
-        assert_true(str.at(2), 'l', "At operator value is not equal to value");
-        assert_true(str.at(3), 'l', "At operator value is not equal to value");
-        assert_true(str.at(4), 'o', "At operator value is not equal to value");
+        assert_true(str.At(0), 'H', "At operator value is not equal to value");
+        assert_true(str.At(1), 'e', "At operator value is not equal to value");
+        assert_true(str.At(2), 'l', "At operator value is not equal to value");
+        assert_true(str.At(3), 'l', "At operator value is not equal to value");
+        assert_true(str.At(4), 'o', "At operator value is not equal to value");
     }
 
     void test_back() {
         const dsa::String str{"Hello"};
 
-        assert_true(str.back(), 'o', "Back operator value is not equal to value");
+        assert_true(str.Back(), 'o', "Back operator value is not equal to value");
     }
 
     void test_front() {
         const dsa::String str{"Hello"};
 
-        assert_true(str.front(), 'H', "Front operator value is not equal to value");
+        assert_true(str.Front(), 'H', "Front operator value is not equal to value");
     }
 
     void test_replace() {
@@ -190,22 +190,22 @@ private:
         const dsa::String str2{"world"};
         const dsa::String str3{"other world!"};
 
-        str.replace(str2, str3);
+        str.Replace(str2, str3);
         assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
 
         str = "Hello world!";
 
-        str.replace("world", "other world!");
+        str.Replace("world", "other world!");
         assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
 
         str = "Hello world!";
 
-        str.replace(str2, "other world!");
+        str.Replace(str2, "other world!");
         assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
 
         str = "Hello world!";
 
-        str.replace("world", str3);
+        str.Replace("world", str3);
         assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
     }
 
@@ -214,46 +214,46 @@ private:
         const dsa::String str2{"world"};
         const char* c_string = "world";
 
-        assert_true(str.find(str2) == "world", "Find operator value is not equal to value");
-        assert_true(str.find(c_string) == "world", "Find operator value is not equal to value");
+        assert_true(str.Find(str2) == "world", "Find operator value is not equal to value");
+        assert_true(str.Find(c_string) == "world", "Find operator value is not equal to value");
     }
 
     void test_substr() {
         const dsa::String str{"Hello world!"};
 
-        assert_true(str.substr(0, 5) == "Hello", "Substr operator 1 value is not equal to value");
-        assert_true(str.substr(5, 5) == " worl", "Substr operator 2 value is not equal to value");
-        assert_true(str.substr(10, 5) == "d!", "Substr operator 3 value is not equal to value");
+        assert_true(str.Substr(0, 5) == "Hello", "Substr operator 1 value is not equal to value");
+        assert_true(str.Substr(5, 5) == " worl", "Substr operator 2 value is not equal to value");
+        assert_true(str.Substr(10, 5) == "d!", "Substr operator 3 value is not equal to value");
     }
 
     void test_size() {
         const dsa::String str{"Hello world!"};
 
-        assert_true(str.size(), dsa::String::strlen("Hello world!"), "Size is not equal to strlen(Hello world!)");
+        assert_true(str.Size(), dsa::String::Strlen("Hello world!"), "Size is not equal to strlen(Hello world!)");
     }
 
     void test_capacity() {
         const dsa::String str{"Hello world!"};
 
-        assert_true(str.capacity(), dsa::String::strlen("Hello world!") + TEST_DEFAULT_CAPACITY, "Capacity is not equal to strlen(Hello world!) + TEST_DEFAULT_CAPACITY");
+        assert_true(str.Capacity(), dsa::String::Strlen("Hello world!") + TEST_DEFAULT_CAPACITY, "Capacity is not equal to strlen(Hello world!) + TEST_DEFAULT_CAPACITY");
     }
 
     void test_is_empty() {
         const dsa::String str{};
 
-        assert_true(str.is_empty(), true, "Is empty is not equal to true");
+        assert_true(str.IsEmpty(), true, "Is empty is not equal to true");
 
         const dsa::String str2{"Hello world!"};
 
-        assert_true(str2.is_empty(), false, "Is empty is not equal to false");
+        assert_true(str2.IsEmpty(), false, "Is empty is not equal to false");
     }
 
     void test_is_equal() {
         const dsa::String str{"Hello world!"};
         const dsa::String str2{"Hello world!"};
 
-        assert_true(str.is_equal(str2), true, "Is equal is not equal to true");
-        assert_true(str.is_equal("Hello"), false, "Is equal is not equal to false");
+        assert_true(str.IsEqual(str2), true, "Is equal is not equal to true");
+        assert_true(str.IsEqual("Hello"), false, "Is equal is not equal to false");
     }
 
     void test_strlen() {
@@ -261,7 +261,7 @@ private:
 
         constexpr std::size_t length = 12;
 
-        assert_true(dsa::String::strlen("Hello world!"), length, "Strlen is not equal to 12");
+        assert_true(dsa::String::Strlen("Hello world!"), length, "Strlen is not equal to 12");
     }
 
     void run() {

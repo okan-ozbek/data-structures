@@ -13,7 +13,7 @@ namespace dsa {
         *
         * @param ptr
         */
-        explicit StringIterator(const char* ptr) : ptr_{ptr} {}
+        explicit StringIterator(const char* ptr) : m_pointer{ptr} {}
 
         /**
         * Move the iterator to the next element in the string.
@@ -21,7 +21,7 @@ namespace dsa {
         * @return StringIterator&
         */
         StringIterator& operator++() {
-            ++ptr_;
+            ++m_pointer;
             return *this;
         }
 
@@ -31,7 +31,7 @@ namespace dsa {
         * @return StringIterator&
         */
         StringIterator& operator--() {
-            --ptr_;
+            --m_pointer;
             return *this;
         }
 
@@ -43,7 +43,7 @@ namespace dsa {
         * @return StringIterator
         */
         StringIterator operator+(const int offset) const {
-            return StringIterator{ptr_ + offset};
+            return StringIterator{m_pointer + offset};
         }
 
         /**
@@ -55,7 +55,7 @@ namespace dsa {
         * @return StringIterator
         */
         StringIterator operator-(const int offset) const {
-            return StringIterator{ptr_ - offset};
+            return StringIterator{m_pointer - offset};
         }
 
         /**
@@ -65,7 +65,7 @@ namespace dsa {
         * @return const char&
         */
         const char& operator[](const int index) {
-            return ptr_[index];
+            return m_pointer[index];
         }
 
         /**
@@ -76,7 +76,7 @@ namespace dsa {
         * @return const char&
         */
         const char& operator[](const int index) const {
-            return ptr_[index];
+            return m_pointer[index];
         }
 
         /**
@@ -85,7 +85,7 @@ namespace dsa {
         * @return const char&
         */
         const char& operator*() {
-            return *ptr_;
+            return *m_pointer;
         }
 
         /**
@@ -95,7 +95,7 @@ namespace dsa {
         * @return const char&
         */
         const char& operator*() const {
-            return *ptr_;
+            return *m_pointer;
         }
 
         /**
@@ -104,7 +104,7 @@ namespace dsa {
         * @return const char*
         */
         const char* operator->() {
-            return ptr_;
+            return m_pointer;
         }
 
         /**
@@ -114,7 +114,7 @@ namespace dsa {
         * @return const char*
         */
         const char* operator->() const {
-            return ptr_;
+            return m_pointer;
         }
 
         /**
@@ -124,7 +124,7 @@ namespace dsa {
         * @return bool
         */
         bool operator==(const StringIterator& other) const {
-            return ptr_ == other.ptr_;
+            return m_pointer == other.m_pointer;
         }
 
         /**
@@ -134,7 +134,7 @@ namespace dsa {
         * @return bool
         */
         bool operator!=(const StringIterator& other) const {
-            return ptr_ != other.ptr_;
+            return m_pointer != other.m_pointer;
         }
 
         /**
@@ -144,7 +144,7 @@ namespace dsa {
         * @return bool
         */
         bool operator<(const StringIterator& other) const {
-            return ptr_ < other.ptr_;
+            return m_pointer < other.m_pointer;
         }
 
         /**
@@ -154,7 +154,7 @@ namespace dsa {
         * @return bool
         */
         bool operator>(const StringIterator& other) const {
-            return ptr_ > other.ptr_;
+            return m_pointer > other.m_pointer;
         }
 
         /**
@@ -164,7 +164,7 @@ namespace dsa {
         * @return bool
         */
         bool operator<=(const StringIterator& other) const {
-            return ptr_ <= other.ptr_;
+            return m_pointer <= other.m_pointer;
         }
 
         /**
@@ -174,15 +174,15 @@ namespace dsa {
         * @return bool
         */
         bool operator>=(const StringIterator& other) const {
-            return ptr_ >= other.ptr_;
+            return m_pointer >= other.m_pointer;
         }
 
         [[nodiscard]] const char* ptr() const {
-            return ptr_;
+            return m_pointer;
         }
 
     private:
-        const char* ptr_;
+        const char* m_pointer;
     };
 }
 
