@@ -26,27 +26,27 @@ public:
     ~TestUniquePointer() = default;
 
 private:
-    void test_default_constructor() {
+    void TestDefaultConstructor() {
         dsa::UniquePointer<int> pointer{};
 
         assert_true(pointer.Get() == nullptr, "Default constructed pointer should be nullptr");
     }
 
-    void test_explicit_value_constructor() {
+    void TestExplicitValueConstructor() {
         const dsa::UniquePointer pointer(new Vector2D{10, 10});
 
         assert_true(pointer->x == 10, "Explicit constructor: x should be 10");
         assert_true(pointer->y == 10, "Explicit constructor: y should be 10");
     }
 
-    void test_factory_constructor() {
+    void TestFactoryConstructor() {
         dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(10, 10);
 
         assert_true(pointer->x == 10, "Factory constructor: x should be 10");
         assert_true(pointer->y == 10, "Factory constructor: y should be 10");
     }
 
-    void test_move_constructor() {
+    void TestMoveConstructor() {
         dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(10, 10);
         const Vector2D* temp_pointer = pointer_1.Get();
 
@@ -56,7 +56,7 @@ private:
         assert_true(pointer_1.Get() == nullptr, "Move constructor: pointer_1 should be nullptr after move");
     }
 
-    void test_destructor() {
+    void TestDestructor() {
         bool deleted{false};
 
         {
@@ -73,7 +73,7 @@ private:
         assert_true(deleted, "Destruction: memory was not deallocated");
     }
 
-    void test_move_assignment_operator() {
+    void TestMoveAssignmentOperator() {
         dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(10, 10);
         const Vector2D* temp_pointer = pointer_1.Get();
         dsa::UniquePointer<Vector2D> pointer_2{};
@@ -84,7 +84,7 @@ private:
         assert_true(pointer_1.Get() == nullptr, "Move assignment: pointer_1 should be nullptr after move");
     }
 
-    void test_arrow_operator() {
+    void TestArrowOperator() {
         int x{10};
         int y{15};
         const dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(x, y);
@@ -93,7 +93,7 @@ private:
         assert_true(pointer->y == y, "Arrow operator: y does not match expected value");
     }
 
-    void test_dereference_operator() {
+    void TestDereferenceOperator() {
         int x{10};
         int y{15};
         const dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(x, y);
@@ -102,7 +102,7 @@ private:
         assert_true((*pointer).y == y, "Dereference operator: y does not match expected value");
     }
 
-    void test_boolean_operator() {
+    void TestBooleanOperator() {
         if (dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(10, 10)) {
             assert_true(true, "Boolean operator: should not fail");
         } else {
@@ -110,7 +110,7 @@ private:
         }
     }
 
-    void test_release() {
+    void TestRelease() {
         int n{10};
         dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(n);
 
@@ -121,7 +121,7 @@ private:
         assert_true(!pointer, "Release: pointer should be nullptr after release");
     }
 
-    void test_reset() {
+    void TestReset() {
         int n{10};
         bool deleted{false};
         auto deleter = [&deleted](const Vector2D* pointer) { delete pointer; deleted = true; };
@@ -142,7 +142,7 @@ private:
         assert_true(pointer_1->y == n * 2, "Reset self: y should survive self-reset");
     }
 
-    void test_get() {
+    void TestGet() {
         int n{10};
         const dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(n);
 
@@ -151,7 +151,7 @@ private:
         assert_true(pointer_1.Get()->y == n, "Get: y does not match expected value");
     }
 
-    void test_swap() {
+    void TestSwap() {
         int n{10};
         dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(n);
         dsa::UniquePointer<Vector2D> pointer_2 = dsa::make_unique<Vector2D>(n * 2);
@@ -166,25 +166,24 @@ private:
 
     void run() {
         // Constructors
-        test_default_constructor();
-        test_explicit_value_constructor();
-        test_factory_constructor();
-        test_move_constructor();
-        test_destructor();
+        TestDefaultConstructor();
+        TestExplicitValueConstructor();
+        TestFactoryConstructor();
+        TestMoveConstructor();
+        TestDestructor();
 
         // Operators
-        test_move_assignment_operator();
-        test_arrow_operator();
-        test_dereference_operator();
-        test_boolean_operator();
+        TestMoveAssignmentOperator();
+        TestArrowOperator();
+        TestDereferenceOperator();
+        TestBooleanOperator();
 
         // Functions
-        test_release();
-        test_reset();
-        test_get();
-        test_swap();
+        TestRelease();
+        TestReset();
+        TestGet();
+        TestSwap();
     }
 };
 
 #endif // TESTUNIQUEPOINTER_H
-

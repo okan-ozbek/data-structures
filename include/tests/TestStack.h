@@ -17,7 +17,7 @@ public:
     ~TestStack() = default;
 
 private:
-    void test_happy_flow() {
+    void TestHappyFlow() {
         Stack<int> q{};
 
         std::cout << "Queue size: " << q.size() << std::endl;
@@ -42,9 +42,8 @@ private:
     }
 
     void run() {
-        test_happy_flow();
+        TestHappyFlow();
     }
 };
 
 #endif // TESTSTACK_H
-

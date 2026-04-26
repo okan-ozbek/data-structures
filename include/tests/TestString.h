@@ -19,7 +19,7 @@ public:
 private:
     std::size_t TEST_DEFAULT_CAPACITY = 10;
 
-    void test_default_constructor() {
+    void TestDefaultConstructor() {
         const dsa::String str{};
         constexpr std::size_t zero{0};
 
@@ -27,7 +27,7 @@ private:
         assert_true(str.Capacity(), TEST_DEFAULT_CAPACITY, "Capacity is not expected capacity of 10");
     }
 
-    void test_c_string_constructor() {
+    void TestCStringConstructor() {
         const char* c_string = "Hello world!";
         const dsa::String str{c_string};
 
@@ -36,7 +36,7 @@ private:
         assert_true(str == c_string, "dsa::String is not equal to c_string");
     }
 
-    void test_copy_constructor() {
+    void TestCopyConstructor() {
         const dsa::String str{"Hello world!"};
         const dsa::String str2{str};
 
@@ -45,7 +45,7 @@ private:
         assert_true(str2.Capacity(), str.Capacity(), "Capacity is not equal to str capacity");
     }
 
-    void test_move_constructor() {
+    void TestMoveConstructor() {
         dsa::String str{"Hello world!"};
         const dsa::String str2{std::move(str)};
 
@@ -54,7 +54,7 @@ private:
         assert_true(str.Size() != str2.Size(), "Size is equal to str size");
     }
 
-    void test_c_string_assignment_operator() {
+    void TestCStringAssignmentOperator() {
         dsa::String str{"Hello world!"};
 
         str = "Hello other world!";
@@ -64,7 +64,7 @@ private:
         assert_true(str.Capacity(), dsa::String::Strlen("Hello world!") + TEST_DEFAULT_CAPACITY, "Capacity is not equal to strlen(Hello world!) + TEST_DEFAULT_CAPACITY");
     }
 
-    void test_copy_assignment_operator() {
+    void TestCopyAssignmentOperator() {
         dsa::String str{"Hello world!"};
         const dsa::String str2{"Hello other world!"};
 
@@ -75,7 +75,7 @@ private:
         assert_true(str.Capacity() != str2.Capacity(), "Capacity is equal to str2 capacity");
     }
 
-    void test_move_assignment_operator() {
+    void TestMoveAssignmentOperator() {
         dsa::String str{"Hello world!"};
         dsa::String str2{"Hello other world!"};
 
@@ -86,7 +86,7 @@ private:
         assert_true(str.Size() != str2.Size(), "Size is equal to str2 size");
     }
 
-    void test_index_operator() {
+    void TestIndexOperator() {
         const dsa::String str{"hello"};
 
         assert_true(str[0], 'h', "Index operator value is not equal to value");
@@ -96,7 +96,7 @@ private:
         assert_true(str[4], 'o', "Index operator value is not equal to value");
     }
 
-    void test_append_operator() {
+    void TestAppendOperator() {
         dsa::String str{"Hello"};
         const char* c_string = "world!";
         const dsa::String str2{"world!"};
@@ -124,7 +124,7 @@ private:
         assert_true(str.Size(), dsa::String::Strlen("Helloworld!"), "Size is not equal to strlen(Hello world!)");
     }
 
-    void test_is_equal_operator() {
+    void TestIsEqualOperator() {
         const dsa::String str{"Hello"};
         const char* c_string = "Hello";
         const dsa::String str2{"Hello"};
@@ -133,7 +133,7 @@ private:
         assert_true(str == str2, "dsa::String is not equal to str2");
     }
 
-    void test_is_not_equal_operator() {
+    void TestIsNotEqualOperator() {
         const dsa::String str{"Hello"};
         const char* c_string = "Hello world!";
         const dsa::String str2{"Hello world!"};
@@ -142,7 +142,7 @@ private:
         assert_true(str != str2, "dsa::String is equal to str2");
     }
 
-    void test_begin_iterator() {
+    void TestBeginIterator() {
         const dsa::String str{"Hello"};
 
         assert_true(*str.Begin(), 'H', "Begin iterator value is not equal to value");
@@ -152,7 +152,7 @@ private:
         assert_true(*(str.Begin() + 4), 'o', "Begin iterator value is not equal to value");
     }
 
-    void test_end_iterator() {
+    void TestEndIterator() {
         const dsa::String str{"Hello"};
 
         assert_true(*(str.End()), '\0', "End iterator value is not equal to value");
@@ -163,7 +163,7 @@ private:
         assert_true(*(str.End() - 5), 'H', "End iterator value is not equal to value");
     }
 
-    void test_at() {
+    void TestAt() {
         const dsa::String str{"Hello"};
 
         assert_true(str.At(0), 'H', "At operator value is not equal to value");
@@ -173,19 +173,19 @@ private:
         assert_true(str.At(4), 'o', "At operator value is not equal to value");
     }
 
-    void test_back() {
+    void TestBack() {
         const dsa::String str{"Hello"};
 
         assert_true(str.Back(), 'o', "Back operator value is not equal to value");
     }
 
-    void test_front() {
+    void TestFront() {
         const dsa::String str{"Hello"};
 
         assert_true(str.Front(), 'H', "Front operator value is not equal to value");
     }
 
-    void test_replace() {
+    void TestReplace() {
         dsa::String str{"Hello world!"};
         const dsa::String str2{"world"};
         const dsa::String str3{"other world!"};
@@ -209,7 +209,7 @@ private:
         assert_true(str == "Hello other world!!", "Replace operator value is not equal to value");
     }
 
-    void test_find() {
+    void TestFind() {
         const dsa::String str{"Hello world!"};
         const dsa::String str2{"world"};
         const char* c_string = "world";
@@ -218,7 +218,7 @@ private:
         assert_true(str.Find(c_string) == "world", "Find operator value is not equal to value");
     }
 
-    void test_substr() {
+    void TestSubstr() {
         const dsa::String str{"Hello world!"};
 
         assert_true(str.Substr(0, 5) == "Hello", "Substr operator 1 value is not equal to value");
@@ -226,19 +226,19 @@ private:
         assert_true(str.Substr(10, 5) == "d!", "Substr operator 3 value is not equal to value");
     }
 
-    void test_size() {
+    void TestSize() {
         const dsa::String str{"Hello world!"};
 
         assert_true(str.Size(), dsa::String::Strlen("Hello world!"), "Size is not equal to strlen(Hello world!)");
     }
 
-    void test_capacity() {
+    void TestCapacity() {
         const dsa::String str{"Hello world!"};
 
         assert_true(str.Capacity(), dsa::String::Strlen("Hello world!") + TEST_DEFAULT_CAPACITY, "Capacity is not equal to strlen(Hello world!) + TEST_DEFAULT_CAPACITY");
     }
 
-    void test_is_empty() {
+    void TestIsEmpty() {
         const dsa::String str{};
 
         assert_true(str.IsEmpty(), true, "Is empty is not equal to true");
@@ -248,7 +248,7 @@ private:
         assert_true(str2.IsEmpty(), false, "Is empty is not equal to false");
     }
 
-    void test_is_equal() {
+    void TestIsEqual() {
         const dsa::String str{"Hello world!"};
         const dsa::String str2{"Hello world!"};
 
@@ -256,7 +256,7 @@ private:
         assert_true(str.IsEqual("Hello"), false, "Is equal is not equal to false");
     }
 
-    void test_strlen() {
+    void TestStrlen() {
         const dsa::String str{"Hello world!"};
 
         constexpr std::size_t length = 12;
@@ -266,40 +266,40 @@ private:
 
     void run() {
         // Constructors
-        test_default_constructor();
-        test_c_string_constructor();
-        test_copy_constructor();
-        test_move_constructor();
+        TestDefaultConstructor();
+        TestCStringConstructor();
+        TestCopyConstructor();
+        TestMoveConstructor();
 
         // Operators
-        test_c_string_assignment_operator();
-        test_copy_assignment_operator();
-        test_move_assignment_operator();
-        test_index_operator();
-        test_append_operator();
-        test_is_equal_operator();
-        test_is_not_equal_operator();
+        TestCStringAssignmentOperator();
+        TestCopyAssignmentOperator();
+        TestMoveAssignmentOperator();
+        TestIndexOperator();
+        TestAppendOperator();
+        TestIsEqualOperator();
+        TestIsNotEqualOperator();
 
         // Iterators
-        test_begin_iterator();
-        test_end_iterator();
+        TestBeginIterator();
+        TestEndIterator();
 
         // Indexing
-        test_at();
-        test_back();
-        test_front();
+        TestAt();
+        TestBack();
+        TestFront();
 
         // Searching
-        test_replace();
-        test_substr();
+        TestReplace();
+        TestSubstr();
 
         // Memory allocation
-        test_size();
-        test_capacity();
+        TestSize();
+        TestCapacity();
 
         // Helpers
-        test_is_empty();
-        test_is_equal();
+        TestIsEmpty();
+        TestIsEqual();
     }
 };
 

@@ -452,7 +452,6 @@ namespace dsa {
             return Substr(index, static_cast<int>(Strlen(pattern)));
         }
 
-        // TODO: check for improvements... Check if we can use iterators or something else so we don't have to copy it over like this, maybe copying is the only way..
         /**
         * Get a substring of the current string starting from the given index and with the given length, or until the end of the string if the length is not provided or exceeds the remaining characters.
         *
@@ -655,7 +654,7 @@ namespace dsa {
         * @param capacity
         */
         void Resize(const std::size_t capacity) {
-            char* newData = static_cast<char*>(::operator new(capacity * sizeof(char)));
+            auto* newData = static_cast<char*>(::operator new(capacity * sizeof(char)));
 
             const std::size_t movableCapacity = (capacity < m_size)
                 ? capacity

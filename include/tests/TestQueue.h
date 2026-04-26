@@ -17,7 +17,7 @@ public:
     ~TestQueue() = default;
 
 private:
-    void test_happy_flow() {
+    void TestHappyFlow() {
         Queue<int> q{};
 
         q.push(5);
@@ -40,9 +40,8 @@ private:
     }
 
     void run() {
-        test_happy_flow();
+        TestHappyFlow();
     }
 };
 
 #endif // TESTQUEUE_H
-

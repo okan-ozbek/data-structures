@@ -19,7 +19,7 @@ public:
 private:
     std::size_t TEST_DEFAULT_CAPACITY = 10;
 
-    void test_default_constructor() {
+    void TestDefaultConstructor() {
         constexpr std::size_t zero = 0;
 
         const dsa::Vector<int> intArray{};
@@ -28,7 +28,7 @@ private:
         assert_true(intArray.Capacity(), TEST_DEFAULT_CAPACITY, "Default constructor capacity is not equal to default capacity");
     }
 
-    void test_capacity_constructor() {
+    void TestCapacityConstructor() {
         constexpr std::size_t capacity = 100;
 
         const dsa::Vector<int> intArray{capacity};
@@ -36,7 +36,7 @@ private:
         assert_true(intArray.Capacity(), capacity, "Capacity constructor capacity is not equal to capacity");
     }
 
-    void test_capacity_value_constructor() {
+    void TestCapacityValueConstructor() {
         constexpr std::size_t capacity = 100;
         constexpr int value = 5;
 
@@ -52,7 +52,7 @@ private:
         }
     }
 
-    void test_copy_constructor() {
+    void TestCopyConstructor() {
         const dsa::Vector<int> intArray{3, 3};
         const dsa::Vector<int> intArrayCopy{intArray};
 
@@ -61,7 +61,7 @@ private:
         assert_true(intArrayCopy.Capacity(), intArray.Capacity(), "Copy constructor capacity is not equal to original capacity");
     }
 
-    void test_move_constructor() {
+    void TestMoveConstructor() {
         dsa::Vector<int> intArray{};
         const dsa::Vector intArrayMove{std::move(intArray)};
 
@@ -71,7 +71,7 @@ private:
         assert_true(intArrayMove.Capacity(), TEST_DEFAULT_CAPACITY, "Move constructor capacity is not equal to 0");
     }
 
-    void test_assignment_operator_copy() {
+    void TestAssignmentOperatorCopy() {
         constexpr std::size_t capacity = 100;
         constexpr int value = 5;
 
@@ -85,7 +85,7 @@ private:
         assert_true(intArrayCopy.Capacity(), intArray.Capacity(), "Assignment operator capacity is not equal to original capacity");
     }
 
-    void test_assignment_operator_move() {
+    void TestAssignmentOperatorMove() {
         constexpr std::size_t capacity = 100;
         constexpr int value = 5;
 
@@ -102,7 +102,7 @@ private:
         assert_true(intArrayMove.Capacity(), capacity, "Assignment operator move capacity is not equal to original capacity");
     }
 
-    void test_index_operator() {
+    void TestIndexOperator() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -114,7 +114,7 @@ private:
         assert_true(intArray[0], 15, "Index operator value is not equal to value");
     }
 
-    void test_index_operator_out_of_bounds() {
+    void TestIndexOperatorOutOfBounds() {
         dsa::Vector<int> intArray{};
 
         try {
@@ -124,7 +124,7 @@ private:
         }
     }
 
-    void test_iterators() {
+    void TestIterators() {
         constexpr std::size_t capacity = 20;
         constexpr int value = 5;
 
@@ -143,7 +143,7 @@ private:
         assert_true(intArray[5], 15, "Iterators value is not equal to value");
     }
 
-    void test_at() {
+    void TestAt() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -153,7 +153,7 @@ private:
         assert_true(intArray.At(1), 10, "At operator value is not equal to value");
     }
 
-    void test_at_out_of_bounds() {
+    void TestAtOutOfBounds() {
         dsa::Vector<int> intArray{};
 
         try {
@@ -163,7 +163,7 @@ private:
         }
     }
 
-    void test_front() {
+    void TestFront() {
         dsa::Vector intArray{10, 1};
 
         intArray.Front() = 5;
@@ -171,7 +171,7 @@ private:
         assert_true(intArray.Front(), 5, "Front operator value is not equal to value");
     }
 
-    void test_back() {
+    void TestBack() {
         dsa::Vector intArray{10, 1};
 
         intArray.Back() = 5;
@@ -179,7 +179,7 @@ private:
         assert_true(intArray.Back(), 5, "Back operator value is not equal to value");
     }
 
-    void test_push_back() {
+    void TestPushBack() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -189,7 +189,7 @@ private:
         assert_true<int>(intArray[1], 10, "Push back operator value is not equal to value");
     }
 
-    void test_emplace_back() {
+    void TestEmplaceBack() {
         struct Vector2D {
             int x;
             int y;
@@ -213,7 +213,7 @@ private:
         assert_true<int>(intArray[2].y, 0, "Emplace back operator value is not equal to value 6");
     }
 
-    void test_pop_back() {
+    void TestPopBack() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -225,7 +225,7 @@ private:
         assert_true<std::size_t>(intArray.Size(), 1, "Pop back operator size is not equal to value");
     }
 
-    void test_erase_single() {
+    void TestEraseSingle() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -239,7 +239,7 @@ private:
         assert_true<std::size_t>(intArray.Size(), 3, "Erase operator size is not equal to value");
     }
 
-    void test_erase_range() {
+    void TestEraseRange() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -279,7 +279,7 @@ private:
         assert_true<std::size_t>(intArray.Size(), 0, "Erase operator size is not equal to value");
     }
 
-    void test_clear() {
+    void TestClear() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -292,7 +292,7 @@ private:
         assert_true<std::size_t>(intArray.Size(), 0, "Clear operator size is not equal to value");
     }
 
-    void test_resize() {
+    void TestResize() {
         dsa::Vector<int> intArray{};
 
         intArray.Resize(30);
@@ -305,7 +305,7 @@ private:
         assert_true<std::size_t>(intArray.Capacity(), 30, "Resize operator size is not equal to value");
     }
 
-    void test_reserve() {
+    void TestReserve() {
         dsa::Vector<int> intArray{};
 
         intArray.Reserve(30);
@@ -319,7 +319,7 @@ private:
         assert_true<std::size_t>(intArray.Capacity(), 40, "Reserve operator size is not equal to value 3");
     }
 
-    void test_shrink_to_fit() {
+    void TestShrinkToFit() {
         dsa::Vector<int> intArray{};
 
         intArray.PushBack(5);
@@ -336,39 +336,38 @@ private:
 
     void run() {
         // Constructors
-        test_default_constructor();
-        test_capacity_constructor();
-        test_capacity_value_constructor();
-        test_copy_constructor();
-        test_move_constructor();
+        TestDefaultConstructor();
+        TestCapacityConstructor();
+        TestCapacityValueConstructor();
+        TestCopyConstructor();
+        TestMoveConstructor();
 
         // Operators
-        test_assignment_operator_copy();
-        test_assignment_operator_move();
-        test_index_operator();
-        test_index_operator_out_of_bounds();
+        TestAssignmentOperatorCopy();
+        TestAssignmentOperatorMove();
+        TestIndexOperator();
+        TestIndexOperatorOutOfBounds();
 
         // Iterators
-        test_iterators();
+        TestIterators();
 
         // Functions
-        test_at();
-        test_at_out_of_bounds();
-        test_front();
-        test_back();
-        test_push_back();
-        test_emplace_back();
-        test_pop_back();
-        test_erase_single();
-        test_erase_range();
+        TestAt();
+        TestAtOutOfBounds();
+        TestFront();
+        TestBack();
+        TestPushBack();
+        TestEmplaceBack();
+        TestPopBack();
+        TestEraseSingle();
+        TestEraseRange();
 
         // Allocation / Deallocation
-        test_clear();
-        test_resize();
-        test_reserve();
-        test_shrink_to_fit();
+        TestClear();
+        TestResize();
+        TestReserve();
+        TestShrinkToFit();
     }
 };
 
 #endif // TESTVECTOR_H
-
