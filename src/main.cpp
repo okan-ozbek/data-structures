@@ -9,7 +9,7 @@
 #include "../include/tests/TestUniquePointer.h"
 #include "../include/tests/TestString.h"
 #include "../include/tests/TestVector.h"
-#include "../include/tests/TestQueue.h"
+#include "../include/tests/TestRingBufferQueue.h"
 // #include "../include/tests/TestStack.h"
 
 int main() {
@@ -19,12 +19,12 @@ int main() {
     {
         Timer timer{};
 
-        TestSharedPointer{};
-        TestUniquePointer{};
-        TestString{};
-        TestVector{};
+        // TestSharedPointer{};
+        // TestUniquePointer{};
+        // TestString{};
+        // TestVector{};
 
-        TestQueue{};
+        TestRingBufferQueue{};
         // TestStack{};
     }
 
@@ -36,7 +36,7 @@ int main() {
     std::cout << "Sizeof std::unique_ptr: " << sizeof(std::unique_ptr<int>) << ", sizeof dsa::UniquePointer: " << sizeof(dsa::UniquePointer<int>) << "\n";
     std::cout << "Sizeof std::string: " << sizeof(std::string) << ", sizeof dsa::String: " << sizeof(dsa::String) << "\n";
     std::cout << "Sizeof std::vector: " << sizeof(std::vector<int>) << ", sizeof dsa::Vector: " << sizeof(dsa::Vector<int>) << "\n";
-    std::cout << "Sizeof std::queue: " << sizeof(std::queue<int>) << ", sizeof dsa::Queue: " << sizeof(dsa::Queue<int>) << "\n";
+    std::cout << "Sizeof std::queue: " << sizeof(std::queue<int>) << ", sizeof dsa::Queue: " << sizeof(dsa::RingBufferQueue<int>) << "\n";
 
     return 0;
 }
