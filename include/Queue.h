@@ -12,100 +12,147 @@
 
 #include <cstddef>
 
-
 namespace dsa {
-    template<typename T>
+    template<typename TValue>
     class Queue {
     public:
-        Queue() = default;
+        Queue()
+            : m_data{ static_cast<TValue*>(::operator new(m_capacity * sizeof(TValue))) }
+        {
+            Populate();
+        }
+
+        explicit Queue(const std::size_t capacity)
+            : m_capacity{ capacity }
+            , m_data{ static_cast<TValue*>(::operator new(m_capacity * sizeof(TValue))) }
+        {
+            Populate();
+        }
+
+        Queue(const Queue& other)
+            : m_data{ static_cast<TValue*>(::operator new(m_capacity * sizeof(TValue))) }
+            , m_capacity{ other.m_capacity }
+            , m_front{ other.m_front }
+            , m_back{ other.m_back }
+        {
+            Populate(other);
+        }
+
+        Queue(Queue&& other) noexcept
+            : m_data{ other.m_data }
+            , m_capacity{ other.m_capacity }
+            , m_front{ other.m_front }
+            , m_back{ other.m_back }
+        {
+            Destroy(other);
+        }
 
         ~Queue() {
-            if (size_ == 0) return;
+            Deallocate();
 
-            QueueNode* current{ head_ };
-            QueueNode* pool{ pool_ };
-
-            while (current) {
-                const QueueNode* temp{ current };
-
-                current = current->next;
-
-                delete temp;
-            }
-
-            while (pool) {
-                const QueueNode* temp{ pool };
-
-                pool = pool->next;
-
-                delete temp;
-            }
+            m_capacity = 0;
+            m_front = 0;
+            m_back = 0;
+            m_size = 0;
         }
 
-        void push(const T& item) {
-            QueueNode* node{ allocate(item) };
-
-            if (tail_ == nullptr) {
-                head_ = node;
-                tail_ = node;
-            } else {
-                tail_->next = node;
-                tail_ = node;
+        Queue& operator=(Queue& other) {
+            if (&other == this) {
+                return *this;
             }
 
-            ++size_;
+            Deallocate();
+
+            m_data = static_cast<TValue*>(::operator new(other.m_capacity * sizeof(TValue)));
+            m_capacity = other.m_capacity;
+            m_front = other.m_front;
+            m_back = other.m_back;
+            m_size = other.m_size;
+
+            Populate(other);
+
+            return *this;
         }
 
-        T pop() {
-            QueueNode* popped{ head_ };
-            const T value{ popped->value };
+        Queue& operator=(Queue&& other) noexcept {
+            if (&other == this) {
+                return *this;
+            }
 
-            head_ = head_->next;
-            --size_;
+            Deallocate();
 
-            deallocate(popped);
-            return value;
+            m_data = other.m_data;
+            m_capacity = other.m_capacity;
+            m_front = other.m_front;
+            m_back = other.m_back;
+            m_size = other.m_size;
+
+            Destroy(other);
+
+            return *this;
         }
 
-        [[nodiscard]] std::size_t size() const {
-            return size_;
+        void Push(const TValue& item) {
+            new (&m_data[m_back]) TValue(item);
+
+            m_back = (m_back + 1) % m_capacity;
+            ++m_size;
+        }
+
+        TValue Pop() {
+            if (IsEmpty()) {
+                throw std::out_of_range("Queue is empty");
+            }
+
+            std::size_t index{ m_front };
+
+            m_front = (m_front + 1) % m_capacity;
+            --m_size;
+
+            return std::move(m_data[index]);
+        }
+
+        [[nodiscard]] bool IsEmpty() const {
+            return (m_front == m_back);
         }
 
     private:
-        struct QueueNode {
-            QueueNode() = default;
+        constexpr static std::size_t DEFAULT_CAPACITY{ 10 };
 
-            explicit QueueNode(T value) : value{ value } {}
+        TValue* m_data{ nullptr };
+        std::size_t m_front{ 0 };
+        std::size_t m_back{ 0 };
+        std::size_t m_size{ 0 };
+        std::size_t m_capacity{ DEFAULT_CAPACITY };
 
-            ~QueueNode() = default;
-
-            T value{};
-            QueueNode* next{};
-        };
-
-        QueueNode* allocate(const T& item) {
-            if (pool_ == nullptr) {
-                return new QueueNode(item);
+        void Deallocate() {
+            for (std::size_t i{}; i < m_size; ++i) {
+                m_data[i].~TValue();
             }
 
-            QueueNode* node{ pool_ };
-
-            pool_ = pool_->next;
-            node->value = item;
-            node->next = nullptr;
-
-            return node;
+            m_size = 0;
+            ::operator delete(m_data);
         }
 
-        void deallocate(QueueNode* node) {
-            node->next = pool_;
-            pool_ = node;
+        void Populate() {
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) TValue{};
+            }
         }
 
-        QueueNode* head_{ nullptr };
-        QueueNode* tail_{ nullptr };
-        QueueNode* pool_{ nullptr };
-        std::size_t size_{ 0 };
+        void Populate(Queue& other) {
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) TValue(other.m_data[i]);
+            }
+        }
+
+        void Destroy(Queue&& other) {
+            other.m_data = nullptr;
+            other.m_capacity = 0;
+            other.m_front = 0;
+            other.m_back = 0;
+            other.m_size = 0;
+        }
     };
 }
 

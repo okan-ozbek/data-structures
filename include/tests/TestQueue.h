@@ -18,25 +18,27 @@ public:
 
 private:
     void TestHappyFlow() {
-        Queue<int> q{};
+        dsa::Queue<int> q{};
 
-        q.push(5);
-        q.push(10);
-        q.push(15);
+        q.Push(5);
+        q.Push(10);
+        q.Push(15);
 
         int expect{5};
 
-        while (q.size() > 0) {
-            const int value = q.pop();
+        assert_true(q.IsEmpty(), false, "Queue is not empty");
 
-            //std::cout << "Pop value: " << value << std::endl;
+        while (!q.IsEmpty()) {
+            const int value = q.Pop();
+
+            std::cout << "Pop value: " << value << std::endl;
 
             assert_true(value, expect, "Pop value is not equal to a divisible by 5");
 
             expect += 5;
         }
 
-        //std::cout << "Queue size: " << q.size() << std::endl;
+        assert_true(q.IsEmpty(), true, "Queue is not empty");
     }
 
     void run() {
