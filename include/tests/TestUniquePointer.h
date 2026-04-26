@@ -29,7 +29,7 @@ private:
     void test_default_constructor() {
         dsa::UniquePointer<int> pointer{};
 
-        assert_true(pointer.get() == nullptr, "Default constructed pointer should be nullptr");
+        assert_true(pointer.Get() == nullptr, "Default constructed pointer should be nullptr");
     }
 
     void test_explicit_value_constructor() {
@@ -48,12 +48,12 @@ private:
 
     void test_move_constructor() {
         dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(10, 10);
-        const Vector2D* temp_pointer = pointer_1.get();
+        const Vector2D* temp_pointer = pointer_1.Get();
 
         const dsa::UniquePointer pointer_2{std::move(pointer_1)};
 
-        assert_true(pointer_2.get() == temp_pointer, "Move constructor: pointer_2 should own the original resource");
-        assert_true(pointer_1.get() == nullptr, "Move constructor: pointer_1 should be nullptr after move");
+        assert_true(pointer_2.Get() == temp_pointer, "Move constructor: pointer_2 should own the original resource");
+        assert_true(pointer_1.Get() == nullptr, "Move constructor: pointer_1 should be nullptr after move");
     }
 
     void test_destructor() {
@@ -75,13 +75,13 @@ private:
 
     void test_move_assignment_operator() {
         dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(10, 10);
-        const Vector2D* temp_pointer = pointer_1.get();
+        const Vector2D* temp_pointer = pointer_1.Get();
         dsa::UniquePointer<Vector2D> pointer_2{};
 
         pointer_2 = std::move(pointer_1);
 
-        assert_true(pointer_2.get() == temp_pointer, "Move assignment: pointer_2 should own the original resource");
-        assert_true(pointer_1.get() == nullptr, "Move assignment: pointer_1 should be nullptr after move");
+        assert_true(pointer_2.Get() == temp_pointer, "Move assignment: pointer_2 should own the original resource");
+        assert_true(pointer_1.Get() == nullptr, "Move assignment: pointer_1 should be nullptr after move");
     }
 
     void test_arrow_operator() {
@@ -114,7 +114,7 @@ private:
         int n{10};
         dsa::UniquePointer<Vector2D> pointer = dsa::make_unique<Vector2D>(n);
 
-        const Vector2D* stale = pointer.release();
+        const Vector2D* stale = pointer.Release();
 
         assert_true(stale->x == n, "Release: x should still be accessible after release");
         assert_true(stale->y == n, "Release: y should still be accessible after release");
@@ -128,14 +128,14 @@ private:
 
         dsa::UniquePointer pointer_1(new Vector2D(n), deleter);
 
-        pointer_1.reset(new Vector2D(n * 2));
+        pointer_1.Reset(new Vector2D(n * 2));
 
         assert_true(deleted, "Reset: memory was not deallocated");
         assert_true(pointer_1->x == n * 2, "Reset: x should be n*2 after reset with new object");
         assert_true(pointer_1->y == n * 2, "Reset: y should be n*2 after reset with new object");
 
         deleted = false;
-        pointer_1.reset(pointer_1.get());
+        pointer_1.Reset(pointer_1.Get());
 
         assert_true(!deleted, "Reset self: memory was not deallocated");
         assert_true(pointer_1->x == n * 2, "Reset self: x should survive self-reset");
@@ -146,9 +146,9 @@ private:
         int n{10};
         const dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(n);
 
-        assert_true(pointer_1.get() != nullptr, "Get: pointer should not be nullptr");
-        assert_true(pointer_1.get()->x == n, "Get: x does not match expected value");
-        assert_true(pointer_1.get()->y == n, "Get: y does not match expected value");
+        assert_true(pointer_1.Get() != nullptr, "Get: pointer should not be nullptr");
+        assert_true(pointer_1.Get()->x == n, "Get: x does not match expected value");
+        assert_true(pointer_1.Get()->y == n, "Get: y does not match expected value");
     }
 
     void test_swap() {
@@ -156,7 +156,7 @@ private:
         dsa::UniquePointer<Vector2D> pointer_1 = dsa::make_unique<Vector2D>(n);
         dsa::UniquePointer<Vector2D> pointer_2 = dsa::make_unique<Vector2D>(n * 2);
 
-        pointer_1.swap(pointer_2);
+        pointer_1.Swap(pointer_2);
 
         assert_true(pointer_1->x == n * 2, "Swap: pointer_1 x should be n*2 after swap");
         assert_true(pointer_2->x == n, "Swap: pointer_2 x should be n after swap");

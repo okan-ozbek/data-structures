@@ -7,7 +7,7 @@
 
 
 namespace dsa {
-    template<typename TValueType, typename TDeleter = std::default_delete<TValueType>>
+    template<typename TValue, typename TDeleter = std::default_delete<TValue>>
     class UniquePointer : TDeleter {
     public:
         /**
@@ -20,8 +20,8 @@ namespace dsa {
         * 
         * @param pointer
         */
-        explicit UniquePointer(TValueType* pointer) 
-            : pointer_{ pointer } 
+        explicit UniquePointer(TValue* pointer)
+            : m_pointer{ pointer }
         {}
 
         /**
@@ -30,9 +30,9 @@ namespace dsa {
         * @param pointer
         * @param deleter
         */
-        UniquePointer(TValueType* pointer, TDeleter deleter) 
+        UniquePointer(TValue* pointer, TDeleter deleter)
             : TDeleter{ std::move(deleter) }
-            , pointer_{ pointer } 
+            , m_pointer{ pointer }
         {}
 
         /**
@@ -52,9 +52,9 @@ namespace dsa {
         * @param other
         */
         UniquePointer(UniquePointer&& other) noexcept 
-            : pointer_{ other.pointer_ } 
+            : m_pointer{ other.m_pointer }
         {
-            other.pointer_ = nullptr;
+            other.m_pointer = nullptr;
         }
 
         /**
@@ -70,7 +70,7 @@ namespace dsa {
                 return *this;
             }
 
-            reset(other.release());
+            Reset(other.Release());
 
             return *this;
         }
@@ -79,12 +79,12 @@ namespace dsa {
         * Destructor. Deletes the owned pointer if not null.
         */
         ~UniquePointer() {
-            if (pointer_ == nullptr) {
-                delete pointer_;
+            if (m_pointer == nullptr) {
+                delete m_pointer;
                 return;
             }
 
-            get_deleter()(pointer_);
+            GetDeleter()(m_pointer);
         }
 
         /**
@@ -92,8 +92,8 @@ namespace dsa {
         * 
         * @return TValueType*
         */
-        TValueType* operator->() const noexcept {
-            return pointer_;
+        TValue* operator->() const noexcept {
+            return m_pointer;
         }
 
         /** 
@@ -101,8 +101,8 @@ namespace dsa {
         * 
         * @return TValueType&
         */
-        TValueType& operator*() const noexcept {
-            return *pointer_;
+        TValue& operator*() const noexcept {
+            return *m_pointer;
         }
 
         /**
@@ -111,7 +111,7 @@ namespace dsa {
         * @return bool
         */
         explicit operator bool() const {
-            return (pointer_ != nullptr);
+            return (m_pointer != nullptr);
         }
 
         /**
@@ -120,9 +120,9 @@ namespace dsa {
         * Time complexity: O(1).
         * @return TValueType*
         */
-        TValueType* release() {
-            auto* stale = pointer_;
-            pointer_ = nullptr;
+        TValue* Release() {
+            auto* stale = m_pointer;
+            m_pointer = nullptr;
 
             return stale;
         }
@@ -133,36 +133,36 @@ namespace dsa {
         * Time complexity: O(1).
         * @param other
         */
-        void reset(TValueType* other = nullptr) noexcept {
-            if (pointer_ == other) {
+        void Reset(TValue* other = nullptr) noexcept {
+            if (m_pointer == other) {
                 return;
             }
 
-            auto* stale = pointer_;
-            pointer_ = other;
+            auto* stale = m_pointer;
+            m_pointer = other;
 
             if (stale == nullptr) {
                 return;
             }
 
-            get_deleter()(stale);
+            GetDeleter()(stale);
         }
 
         /**
         * Return the pointer
         */
-        TValueType* get() const noexcept {
-            return pointer_;
+        TValue* Get() const noexcept {
+            return m_pointer;
         }
 
         /**
         * Return the deleter (access the base class)
         */
-        TDeleter& get_deleter() noexcept {
+        TDeleter& GetDeleter() noexcept {
             return static_cast<TDeleter&>(*this);
         }
 
-        const TDeleter& get_deleter() const noexcept {
+        [[nodiscard]] const TDeleter& GetDeleter() const noexcept {
             return static_cast<const TDeleter&>(*this);
         }
 
@@ -172,15 +172,15 @@ namespace dsa {
         * Time complexity: O(1).
         * @param other
         */
-        void swap(UniquePointer& other) noexcept {
-            std::swap(pointer_, other.pointer_);
+        void Swap(UniquePointer& other) noexcept {
+            std::swap(m_pointer, other.m_pointer);
         }
 
     private:
         /**
         * The pointer we are protecting ownership of.
         */
-        TValueType* pointer_{nullptr};
+        TValue* m_pointer{ nullptr };
     };
 
     /**
@@ -191,9 +191,9 @@ namespace dsa {
     * @param args
     * @return UniquePointer<TValueType>
     */
-    template<typename TValueType, typename... TArgs>
-    UniquePointer<TValueType> make_unique(TArgs&&... args) {
-        return UniquePointer<TValueType>(new TValueType(std::forward<TArgs>(args)...));
+    template<typename TValue, typename... TArgs>
+    UniquePointer<TValue> make_unique(TArgs&&... args) {
+        return UniquePointer<TValue>(new TValue(std::forward<TArgs>(args)...));
     }
 }
 

@@ -22,103 +22,103 @@ private:
     void test_default_constructor() {
         constexpr std::size_t zero = 0;
 
-        const dsa::Vector<int> int_array{};
+        const dsa::Vector<int> intArray{};
 
-        assert_true(int_array.size(), zero, "Default constructor size is not equal to default capacity");
-        assert_true(int_array.capacity(), TEST_DEFAULT_CAPACITY, "Default constructor capacity is not equal to default capacity");
+        assert_true(intArray.Size(), zero, "Default constructor size is not equal to default capacity");
+        assert_true(intArray.Capacity(), TEST_DEFAULT_CAPACITY, "Default constructor capacity is not equal to default capacity");
     }
 
     void test_capacity_constructor() {
         constexpr std::size_t capacity = 100;
 
-        const dsa::Vector<int> int_array{capacity};
+        const dsa::Vector<int> intArray{capacity};
 
-        assert_true(int_array.capacity(), capacity, "Capacity constructor capacity is not equal to capacity");
+        assert_true(intArray.Capacity(), capacity, "Capacity constructor capacity is not equal to capacity");
     }
 
     void test_capacity_value_constructor() {
         constexpr std::size_t capacity = 100;
         constexpr int value = 5;
 
-        const dsa::Vector int_array{capacity, value};
+        const dsa::Vector intArray{capacity, value};
 
-        assert_true(int_array.capacity(), capacity, "Capacity and value constructor capacity is not equal to capacity");
+        assert_true(intArray.Capacity(), capacity, "Capacity and value constructor capacity is not equal to capacity");
 
-        for (std::size_t i{}; i < int_array.size(); ++i) {
-            assert_true(int_array[i], value, "Capacity and value constructor value is not equal to value");
-            if (int_array[i] != value) {
+        for (std::size_t i{}; i < intArray.Size(); ++i) {
+            assert_true(intArray[i], value, "Capacity and value constructor value is not equal to value");
+            if (intArray[i] != value) {
                 break;
             }
         }
     }
 
     void test_copy_constructor() {
-        const dsa::Vector<int> int_array{};
-        const dsa::Vector int_array_copy{int_array};
+        const dsa::Vector<int> intArray{3, 3};
+        const dsa::Vector<int> intArrayCopy{intArray};
 
-        assert_true(*int_array.begin(), *int_array_copy.begin(), "Copy constructor begin is not equal to original begin");
-        assert_true(int_array_copy.size(), int_array.size(), "Copy constructor size is not equal to original size");
-        assert_true(int_array_copy.capacity(), int_array.capacity(), "Copy constructor capacity is not equal to original capacity");
+        assert_true(*intArray.begin(), *intArrayCopy.begin(), "Copy constructor begin is not equal to original begin");
+        assert_true(intArrayCopy.Size(), intArray.Size(), "Copy constructor size is not equal to original size");
+        assert_true(intArrayCopy.Capacity(), intArray.Capacity(), "Copy constructor capacity is not equal to original capacity");
     }
 
     void test_move_constructor() {
-        dsa::Vector<int> int_array{};
-        const dsa::Vector int_array_move{std::move(int_array)};
+        dsa::Vector<int> intArray{};
+        const dsa::Vector intArrayMove{std::move(intArray)};
 
         constexpr std::size_t zero = 0;
 
-        assert_true(int_array_move.size(), zero, "Move constructor size is not equal to 0");
-        assert_true(int_array_move.capacity(), TEST_DEFAULT_CAPACITY, "Move constructor capacity is not equal to 0");
+        assert_true(intArrayMove.Size(), zero, "Move constructor size is not equal to 0");
+        assert_true(intArrayMove.Capacity(), TEST_DEFAULT_CAPACITY, "Move constructor capacity is not equal to 0");
     }
 
     void test_assignment_operator_copy() {
         constexpr std::size_t capacity = 100;
         constexpr int value = 5;
 
-        const dsa::Vector int_array{capacity, value};
-        dsa::Vector<int> int_array_copy{};
+        const dsa::Vector intArray{capacity, value};
+        dsa::Vector<int> intArrayCopy{};
 
-        int_array_copy = int_array;
+        intArrayCopy = intArray;
 
-        assert_true(*int_array_copy.begin(), *int_array.begin(), "Assignment operator begin is not equal to original begin");
-        assert_true(int_array_copy.size(), int_array.size(), "Assignment operator size is not equal to original size");
-        assert_true(int_array_copy.capacity(), int_array.capacity(), "Assignment operator capacity is not equal to original capacity");
+        assert_true(*intArrayCopy.begin(), *intArray.begin(), "Assignment operator begin is not equal to original begin");
+        assert_true(intArrayCopy.Size(), intArray.Size(), "Assignment operator size is not equal to original size");
+        assert_true(intArrayCopy.Capacity(), intArray.Capacity(), "Assignment operator capacity is not equal to original capacity");
     }
 
     void test_assignment_operator_move() {
         constexpr std::size_t capacity = 100;
         constexpr int value = 5;
 
-        dsa::Vector int_array{capacity, value};
+        dsa::Vector intArray{capacity, value};
 
-        dsa::Vector<int> int_array_move{};
-        int_array_move = std::move(int_array);
+        dsa::Vector<int> intArrayMove{};
+        intArrayMove = std::move(intArray);
 
         constexpr std::size_t zero = 0;
 
-        assert_true(int_array.size(), zero, "Assignment operator move size is not equal to 0");
-        assert_true(int_array.capacity(), zero, "Assignment operator move capacity is not equal to 0");
-        assert_true(int_array_move.size(), capacity, "Assignment operator move size is not equal to original size");
-        assert_true(int_array_move.capacity(), capacity, "Assignment operator move capacity is not equal to original capacity");
+        assert_true(intArray.Size(), zero, "Assignment operator move size is not equal to 0");
+        assert_true(intArray.Capacity(), zero, "Assignment operator move capacity is not equal to 0");
+        assert_true(intArrayMove.Size(), capacity, "Assignment operator move size is not equal to original size");
+        assert_true(intArrayMove.Capacity(), capacity, "Assignment operator move capacity is not equal to original capacity");
     }
 
     void test_index_operator() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
+        intArray.PushBack(5);
 
-        assert_true(int_array[0], 5, "Index operator value is not equal to value");
+        assert_true(intArray[0], 5, "Index operator value is not equal to value");
 
-        int_array[0] = 15;
+        intArray[0] = 15;
 
-        assert_true(int_array[0], 15, "Index operator value is not equal to value");
+        assert_true(intArray[0], 15, "Index operator value is not equal to value");
     }
 
     void test_index_operator_out_of_bounds() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
         try {
-            int_array[100] = 10;
+            intArray[100] = 10;
         } catch (const std::out_of_range& e) {
             assert_true(true, true, "Index operator out of bounds does not throw correct error message");
         }
@@ -128,65 +128,65 @@ private:
         constexpr std::size_t capacity = 20;
         constexpr int value = 5;
 
-        dsa::Vector int_array{capacity, value};
+        dsa::Vector intArray{capacity, value};
 
-        for (int& x : int_array) {
+        for (int& x : intArray) {
             x = 10;
         }
 
-        assert_true(int_array[0], 10, "Iterators value is not equal to value");
+        assert_true(intArray[0], 10, "Iterators value is not equal to value");
 
-        for (dsa::Vector<int>::Iterator it = int_array.begin(); it != int_array.end(); ++it) {
-            *it = 15;
+        for (auto & it : intArray) {
+            it = 15;
         }
 
-        assert_true(int_array[5], 15, "Iterators value is not equal to value");
+        assert_true(intArray[5], 15, "Iterators value is not equal to value");
     }
 
     void test_at() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
-        int_array.push_back(10);
+        intArray.PushBack(5);
+        intArray.PushBack(10);
 
-        assert_true(int_array.at(0), 5, "At operator value is not equal to value");
-        assert_true(int_array.at(1), 10, "At operator value is not equal to value");
+        assert_true(intArray.At(0), 5, "At operator value is not equal to value");
+        assert_true(intArray.At(1), 10, "At operator value is not equal to value");
     }
 
     void test_at_out_of_bounds() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
         try {
-            int_array.at(100);
+            intArray.At(100);
         } catch (const std::out_of_range& e) {
             assert_true(true, true, "At operator out of bounds does not throw correct error message");
         }
     }
 
     void test_front() {
-        dsa::Vector int_array{10, 1};
+        dsa::Vector intArray{10, 1};
 
-        int_array.front() = 5;
+        intArray.Front() = 5;
 
-        assert_true(int_array.front(), 5, "Front operator value is not equal to value");
+        assert_true(intArray.Front(), 5, "Front operator value is not equal to value");
     }
 
     void test_back() {
-        dsa::Vector int_array{10, 1};
+        dsa::Vector intArray{10, 1};
 
-        int_array.back() = 5;
+        intArray.Back() = 5;
 
-        assert_true(int_array.back(), 5, "Back operator value is not equal to value");
+        assert_true(intArray.Back(), 5, "Back operator value is not equal to value");
     }
 
     void test_push_back() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
-        int_array.push_back(10);
+        intArray.PushBack(5);
+        intArray.PushBack(10);
 
-        assert_true<int>(int_array[0], 5, "Push back operator value is not equal to value");
-        assert_true<int>(int_array[1], 10, "Push back operator value is not equal to value");
+        assert_true<int>(intArray[0], 5, "Push back operator value is not equal to value");
+        assert_true<int>(intArray[1], 10, "Push back operator value is not equal to value");
     }
 
     void test_emplace_back() {
@@ -199,139 +199,139 @@ private:
             explicit Vector2D(const int x, const int y) : x{x}, y{y} {}
         };
 
-        dsa::Vector<Vector2D> int_array{};
+        dsa::Vector<Vector2D> intArray{};
 
-        int_array.emplace_back(5, 10);
-        int_array.emplace_back(5);
-        int_array.emplace_back();
+        intArray.EmplaceBack(5, 10);
+        intArray.EmplaceBack(5);
+        intArray.EmplaceBack();
 
-        assert_true<int>(int_array[0].x, 5, "Emplace back operator value is not equal to value 1");
-        assert_true<int>(int_array[0].y, 10, "Emplace back operator value is not equal to value 2");
-        assert_true<int>(int_array[1].x, 5, "Emplace back operator value is not equal to value 3");
-        assert_true<int>(int_array[1].y, 5, "Emplace back operator value is not equal to value 4 ");
-        assert_true<int>(int_array[2].x, 0, "Emplace back operator value is not equal to value 5");
-        assert_true<int>(int_array[2].y, 0, "Emplace back operator value is not equal to value 6");
+        assert_true<int>(intArray[0].x, 5, "Emplace back operator value is not equal to value 1");
+        assert_true<int>(intArray[0].y, 10, "Emplace back operator value is not equal to value 2");
+        assert_true<int>(intArray[1].x, 5, "Emplace back operator value is not equal to value 3");
+        assert_true<int>(intArray[1].y, 5, "Emplace back operator value is not equal to value 4 ");
+        assert_true<int>(intArray[2].x, 0, "Emplace back operator value is not equal to value 5");
+        assert_true<int>(intArray[2].y, 0, "Emplace back operator value is not equal to value 6");
     }
 
     void test_pop_back() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
-        int_array.push_back(10);
+        intArray.PushBack(5);
+        intArray.PushBack(10);
 
-        int_array.pop_back();
+        intArray.PopBack();
 
-        assert_true<int>(int_array.back(), 5, "Pop back operator value is not equal to value");
-        assert_true<int>(int_array.size(), 1, "Pop back operator size is not equal to value");
+        assert_true<int>(intArray.Back(), 5, "Pop back operator value is not equal to value");
+        assert_true<std::size_t>(intArray.Size(), 1, "Pop back operator size is not equal to value");
     }
 
     void test_erase_single() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
-        int_array.push_back(10);
-        int_array.push_back(15);
-        int_array.push_back(20);
+        intArray.PushBack(5);
+        intArray.PushBack(10);
+        intArray.PushBack(15);
+        intArray.PushBack(20);
 
-        int_array.erase(int_array.begin() + 1);
+        intArray.Erase(intArray.begin() + 1);
 
-        assert_true(int_array[1], 15, "Erase operator value is not equal to value");
-        assert_true<std::size_t>(int_array.size(), 3, "Erase operator size is not equal to value");
+        assert_true(intArray[1], 15, "Erase operator value is not equal to value");
+        assert_true<std::size_t>(intArray.Size(), 3, "Erase operator size is not equal to value");
     }
 
     void test_erase_range() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
-        int_array.push_back(10);
-        int_array.push_back(15);
-        int_array.push_back(20);
-        int_array.push_back(25);
-        int_array.push_back(30);
+        intArray.PushBack(5);
+        intArray.PushBack(10);
+        intArray.PushBack(15);
+        intArray.PushBack(20);
+        intArray.PushBack(25);
+        intArray.PushBack(30);
 
-        int_array.erase(int_array.begin() + 1, int_array.begin() + 3);
+        intArray.Erase(intArray.begin() + 1, intArray.begin() + 3);
 
-        assert_true<int>(int_array[0], 5, "Erase operator value is not equal to value");
-        assert_true<int>(int_array[1], 25, "Erase operator value is not equal to value");
-        assert_true<int>(int_array[2], 30, "Erase operator value is not equal to value");
-        assert_true<int>(int_array.size(), 3, "Erase operator size is not equal to value");
+        assert_true<int>(intArray[0], 5, "Erase operator value is not equal to value");
+        assert_true<int>(intArray[1], 25, "Erase operator value is not equal to value");
+        assert_true<int>(intArray[2], 30, "Erase operator value is not equal to value");
+        assert_true<std::size_t>(intArray.Size(), 3, "Erase operator size is not equal to value");
 
-        int_array.clear();
-        int_array.push_back(5);
-        int_array.push_back(10);
-        int_array.push_back(15);
-        int_array.push_back(20);
-        int_array.push_back(25);
-        int_array.push_back(30);
+        intArray.Clear();
+        intArray.PushBack(5);
+        intArray.PushBack(10);
+        intArray.PushBack(15);
+        intArray.PushBack(20);
+        intArray.PushBack(25);
+        intArray.PushBack(30);
 
-        int_array.erase(int_array.begin() + 1, int_array.end());
+        intArray.Erase(intArray.begin() + 1, intArray.end());
 
-        assert_true<int>(int_array[0], 5, "Erase operator value is not equal to value");
-        assert_true<int>(int_array.size(), 1, "Erase operator size is not equal to value");
+        assert_true<int>(intArray[0], 5, "Erase operator value is not equal to value");
+        assert_true<std::size_t>(intArray.Size(), 1, "Erase operator size is not equal to value");
 
-        int_array.clear();
-        int_array.push_back(5);
-        int_array.push_back(10);
-        int_array.push_back(15);
+        intArray.Clear();
+        intArray.PushBack(5);
+        intArray.PushBack(10);
+        intArray.PushBack(15);
 
-        int_array.erase(int_array.begin(), int_array.end());
+        intArray.Erase(intArray.begin(), intArray.end());
 
-        assert_true<int>(int_array.size(), 0, "Erase operator size is not equal to value");
+        assert_true<std::size_t>(intArray.Size(), 0, "Erase operator size is not equal to value");
     }
 
     void test_clear() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
-        int_array.push_back(10);
-        int_array.push_back(15);
-        int_array.push_back(20);
+        intArray.PushBack(5);
+        intArray.PushBack(10);
+        intArray.PushBack(15);
+        intArray.PushBack(20);
 
-        int_array.clear();
+        intArray.Clear();
 
-        assert_true<int>(int_array.size(), 0, "Clear operator size is not equal to value");
+        assert_true<std::size_t>(intArray.Size(), 0, "Clear operator size is not equal to value");
     }
 
     void test_resize() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.resize(30);
-        assert_true<int>(int_array.capacity(), 30, "Resize operator size is not equal to value");
+        intArray.Resize(30);
+        assert_true<std::size_t>(intArray.Capacity(), 30, "Resize operator size is not equal to value");
 
-        int_array.resize(20);
-        assert_true<int>(int_array.capacity(), 20, "Resize operator size is not equal to value");
+        intArray.Resize(20);
+        assert_true<std::size_t>(intArray.Capacity(), 20, "Resize operator size is not equal to value");
 
-        int_array.resize(30);
-        assert_true<int>(int_array.capacity(), 30, "Resize operator size is not equal to value");
+        intArray.Resize(30);
+        assert_true<std::size_t>(intArray.Capacity(), 30, "Resize operator size is not equal to value");
     }
 
     void test_reserve() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.reserve(30);
-        assert_true<int>(int_array.capacity(), 30, "Reserve operator size is not equal to value 1");
+        intArray.Reserve(30);
+        assert_true<std::size_t>(intArray.Capacity(), 30, "Reserve operator size is not equal to value 1");
 
         // Reason: Reserve cannot shrink its capacity.
-        int_array.reserve(20);
-        assert_true<int>(int_array.capacity(), 30, "Reserve operator size is not equal to value 2");
+        intArray.Reserve(20);
+        assert_true<std::size_t>(intArray.Capacity(), 30, "Reserve operator size is not equal to value 2");
 
-        int_array.reserve(40);
-        assert_true<int>(int_array.capacity(), 40, "Reserve operator size is not equal to value 3");
+        intArray.Reserve(40);
+        assert_true<std::size_t>(intArray.Capacity(), 40, "Reserve operator size is not equal to value 3");
     }
 
     void test_shrink_to_fit() {
-        dsa::Vector<int> int_array{};
+        dsa::Vector<int> intArray{};
 
-        int_array.push_back(5);
-        int_array.push_back(10);
+        intArray.PushBack(5);
+        intArray.PushBack(10);
 
-        assert_true<int>(int_array.capacity(), TEST_DEFAULT_CAPACITY, "Shrink to fit operator size is not equal to value");
+        assert_true<std::size_t>(intArray.Capacity(), TEST_DEFAULT_CAPACITY, "Shrink to fit operator size is not equal to value");
 
-        int_array.shrink_to_fit();
+        intArray.ShrinkToFit();
 
-        assert_true<int>(int_array.capacity(), 2, "Shrink to fit operator size is not equal to value");
-        assert_true<int>(int_array[0], 5, "Shrink to fit operator size is not equal to value");
-        assert_true<int>(int_array[1], 10, "Shrink to fit operator size is not equal to value");
+        assert_true<std::size_t>(intArray.Capacity(), 2, "Shrink to fit operator size is not equal to value");
+        assert_true<int>(intArray[0], 5, "Shrink to fit operator size is not equal to value");
+        assert_true<int>(intArray[1], 10, "Shrink to fit operator size is not equal to value");
     }
 
     void run() {

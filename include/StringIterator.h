@@ -11,9 +11,9 @@ namespace dsa {
         /**
         * Initialize a string iterator, pointing to the provided pointer.
         *
-        * @param ptr
+        * @param pointer
         */
-        explicit StringIterator(const char* ptr) : m_pointer{ptr} {}
+        explicit StringIterator(const char* pointer) : m_pointer{ pointer } {}
 
         /**
         * Move the iterator to the next element in the string.
@@ -177,7 +177,7 @@ namespace dsa {
             return m_pointer >= other.m_pointer;
         }
 
-        [[nodiscard]] const char* ptr() const {
+        [[nodiscard]] const char* pointer() const {
             return m_pointer;
         }
 

@@ -15,9 +15,9 @@ namespace dsa {
         /**
         * Initialize a vector iterator, pointing to the provided pointer.
         *
-        * @param ptr
+        * @param pointer
         */
-        explicit VectorIterator(ValueType* ptr) : ptr_{ptr} {}
+        explicit VectorIterator(ValueType* pointer) : m_pointer{ pointer } {}
 
         /**
         * Move the iterator to the next element in the array.
@@ -25,7 +25,7 @@ namespace dsa {
         * @return VectorIterator&
         */
         VectorIterator& operator++() {
-            ++ptr_;
+            ++m_pointer;
             return *this;
         }
 
@@ -35,7 +35,7 @@ namespace dsa {
         * @return VectorIterator&
         */
         VectorIterator& operator--() {
-            --ptr_;
+            --m_pointer;
             return *this;
         }
 
@@ -47,7 +47,7 @@ namespace dsa {
         * @return VectorIterator
         */
         VectorIterator operator+(const int offset) const {
-            return VectorIterator{ptr_ + offset};
+            return VectorIterator{ m_pointer + offset };
         }
 
         /**
@@ -59,7 +59,7 @@ namespace dsa {
         * @return VectorIterator
         */
         VectorIterator operator-(const int offset) const {
-            return VectorIterator{ptr_ - offset};
+            return VectorIterator{ m_pointer - offset };
         }
 
         /**
@@ -69,7 +69,7 @@ namespace dsa {
         * @return ValueType&
         */
         ValueType& operator[](const int index) {
-            return ptr_[index];
+            return m_pointer[index];
         }
 
         /**
@@ -80,7 +80,7 @@ namespace dsa {
         * @return ValueType&
         */
         ValueType& operator[](const int index) const {
-            return ptr_[index];
+            return m_pointer[index];
         }
 
         /**
@@ -89,7 +89,7 @@ namespace dsa {
         * @return ValueType&
         */
         ValueType& operator*() {
-            return *ptr_;
+            return *m_pointer;
         }
 
         /**
@@ -99,7 +99,7 @@ namespace dsa {
         * @return ValueType&
         */
         ValueType& operator*() const {
-            return *ptr_;
+            return *m_pointer;
         }
 
         /**
@@ -108,7 +108,7 @@ namespace dsa {
         * @return ValueType*
         */
         ValueType* operator->() {
-            return ptr_;
+            return m_pointer;
         }
 
         /**
@@ -118,7 +118,7 @@ namespace dsa {
         * @return ValueType*
         */
         ValueType* operator->() const {
-            return ptr_;
+            return m_pointer;
         }
 
         /**
@@ -128,7 +128,7 @@ namespace dsa {
         * @return bool
         */
         bool operator==(const VectorIterator& other) const {
-            return ptr_ == other.ptr_;
+            return m_pointer == other.m_pointer;
         }
 
         /**
@@ -138,7 +138,7 @@ namespace dsa {
         * @return bool
         */
         bool operator!=(const VectorIterator& other) const {
-            return ptr_ != other.ptr_;
+            return m_pointer != other.m_pointer;
         }
 
         /**
@@ -148,7 +148,7 @@ namespace dsa {
         * @return bool
         */
         bool operator<(const VectorIterator& other) const {
-            return ptr_ < other.ptr_;
+            return m_pointer < other.m_pointer;
         }
 
         /**
@@ -158,7 +158,7 @@ namespace dsa {
         * @return bool
         */
         bool operator>(const VectorIterator& other) const {
-            return ptr_ > other.ptr_;
+            return m_pointer > other.m_pointer;
         }
 
         /**
@@ -168,7 +168,7 @@ namespace dsa {
         * @return bool
         */
         bool operator<=(const VectorIterator& other) const {
-            return ptr_ <= other.ptr_;
+            return m_pointer <= other.m_pointer;
         }
 
         /**
@@ -178,15 +178,15 @@ namespace dsa {
         * @return bool
         */
         bool operator>=(const VectorIterator& other) const {
-            return ptr_ >= other.ptr_;
+            return m_pointer >= other.m_pointer;
         }
 
-        ValueType* ptr() const {
-            return ptr_;
+        ValueType* pointer() const {
+            return m_pointer;
         }
 
     private:
-        ValueType* ptr_;
+        ValueType* m_pointer;
     };
 }
 

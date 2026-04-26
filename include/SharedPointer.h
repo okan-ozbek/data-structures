@@ -10,7 +10,7 @@
 
 
 namespace dsa {
-    template<typename TValueType>
+    template<typename TValue>
     class SharedPointer {
     public:
         /**
@@ -23,9 +23,9 @@ namespace dsa {
          *
          * @param pointer
          */
-        explicit SharedPointer(TValueType* pointer)
-            : pointer_{ pointer } 
-            , control_{ pointer ? new ControlBlock() : nullptr }
+        explicit SharedPointer(TValue* pointer)
+            : m_pointer{ pointer }
+            , m_control{ pointer ? new ControlBlock() : nullptr }
         {}
 
         /**
@@ -34,11 +34,11 @@ namespace dsa {
          * @param other
          */
         SharedPointer(const SharedPointer& other)
-            : pointer_{ other.pointer_ }
-            , control_{ other.control_ }
+            : m_pointer{ other.m_pointer }
+            , m_control{ other.m_control }
         {
-            if (control_) {
-                ++control_->count;
+            if (m_control) {
+                ++m_control->count;
             }
         }
 
@@ -54,13 +54,13 @@ namespace dsa {
                 return *this;
             }
 
-            remove_shared();
+            RemoveShared();
 
-            control_ = other.control_;
-            pointer_ = other.pointer_;
+            m_control = other.m_control;
+            m_pointer = other.m_pointer;
 
-            if (control_) {
-                ++control_->count;
+            if (m_control) {
+                ++m_control->count;
             }
 
             return *this;
@@ -80,7 +80,7 @@ namespace dsa {
         SharedPointer& operator=(SharedPointer&&) = delete;
 
         ~SharedPointer() {
-            remove_shared();
+            RemoveShared();
         }
 
         /**
@@ -92,16 +92,16 @@ namespace dsa {
          * @param pointer
          * @param deleter
          */
-        template<typename TDeleter = std::default_delete<TValueType>>
-        void reset(TValueType* pointer = nullptr, TDeleter deleter = TDeleter{}) {
-            remove_shared<TDeleter>(deleter);
+        template<typename TDeleter = std::default_delete<TValue>>
+        void Reset(TValue* pointer = nullptr, TDeleter deleter = TDeleter{}) {
+            RemoveShared<TDeleter>(deleter);
 
             if (pointer) {
-                pointer_ = pointer;
-                control_ = new ControlBlock();
+                m_pointer = pointer;
+                m_control = new ControlBlock();
             } else {
-                pointer_ = nullptr;
-                control_ = nullptr;
+                m_pointer = nullptr;
+                m_control = nullptr;
             }
         }
 
@@ -112,9 +112,9 @@ namespace dsa {
          * Time complexity: O(1) std::swap is in constant time
          * @param other
          */
-        void swap(SharedPointer& other) noexcept {
-            std::swap(pointer_, other.pointer_);
-            std::swap(control_, other.control_);
+        void Swap(SharedPointer& other) noexcept {
+            std::swap(m_pointer, other.m_pointer);
+            std::swap(m_control, other.m_control);
         }
 
         /**
@@ -122,8 +122,8 @@ namespace dsa {
          *
          * @return TValueType*
          */
-        TValueType* get() const {
-            return pointer_;
+        TValue* Get() const {
+            return m_pointer;
         }
 
         /**
@@ -131,8 +131,8 @@ namespace dsa {
          *
          * @return bool
          */
-        [[nodiscard]] bool is_unique() const {
-            return control_ && control_->count == 1;
+        [[nodiscard]] bool IsUnique() const {
+            return m_control && m_control->count == 1;
         }
 
         /**
@@ -140,9 +140,9 @@ namespace dsa {
          *
          * @return std::size_t
          */
-        [[nodiscard]] std::size_t share_count() const {
-            return control_ 
-                ? control_->count
+        [[nodiscard]] std::size_t ShareCount() const {
+            return m_control
+                ? m_control->count
                 : 0;
         }
 
@@ -150,12 +150,12 @@ namespace dsa {
         struct ControlBlock {
             std::size_t count;
 
-            ControlBlock() : count{1} {}
+            ControlBlock() : count{ 1 } {}
             ~ControlBlock() = default;
         };
 
-        TValueType* pointer_{nullptr};
-        ControlBlock* control_{nullptr};
+        TValue* m_pointer{ nullptr };
+        ControlBlock* m_control{ nullptr };
 
         /**
          * Helper function to decrement the reference count and delete the managed object and control block
@@ -164,15 +164,15 @@ namespace dsa {
          * @tparam TDeleter
          * @param deleter
          */
-        template<typename TDeleter = std::default_delete<TValueType>>
-        void remove_shared(TDeleter deleter = TDeleter{}) const {
-            if (!control_) {
+        template<typename TDeleter = std::default_delete<TValue>>
+        void RemoveShared(TDeleter deleter = TDeleter{}) const {
+            if (!m_pointer) {
                 return;
             }
 
-            if (--control_->count == 0) {
-                deleter(pointer_);
-                delete control_;
+            if (--m_control->count == 0) {
+                deleter(m_pointer);
+                delete m_control;
             }
         }
     };

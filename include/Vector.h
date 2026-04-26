@@ -17,22 +17,23 @@ namespace dsa {
     * storing and managing a collection of objects similar to std::vector, with
     * features like dynamic resizing and manual memory management.
     *
-    * @tparam TValueType Type of elements stored in the array.
+    * @tparam TValue Type of elements stored in the array.
     */
-    template<typename TValueType>
+    template<typename TValue>
     class Vector {
     public:
-        using ValueType = TValueType;
         using Iterator = VectorIterator<Vector>;
+        using ValueType = TValue;
 
         /**
         * Initialize a dynamic array with default capacity
         *
         * Time complexity: O(1) since it only involves allocating memory for the default capacity, without initializing any elements.
         */
-        Vector() :
-            data_{static_cast<ValueType*>(::operator new(DEFAULT_CAPACITY * sizeof(ValueType)))},
-            capacity_{DEFAULT_CAPACITY}
+        Vector()
+            : m_data{ static_cast<TValue*>(::operator new(DEFAULT_CAPACITY * sizeof(TValue))) }
+            , m_size{ 0 }
+            , m_capacity{ DEFAULT_CAPACITY }
         {
         }
 
@@ -42,13 +43,13 @@ namespace dsa {
         * Time complexity: O(n) due to having to default-construct each element.
         * @param capacity
         */
-        explicit Vector(const std::size_t capacity) :
-            data_{static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)))},
-            size_{capacity},
-            capacity_{capacity}
+        explicit Vector(const std::size_t capacity)
+            : m_data{ static_cast<TValue*>(::operator new(capacity * sizeof(TValue))) }
+            , m_size{ capacity }
+            , m_capacity{ capacity }
         {
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data_[i]) ValueType{};
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) TValue{};
             }
         }
 
@@ -59,13 +60,13 @@ namespace dsa {
         * @param capacity
         * @param value
         */
-        explicit Vector(const std::size_t capacity, const ValueType& value) :
-            data_{static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)))},
-            size_{capacity},
-            capacity_{capacity}
+        explicit Vector(const std::size_t capacity, const TValue& value)
+            : m_data{ static_cast<TValue*>(::operator new(capacity * sizeof(TValue))) }
+            , m_size{ capacity }
+            , m_capacity{ capacity }
         {
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data_[i]) ValueType(value);
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) TValue(value);
             }
         }
 
@@ -75,13 +76,13 @@ namespace dsa {
         * Time complexity: O(n) due to having to copy-construct each element.
         * @param other
         */
-        Vector(const Vector& other) :
-            data_{static_cast<ValueType*>(::operator new(other.capacity_ * sizeof(ValueType)))},
-            size_{other.size_},
-            capacity_{other.capacity_}
+        Vector(const Vector& other)
+            : m_data{ static_cast<TValue*>(::operator new(other.m_capacity * sizeof(TValue))) }
+            , m_size{ other.m_size }
+            , m_capacity{ other.m_capacity }
         {
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data_[i]) ValueType(other.data_[i]);
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) TValue(other.m_data[i]);
             }
         }
 
@@ -91,13 +92,13 @@ namespace dsa {
         * Time complexity: O(n) due to having to move each element.
         * @param other
         */
-        Vector(Vector&& other) noexcept :
-            data_{std::move(other.data_)},
-            size_{other.size_},
-            capacity_{other.capacity_}
+        Vector(Vector&& other) noexcept
+            : m_data{ other.m_data }
+            , m_size{ other.m_size }
+            , m_capacity{ other.m_capacity }
         {
-            other.data_ = nullptr;
-            other.size_ = 0;
+            other.m_data = nullptr;
+            other.m_size = 0;
         }
 
         /**
@@ -107,8 +108,8 @@ namespace dsa {
         * Time complexity: O(n) due to the need to destruct each element in the array before deallocating memory.
         */
         ~Vector() {
-            clear();
-            ::operator delete(data_);
+            Clear();
+            ::operator delete(m_data);
         }
 
         /**
@@ -123,15 +124,15 @@ namespace dsa {
                 return *this;
             }
 
-            clear();
-            ::operator delete(data_);
+            Clear();
+            ::operator delete(m_data);
 
-            data_ = static_cast<ValueType*>(::operator new(other.capacity_ * sizeof(ValueType)));
-            capacity_ = other.capacity_;
-            size_ = other.size_;
+            m_data = static_cast<TValue*>(::operator new(other.m_capacity * sizeof(TValue)));
+            m_capacity = other.m_capacity;
+            m_size = other.m_size;
 
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data_[i]) ValueType(other.data_[i]);
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&m_data[i]) TValue(other.m_data[i]);
             }
 
             return *this;
@@ -151,16 +152,16 @@ namespace dsa {
                 return *this;
             }
 
-            clear();
-            ::operator delete(data_);
+            Clear();
+            ::operator delete(m_data);
 
-            data_ = std::move(other.data_);
-            size_ = other.size_;
-            capacity_ = other.capacity_;
+            m_data = std::move(other.m_data);
+            m_size = other.m_size;
+            m_capacity = other.m_capacity;
 
-            other.data_ = nullptr;
-            other.size_ = 0;
-            other.capacity_ = 0;
+            other.m_data = nullptr;
+            other.m_size = 0;
+            other.m_capacity = 0;
 
             return *this;
         }
@@ -172,12 +173,12 @@ namespace dsa {
         * @param index
         * @return ValueType&
         */
-        const ValueType& operator[](const std::size_t index) const {
-            if (is_out_of_bounds(index)) {
+        const TValue& operator[](const std::size_t index) const {
+            if (IsOutOfBounds(index)) {
                 throw std::out_of_range("Index out of range");
             }
 
-            return data_[index];
+            return m_data[index];
         }
 
         /**
@@ -187,12 +188,12 @@ namespace dsa {
         * @param index
         * @return ValueType&
         */
-        ValueType& operator[](const std::size_t index) {
-            if (is_out_of_bounds(index)) {
+        TValue& operator[](const std::size_t index) {
+            if (IsOutOfBounds(index)) {
                 throw std::out_of_range("Index out of range");
             }
 
-            return data_[index];
+            return m_data[index];
         }
 
         /**
@@ -202,7 +203,7 @@ namespace dsa {
         * @return Iterator
         */
         [[nodiscard]] Iterator begin() const {
-            return Iterator{data_};
+            return Iterator{ m_data };
         }
 
         /**
@@ -212,7 +213,7 @@ namespace dsa {
         * @return Iterator
         */
         [[nodiscard]] Iterator end() const {
-            return Iterator{data_ + size_};
+            return Iterator{ m_data + m_size };
         }
 
         /**
@@ -222,12 +223,12 @@ namespace dsa {
         * @param index
         * @return ValueType&
         */
-        ValueType& at(const std::size_t index) {
-            if (is_out_of_bounds(index)) {
+        TValue& At(const std::size_t index) {
+            if (IsOutOfBounds(index)) {
                 throw std::out_of_range("Index out of range");
             }
 
-            return data_[index];
+            return m_data[index];
         }
 
         /**
@@ -236,8 +237,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return ValueType&
         */
-        ValueType& front() {
-            return data_[0];
+        TValue& Front() {
+            return m_data[0];
         }
 
         /**
@@ -246,8 +247,8 @@ namespace dsa {
         * Time complexity: O(1)
         * @return ValueType&
         */
-        ValueType& back() {
-            return data_[size_ - 1];
+        TValue& Back() {
+            return m_data[m_size - 1];
         }
 
         /**
@@ -256,13 +257,13 @@ namespace dsa {
         * Time complexity: O(1) on average, but can be O(n) when resizing is required.
         * @param value
         */
-        void push_back(const ValueType& value) {
-            if (is_full()) {
-                resize(capacity_ * 2);
+        void PushBack(const TValue& value) {
+            if (IsFull()) {
+                Resize(m_capacity * 2);
             }
 
-            new (&data_[size_]) ValueType(value);
-            ++size_;
+            new (&m_data[m_size]) TValue(value);
+            ++m_size;
         }
 
         /**
@@ -272,13 +273,13 @@ namespace dsa {
         * Time complexity: O(1) on average, but can be O(n) when resizing is required.
         * @param value
         */
-        void push_back(ValueType&& value) {
-            if (is_full()) {
-                resize(capacity_ * 2);
+        void PushBack(TValue&& value) {
+            if (IsFull()) {
+                Resize(m_capacity * 2);
             }
 
-            new (&data_[size_]) ValueType(std::move(value));
-            ++size_;
+            new (&m_data[m_size]) TValue(std::move(value));
+            ++m_size;
         }
 
         /**
@@ -290,13 +291,13 @@ namespace dsa {
         * @param args
         */
         template<typename... Args>
-        void emplace_back(Args&&... args) {
-            if (is_full()) {
-                resize(capacity_ * 2);
+        void EmplaceBack(Args&&... args) {
+            if (IsFull()) {
+                Resize(m_capacity * 2);
             }
 
-            new (&data_[size_]) ValueType(std::forward<Args>(args)...);
-            ++size_;
+            new (&m_data[m_size]) TValue(std::forward<Args>(args)...);
+            ++m_size;
         }
 
         /**
@@ -304,9 +305,9 @@ namespace dsa {
         *
         * Time complexity: O(1)
         */
-        [[maybe_unused]] void pop_back() {
-            decrement_size();
-            data_[size_].~ValueType();
+        [[maybe_unused]] void PopBack() {
+            DecrementSize();
+            m_data[m_size].~TValue();
         }
 
         /**
@@ -316,8 +317,8 @@ namespace dsa {
         * @param iterator
         * @return Iterator
         */
-        Iterator erase(const Iterator& iterator) {
-            if (is_empty()) {
+        Iterator Erase(const Iterator& iterator) {
+            if (IsEmpty()) {
                 return end();
             }
 
@@ -325,16 +326,16 @@ namespace dsa {
                 return end();
             }
 
-            std::size_t index{static_cast<std::size_t>(iterator.ptr() - data_)};
+            std::size_t index{static_cast<std::size_t>(iterator.pointer() - m_data)};
             iterator->~ValueType();
 
-            for (std::size_t i{index}; i + 1 < size_; ++i) {
-                new (&data_[i]) ValueType(std::move(data_[i + 1]));
-                data_[i + 1].~ValueType();
+            for (std::size_t i{index}; i + 1 < m_size; ++i) {
+                new (&m_data[i]) TValue(std::move(m_data[i + 1]));
+                m_data[i + 1].~TValue();
             }
 
-            --size_;
-            return Iterator{data_ + index};
+            --m_size;
+            return Iterator{ m_data + index };
         }
 
         /**
@@ -345,31 +346,29 @@ namespace dsa {
         * @param last
         * @return
         */
-        Iterator erase(const Iterator& first, const Iterator& last) {
-            // Erase everything between first and last
-
-            if (is_empty()) {
+        Iterator Erase(const Iterator& first, const Iterator& last) {
+            if (IsEmpty()) {
                 return end();
             }
 
-            if (is_invalid_iterator_range(first, last)) {
+            if (IsInvalidIteratorRange(first, last)) {
                 return end();
             }
 
-            const std::size_t index{static_cast<std::size_t>(first.ptr() - data_)};
-            std::size_t count{static_cast<std::size_t>(last.ptr() - first.ptr())};
+            const std::size_t index{ static_cast<std::size_t>(first.pointer() - m_data) };
+            std::size_t count{ static_cast<std::size_t>(last.pointer() - first.pointer()) };
 
             if (last != end()) {
                 ++count;
             }
 
-            for (std::size_t i{index}; i + count < size_; ++i) {
-                new (&data_[i]) ValueType(std::move(data_[i + count]));
-                data_[i + count].~ValueType();
+            for (std::size_t i{ index }; i + count < m_size; ++i) {
+                new (&m_data[i]) TValue(std::move(m_data[i + count]));
+                m_data[i + count].~TValue();
             }
 
-            size_ -= count;
-            return Iterator{data_ + index};
+            m_size -= count;
+            return Iterator{ m_data + index };
         }
 
         /**
@@ -377,12 +376,12 @@ namespace dsa {
         *
         * Time complexity: O(n) due to the need to destruct each element in the array.
         */
-        void clear() {
-            for (std::size_t i{}; i < size_; ++i) {
-                data_[i].~ValueType();
+        void Clear() {
+            for (std::size_t i{}; i < m_size; ++i) {
+                m_data[i].~TValue();
             }
 
-            size_ = 0;
+            m_size = 0;
         }
 
         /**
@@ -391,27 +390,30 @@ namespace dsa {
         * Time complexity: O(n) due to the destructuring of all elements in the old array.
         * @param capacity
         */
-        void resize(const std::size_t capacity) {
-            const std::size_t movable_capacity = (capacity < size_)
+        void Resize(const std::size_t capacity) {
+            const std::size_t movableCapacity = (capacity < m_size)
                 ? capacity
-                : size_;
+                : m_size;
 
-            auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
+            auto* data = static_cast<TValue*>(::operator new(capacity * sizeof(TValue)));
 
-            for (std::size_t i{}; i < movable_capacity; ++i) {
-                new (&data[i]) ValueType(std::move(data_[i]));
-                data_[i].~ValueType();
+            for (std::size_t i{}; i < movableCapacity; ++i) {
+                new (&data[i]) TValue(std::move(m_data[i]));
+
+                if (i < m_size) {
+                    m_data[i].~TValue();
+                }
             }
 
-            for (std::size_t i{movable_capacity}; i < capacity_; ++i) {
-                data_[i].~ValueType();
+            for (std::size_t i{ movableCapacity }; i < m_size; ++i) {
+                m_data[i].~TValue();
             }
 
-            ::operator delete(data_);
+            ::operator delete(m_data);
 
-            data_ = data;
-            capacity_ = capacity;
-            size_ = movable_capacity;
+            m_data = data;
+            m_capacity = capacity;
+            m_size = movableCapacity;
         }
 
         /**
@@ -420,22 +422,22 @@ namespace dsa {
         * Time complexity: O(n) due to the destructuring of all elements in the old array.
         * @param capacity
         */
-        void reserve(const std::size_t capacity) {
-            if (capacity <= capacity_) {
+        void Reserve(const std::size_t capacity) {
+            if (capacity <= m_capacity) {
                 return;
             }
 
-            auto* data = static_cast<ValueType*>(::operator new(capacity * sizeof(ValueType)));
+            auto* data = static_cast<TValue*>(::operator new(capacity * sizeof(TValue)));
 
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data[i]) ValueType(std::move(data_[i]));
-                data_[i].~ValueType();
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&data[i]) TValue(std::move(m_data[i]));
+                m_data[i].~TValue();
             }
 
-            ::operator delete(data_);
+            ::operator delete(m_data);
 
-            data_ = data;
-            capacity_ = capacity;
+            m_data = data;
+            m_capacity = capacity;
         }
 
         /**
@@ -443,30 +445,30 @@ namespace dsa {
         *
         * Time complexity: O(n) due to the destructuring of all elements in the old array.
         */
-        void shrink_to_fit() {
-            if (is_empty()) {
+        void ShrinkToFit() {
+            if (IsEmpty()) {
                 return;
             }
 
-            if (is_full()) {
+            if (IsFull()) {
                 return;
             }
 
-            auto* data = static_cast<ValueType*>(::operator new(size_ * sizeof(ValueType)));
+            auto* data = static_cast<TValue*>(::operator new(m_size * sizeof(TValue)));
 
-            for (std::size_t i{}; i < size_; ++i) {
-                new (&data[i]) ValueType(std::move(data_[i]));
-                data_[i].~ValueType();
+            for (std::size_t i{}; i < m_size; ++i) {
+                new (&data[i]) TValue(std::move(m_data[i]));
+                m_data[i].~TValue();
             }
 
-            for (std::size_t i{size_}; i < capacity_; ++i) {
-                data_[i].~ValueType();
+            for (std::size_t i{ m_size }; i < m_capacity; ++i) {
+                m_data[i].~TValue();
             }
 
-            ::operator delete(data_);
+            ::operator delete(m_data);
 
-            data_ = data;
-            capacity_ = size_;
+            m_data = data;
+            m_capacity = m_size;
         }
 
         /**
@@ -474,8 +476,8 @@ namespace dsa {
         *
         * @return bool
         */
-        [[nodiscard]] constexpr bool is_empty() const {
-            return size_ == 0;
+        [[nodiscard]] constexpr bool IsEmpty() const {
+            return m_size == 0;
         }
 
         /**
@@ -483,8 +485,8 @@ namespace dsa {
         *
         * @return std::size_t
         */
-        [[nodiscard]] constexpr std::size_t size() const {
-            return size_;
+        [[nodiscard]] constexpr std::size_t Size() const {
+            return m_size;
         }
 
         /**
@@ -492,23 +494,23 @@ namespace dsa {
         *
         * @return std::size_t
         */
-        [[nodiscard]] constexpr std::size_t capacity() const {
-            return capacity_;
+        [[nodiscard]] constexpr std::size_t Capacity() const {
+            return m_capacity;
         }
 
     private:
         constexpr static std::size_t DEFAULT_CAPACITY = 10;
 
-        ValueType* data_{nullptr};
-        std::size_t size_{};
-        std::size_t capacity_{};
+        TValue* m_data{ nullptr };
+        std::size_t m_size;
+        std::size_t m_capacity;
 
         /**
         * Helper function to decrement size_ to a minimum of 0.
         */
-        void decrement_size() {
-            if (size_ > 0) {
-                --size_;
+        void DecrementSize() {
+            if (m_size > 0) {
+                --m_size;
             }
         }
 
@@ -518,8 +520,8 @@ namespace dsa {
         * @param index
         * @return bool
         */
-        [[nodiscard]] constexpr bool is_out_of_bounds(const std::size_t index) const {
-            return index >= size_;
+        [[nodiscard]] constexpr bool IsOutOfBounds(const std::size_t index) const {
+            return index >= m_size;
         }
 
         /**
@@ -529,7 +531,7 @@ namespace dsa {
         * @param last
         * @return bool
         */
-        [[nodiscard]] constexpr bool is_invalid_iterator_range(const Iterator& first, const Iterator& last) const {
+        [[nodiscard]] constexpr bool IsInvalidIteratorRange(const Iterator& first, const Iterator& last) const {
             return first > last || last > end() || first > end() || first == last;
         }
 
@@ -538,8 +540,8 @@ namespace dsa {
         *
         * @return bool
         */
-        [[nodiscard]] constexpr bool is_full() const {
-            return size_ == capacity_;
+        [[nodiscard]] constexpr bool IsFull() const {
+            return m_size == m_capacity;
         }
     };
 }
