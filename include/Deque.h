@@ -6,13 +6,16 @@
 #define DEQUE_H
 
 
+#include <cstddef>
+
+
 namespace dsa {
     template<typename TValue>
     class Deque {
     public:
         Deque()
-            : m_data{ static_cast<TValue*>(::operator new(m_capacity * sizeof(TValue))) }
-            , m_capacity{ DEFAULT_CAPACITY }
+            : m_capacity{ DEFAULT_CAPACITY }
+            , m_data{ static_cast<TValue*>(::operator new(m_capacity * sizeof(TValue))) }
             , m_size{ 0 }
             , m_front{ 0 }
             , m_back{ 0 }
@@ -23,22 +26,22 @@ namespace dsa {
         }
 
         Deque(const Deque& other)
-            : m_data{ static_cast<TValue*>(::operator new(other.m_capacity * sizeof(TValue))) }
-            , m_capacity{ other.m_capacity }
+            : m_capacity{ other.m_capacity }
+            , m_data{ static_cast<TValue*>(::operator new(other.m_capacity * sizeof(TValue))) }
             , m_size{ other.m_size }
             , m_front{ other.m_front }
             , m_back{ other.m_back }
         {
             for (std::size_t i{}; i < other.m_size; ++i) {
-                std::size_t index{ (other.m_front + i) % other.m_capacity - 1 };
+                std::size_t index{ (other.m_front + i) % other.m_capacity };
 
                 new (&m_data[i]) TValue(other.m_data[index]);
             }
         }
 
         Deque(Deque&& other) noexcept
-            : m_data{ other.m_data }
-            , m_capacity{ other.m_capacity }
+            : m_capacity{ other.m_capacity }
+            , m_data{ other.m_data }
             , m_size{ other.m_size }
             , m_front{ other.m_front }
             , m_back{ other.m_back }
@@ -51,6 +54,7 @@ namespace dsa {
         }
 
         ~Deque() {
+            Clear();
             ::operator delete(m_data);
 
             m_capacity = 0;
@@ -59,7 +63,6 @@ namespace dsa {
             m_back = 0;
         }
 
-        // Revisit for ring buffer impl
         Deque& operator=(const Deque& other) {
             if (&other == this) {
                 return *this;
@@ -68,14 +71,14 @@ namespace dsa {
             Clear();
             ::operator delete(m_data);
 
-            m_data = static_cast<TValue*>(::operator new(m_capacity * sizeof(TValue)));
+            m_data = static_cast<TValue*>(::operator new(other.m_capacity * sizeof(TValue)));
             m_capacity = other.m_capacity;
             m_size = other.m_size;
             m_front = other.m_front;
             m_back = other.m_back;
 
             for (std::size_t i{}; i < other.m_size; ++i) {
-                std::size_t index{ (other.m_front + i) % other.m_capacity - 1 };
+                std::size_t index{ (other.m_front + i) % other.m_capacity };
 
                 new (&m_data[i]) TValue(other.m_data[index]);
             }
@@ -83,7 +86,6 @@ namespace dsa {
             return *this;
         }
 
-        // Revisit for ring buffer impl
         Deque& operator=(Deque&& other) noexcept {
             if (&other == this) {
                 return *this;
@@ -107,14 +109,16 @@ namespace dsa {
             return *this;
         }
 
-        // Wont work with ring buffer impl
         TValue& operator[](const std::size_t index) const {
-            return m_data[(m_front + index) % m_capacity];
+            return m_data[
+                (m_front + index) % m_capacity
+            ];
         }
 
-        // Wont work with ring buffer impl
         TValue& At(const std::size_t index) const {
-            return m_data[(m_front + index) % m_capacity];
+            return m_data[
+                (m_front + index) % m_capacity
+            ];
         }
 
         TValue& Front() const {
@@ -122,20 +126,19 @@ namespace dsa {
         }
 
         TValue& Back() const {
-            return m_data[m_back];
+            return m_data[
+                (m_back + m_capacity - 1) % m_capacity
+            ];
         }
 
-        std::size_t Size() {
+        std::size_t Size() const {
             return m_size;
         }
 
-        bool IsEmpty() {
+        bool IsEmpty() const {
             return m_size == 0;
         }
 
-        // We need to implement a hybrid dynamic-array / ring-buffer style resize
-        // The goal is that during the resizing we also linearize all our data
-        // Meaning if our buffer was pointing at 4-12 it would now be reset to 0-8
         void Resize(const std::size_t newCapacity) {
             if (newCapacity == m_capacity) {
                 return;
@@ -154,12 +157,9 @@ namespace dsa {
 
             m_capacity = newCapacity;
             m_front = 0;
-            m_back = m_size;
+            m_back = m_size % m_capacity;
         }
 
-        // void ShrinkToFit() {} TODO extra
-
-        // Push back will just append to our end pointer + 1
         void PushBack(const TValue& item) {
             if (IsFull()) {
                 Resize(m_capacity * 2);
@@ -171,7 +171,6 @@ namespace dsa {
             ++m_size;
         }
 
-        // Push front will just append to our front pointer - 1
         void PushFront(const TValue& item) {
             if (IsFull()) {
                 Resize(m_capacity * 2);
@@ -182,15 +181,13 @@ namespace dsa {
             ++m_size;
         }
 
-        // Pop back will pop and remove the element from our end pointer
-        // End pointer will now be x -= 1
         TValue PopBack() {
             if (IsEmpty()) {
                 throw std::out_of_range("Deque is empty");
             }
 
-            std::size_t index{ m_back };
             m_back = (m_back + m_capacity - 1) % m_capacity;
+            std::size_t index{ m_back };
             --m_size;
 
             TValue value = std::move(m_data[index]);
@@ -199,8 +196,6 @@ namespace dsa {
             return value;
         }
 
-        // Pop front will pop and remove the element from our front pointer
-        // Front pointer will now be x += 1
         TValue PopFront() {
             if (IsEmpty()) {
                 throw std::out_of_range("Deque is empty");
@@ -235,8 +230,8 @@ namespace dsa {
     private:
         constexpr static int DEFAULT_CAPACITY{ 10 };
 
-        TValue* m_data{ nullptr };
         std::size_t m_capacity;
+        TValue* m_data{ nullptr };
         std::size_t m_size;
         std::size_t m_front;
         std::size_t m_back;
