@@ -1,30 +1,30 @@
 //
-// Created by Okan Ozbek on 4/7/2026.
+// Created by Dorza on 4/28/2026.
 //
 
-#ifndef DATA_STRUCTURES_VECTORITERATOR_H
-#define DATA_STRUCTURES_VECTORITERATOR_H
+#ifndef DATA_STRUCTURES_DEQUEITERATOR_H
+#define DATA_STRUCTURES_DEQUEITERATOR_H
 
 
 namespace dsa {
-    template<typename TVector>
-    class VectorIterator {
+    template <typename TDeque>
+    class DequeIterator {
     public:
-        using ValueType = TVector::ValueType;
+        using ValueType = TDeque::ValueType;
 
         /**
-        * Initialize a vector iterator, pointing to the provided pointer.
+        * Initialize a deque iterator, pointing to the provided pointer.
         *
         * @param pointer
         */
-        explicit VectorIterator(ValueType* pointer) : m_pointer{ pointer } {}
+        explicit DequeIterator(ValueType* pointer) : m_pointer{ pointer } {}
 
         /**
         * Move the iterator to the next element in the array.
         *
-        * @return VectorIterator&
+        * @return DequeIterator&
         */
-        VectorIterator& operator++() {
+        DequeIterator& operator++() {
             ++m_pointer;
             return *this;
         }
@@ -32,9 +32,9 @@ namespace dsa {
         /**
         * Move the iterator to the previous element in the array.
         *
-        * @return VectorIterator&
+        * @return DequeIterator&
         */
-        VectorIterator& operator--() {
+        DequeIterator& operator--() {
             --m_pointer;
             return *this;
         }
@@ -44,10 +44,10 @@ namespace dsa {
         * Increase the iterator by the specified offset, moving it forward in the array.
         * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
         *
-        * @return VectorIterator
+        * @return DequeIterator
         */
-        VectorIterator operator+(const int offset) const {
-            return VectorIterator{ m_pointer + offset };
+        DequeIterator operator+(const int offset) const {
+            return DequeIterator{ m_pointer + offset };
         }
 
         /**
@@ -56,10 +56,10 @@ namespace dsa {
         * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
         *
         * @param offset
-        * @return VectorIterator
+        * @return DequeIterator
         */
-        VectorIterator operator-(const int offset) const {
-            return VectorIterator{ m_pointer - offset };
+        DequeIterator operator-(const int offset) const {
+            return DequeIterator{ m_pointer - offset };
         }
 
         /**
@@ -127,7 +127,7 @@ namespace dsa {
         *
         * @return bool
         */
-        bool operator==(const VectorIterator& other) const {
+        bool operator==(const DequeIterator& other) const {
             return m_pointer == other.m_pointer;
         }
 
@@ -137,7 +137,7 @@ namespace dsa {
         *
         * @return bool
         */
-        bool operator!=(const VectorIterator& other) const {
+        bool operator!=(const DequeIterator& other) const {
             return m_pointer != other.m_pointer;
         }
 
@@ -147,7 +147,7 @@ namespace dsa {
         *
         * @return bool
         */
-        bool operator<(const VectorIterator& other) const {
+        bool operator<(const DequeIterator& other) const {
             return m_pointer < other.m_pointer;
         }
 
@@ -157,7 +157,7 @@ namespace dsa {
         *
         * @return bool
         */
-        bool operator>(const VectorIterator& other) const {
+        bool operator>(const DequeIterator& other) const {
             return m_pointer > other.m_pointer;
         }
 
@@ -167,7 +167,7 @@ namespace dsa {
         *
         * @return bool
         */
-        bool operator<=(const VectorIterator& other) const {
+        bool operator<=(const DequeIterator& other) const {
             return m_pointer <= other.m_pointer;
         }
 
@@ -177,7 +177,7 @@ namespace dsa {
         *
         * @return bool
         */
-        bool operator>=(const VectorIterator& other) const {
+        bool operator>=(const DequeIterator& other) const {
             return m_pointer >= other.m_pointer;
         }
 
@@ -186,9 +186,8 @@ namespace dsa {
         }
 
     private:
-        ValueType* m_pointer;
+        ValueType* m_pointer{ nullptr };
     };
 }
 
-
-#endif //DATA_STRUCTURES_VECTORITERATOR_H
+#endif //DATA_STRUCTURES_DEQUEITERATOR_H

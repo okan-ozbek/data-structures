@@ -4,6 +4,7 @@
 
 #include <queue>
 
+#include "../include/tests/TestDeque.h"
 #include "../include/utils/Timer.h"
 #include "../include/tests/TestSharedPointer.h"
 #include "../include/tests/TestUniquePointer.h"
@@ -24,7 +25,7 @@ int main() {
         TestString{};
         TestVector{};
         TestRingBufferQueue{};
-        // TestStack{};
+        TestDeque{};
     }
 
     std::cout << "\nSuccessful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n\n";
@@ -36,6 +37,7 @@ int main() {
     std::cout << "Sizeof std::string: " << sizeof(std::string) << ", sizeof dsa::String: " << sizeof(dsa::String) << "\n";
     std::cout << "Sizeof std::vector: " << sizeof(std::vector<int>) << ", sizeof dsa::Vector: " << sizeof(dsa::Vector<int>) << "\n";
     std::cout << "Sizeof std::queue: " << sizeof(std::queue<int>) << ", sizeof dsa::Queue: " << sizeof(dsa::RingBufferQueue<int>) << "\n";
+    std::cout << "Sizeof std::deque: " << sizeof(std::deque<int>) << ", sizeof dsa::Deque: " << sizeof(dsa::Deque<int>) << "\n";
 
     return 0;
 }
