@@ -178,22 +178,24 @@ namespace dsa {
 
         /**
         * Get the iterator pointing to the beginning of the array.
+        * The iterator looks at the logical index and not the physical index
         *
         * Time complexity: O(1)
         * @return Iterator
         */
         [[nodiscard]] Iterator begin() const {
-            return Iterator{ m_data };
+            return Iterator{ this, 0 };
         }
 
         /**
         * Get the iterator pointing to the end + 1 of the array.
+        * The iterator looks at the logical index and not the physical index
         *
         * Time complexity: O(1)
         * @return Iterator
         */
         [[nodiscard]] Iterator end() const {
-            return Iterator{ m_data + m_size };
+            return Iterator{ this, m_size };
         }
 
         TValue& At(const std::size_t index) const {
@@ -440,6 +442,9 @@ namespace dsa {
 
 
     private:
+        template<typename>
+        friend class DequeIterator;
+
         constexpr static int DEFAULT_CAPACITY{ 10 };
 
         std::size_t m_capacity;

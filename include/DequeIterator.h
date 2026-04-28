@@ -1,10 +1,5 @@
-//
-// Created by Dorza on 4/28/2026.
-//
-
 #ifndef DATA_STRUCTURES_DEQUEITERATOR_H
 #define DATA_STRUCTURES_DEQUEITERATOR_H
-
 
 namespace dsa {
     template <typename TDeque>
@@ -12,181 +7,123 @@ namespace dsa {
     public:
         using ValueType = TDeque::ValueType;
 
-        /**
-        * Initialize a deque iterator, pointing to the provided pointer.
-        *
-        * @param pointer
-        */
-        explicit DequeIterator(ValueType* pointer) : m_pointer{ pointer } {}
+        DequeIterator(const TDeque* deque, const std::size_t logicalIndex)
+            : m_deque(deque), m_index(logicalIndex) {}
 
         /**
-        * Move the iterator to the next element in the array.
-        *
-        * @return DequeIterator&
-        */
+         * Move the iterator to the next element in the deque, which is the element at the logical index + 1.
+         *
+         * @return DequeIterator&
+         */
         DequeIterator& operator++() {
-            ++m_pointer;
+            ++m_index;
             return *this;
         }
 
         /**
-        * Move the iterator to the previous element in the array.
-        *
-        * @return DequeIterator&
-        */
+         * Move the iterator to the previous element in the deque, which is the element at the logical index - 1.
+         *
+         * @return DequeIterator&
+         */
         DequeIterator& operator--() {
-            --m_pointer;
+            --m_index;
             return *this;
         }
 
         /**
-        * (constant)
-        * Increase the iterator by the specified offset, moving it forward in the array.
-        * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
-        *
-        * @return DequeIterator
-        */
+         * (constant)
+         * Increase the iterator by the specified offset, moving it forward in the deque.
+         * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
+         *
+         * @param offset
+         * @return DequeIterator
+         */
         DequeIterator operator+(const int offset) const {
-            return DequeIterator{ m_pointer + offset };
+            return DequeIterator{ m_deque, m_index + offset };
         }
 
         /**
-        * (constant)
-        * Decrease the iterator by the specified offset, moving it backward in the array.
-        * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
-        *
-        * @param offset
-        * @return DequeIterator
-        */
+         * (constant)
+         * Decrease the iterator by the specified offset, moving it forward in the deque.
+         * The operation also causes the original iterator to be unchanged, and a new iterator to be returned.
+         *
+         * @param offset
+         * @return DequeIterator
+         */
         DequeIterator operator-(const int offset) const {
-            return DequeIterator{ m_pointer - offset };
+            return DequeIterator{ m_deque, m_index - offset };
         }
 
         /**
-        * Return the element at the specified index.
-        *
-        * @param index
-        * @return ValueType&
-        */
-        ValueType& operator[](const int index) {
-            return m_pointer[index];
+         * Return the value at the specified index, wrap around the ring-buffer if necessary.
+         * The offset is added to the logical index of the iterator, and then converted to a
+         * physical index in the underlying array.
+         *
+         * @param offset
+         * @return ValueType&
+         */
+        ValueType& operator[](const int offset) const {
+            std::size_t physical = (m_deque->m_front + m_index + offset) % m_deque->m_capacity;
+            return m_deque->m_data[physical];
         }
 
         /**
-        * (constant)
-        * Return the element at the specified index.
-        *
-        * @param index
-        * @return ValueType&
-        */
-        ValueType& operator[](const int index) const {
-            return m_pointer[index];
-        }
-
-        /**
-        * Return the dereferenced version of the iterator, which is the element it points to.
-        *
-        * @return ValueType&
-        */
-        ValueType& operator*() {
-            return *m_pointer;
-        }
-
-        /**
-        * (constant)
-        * Return the dereferenced version of the iterator, which is the element it points to.
-        *
-        * @return ValueType&
-        */
+         * Return the value at the current logical index, wrap around the ring-buffer if necessary.
+         * The logical index of the iterator is converted to a physical index in the underlying array.
+         *
+         * @return ValueType&
+         */
         ValueType& operator*() const {
-            return *m_pointer;
+            std::size_t physical = (m_deque->m_front + m_index) % m_deque->m_capacity;
+            return m_deque->m_data[physical];
         }
 
         /**
-        * Return the pointer version of the iterator, which is the element it points to.
-        *
-        * @return ValueType*
-        */
-        ValueType* operator->() {
-            return m_pointer;
-        }
-
-        /**
-        * (constant)
-        * Return the pointer version of the iterator, which is the element it points to.
-        *
-        * @return ValueType*
-        */
+         * Return the pointer to the value at the current logical index, wrap around the ring-buffer if necessary.
+         * The logical index of the iterator is converted to a physical index in the underlying array.
+         *
+         * @return ValueType*
+         */
         ValueType* operator->() const {
-            return m_pointer;
+            std::size_t physical = (m_deque->m_front + m_index) % m_deque->m_capacity;
+            return &m_deque->m_data[physical];
         }
 
         /**
-        * (constant)
-        * Return true if the iterators point to the same element in the array, and false otherwise.
-        *
-        * @return bool
-        */
+         * Conditional operators
+         * These operators are here to allow for comparison of iterators, and to allow for the use
+         * of iterators in standard algorithms that require comparison operators.
+         *
+         * @param other
+         * @return bool
+         */
         bool operator==(const DequeIterator& other) const {
-            return m_pointer == other.m_pointer;
+            return m_deque == other.m_deque && m_index == other.m_index;
         }
 
-        /**
-        * (constant)
-        * Return true if the iterators do not point to the same element in the array, and false otherwise.
-        *
-        * @return bool
-        */
         bool operator!=(const DequeIterator& other) const {
-            return m_pointer != other.m_pointer;
+            return !(*this == other);
         }
 
-        /**
-        * (constant)
-        * Return true if this iterator is less than the other iterator, and false otherwise.
-        *
-        * @return bool
-        */
         bool operator<(const DequeIterator& other) const {
-            return m_pointer < other.m_pointer;
+            return m_index < other.m_index;
         }
 
-        /**
-        * (constant)
-        * Return true if this iterator is greater than the other iterator, and false otherwise.
-        *
-        * @return bool
-        */
         bool operator>(const DequeIterator& other) const {
-            return m_pointer > other.m_pointer;
+            return m_index > other.m_index;
         }
 
-        /**
-        * (constant)
-        * Return true if this iterator is less or equal than the other iterator, and false otherwise.
-        *
-        * @return bool
-        */
         bool operator<=(const DequeIterator& other) const {
-            return m_pointer <= other.m_pointer;
+            return m_index <= other.m_index;
         }
 
-        /**
-        * (constant)
-        * Return true if this iterator is greater or equal than the other iterator, and false otherwise.
-        *
-        * @return bool
-        */
         bool operator>=(const DequeIterator& other) const {
-            return m_pointer >= other.m_pointer;
-        }
-
-        ValueType* pointer() const {
-            return m_pointer;
+            return m_index >= other.m_index;
         }
 
     private:
-        ValueType* m_pointer{ nullptr };
+        const TDeque* m_deque;
+        std::size_t m_index{};
     };
 }
 

@@ -121,14 +121,14 @@ private:
 
         assert_true(dq.Size() == 3, "Iterators are not equal to 3");
 
+        dq.PopFront();
         for (int& x : dq) {
             x += 5;
         }
 
-        assert_true(dq.Size() == 3, "Iterators are not equal to 3");
-        assert_true(dq[0] == 15, "Iterators value at index 0 is not equal to 15");
-        assert_true(dq[1] == 25, "Iterators value at index 1 is not equal to 25");
-        assert_true(dq[2] == 35, "Iterators value at index 2 is not equal to 35");
+        assert_true(dq.Size() == 2, "Iterators are not equal to 3");
+        assert_true(dq[0] == 25, "Iterators value at index 0 is not equal to 25");
+        assert_true(dq[1] == 35, "Iterators value at index 1 is not equal to 35");
     }
 
     void TestFront() {
