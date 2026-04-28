@@ -14,6 +14,24 @@
 
 
 namespace dsa {
+    /**
+     * Deque is short for double-ended queue, where you can push from both the front and back,
+     * as wel as pop from the front and back. In the standard library it is implemented as a dynamic array
+     * of fixed-size arrays, but here we will implement it as a circular buffer, which allows us to achieve O(1)
+     * time complexity for push and pop operations from both ends.
+     *
+     * The circular buffer implementation of the deque uses a fixed-size array to store the elements,
+     * and two indices (front and back) to keep track of the positions of the first and last elements in the deque.
+     * When an element is added to the front or back of the deque, the corresponding index is updated accordingly,
+     * and when an element is removed from the front or back, the index is also updated.
+     * This allows for efficient use of memory and fast access to both ends of the deque.
+     *
+     * Other standard library data structures that use std::deque<T> as a wrapper include:
+     * - std::queue<T>
+     * - std::stack<T>
+     *
+     * @tparam TValue
+     */
     template<typename TValue>
     class Deque {
     public:
