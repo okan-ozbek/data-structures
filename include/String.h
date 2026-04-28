@@ -2,8 +2,8 @@
 // Created by Okan Ozbek on 4/7/2026.
 //
 
-#ifndef TEMP_CPP_STRING_H
-#define TEMP_CPP_STRING_H
+#ifndef DATA_STRUCTURES_STRING_H
+#define DATA_STRUCTURES_STRING_H
 
 
 #include <cstddef>

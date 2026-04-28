@@ -2,8 +2,8 @@
 // Created by Okan Ozbek on 4/7/2026.
 //
 
-#ifndef TEMP_CPP_VECTOR_H
-#define TEMP_CPP_VECTOR_H
+#ifndef DATA_STRUCTURES_VECTOR_H
+#define DATA_STRUCTURES_VECTOR_H
 
 
 #include <algorithm>
@@ -547,4 +547,4 @@ namespace dsa {
 }
 
 
-#endif //TEMP_CPP_VECTOR_H
+#endif //DATA_STRUCTURES_VECTOR_H

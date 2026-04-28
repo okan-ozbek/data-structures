@@ -2,8 +2,8 @@
 // Created by Okan Ozbek on 4/9/2026.
 //
 
-#ifndef TEMP_CPP_STRINGITERATOR_H
-#define TEMP_CPP_STRINGITERATOR_H
+#ifndef DATA_STRUCTURES_STRINGITERATOR_H
+#define DATA_STRUCTURES_STRINGITERATOR_H
 
 namespace dsa {
     class StringIterator {
@@ -186,4 +186,4 @@ namespace dsa {
     };
 }
 
-#endif // TEMP_CPP_STRINGITERATOR_H
+#endif // DATA_STRUCTURES_STRINGITERATOR_H
