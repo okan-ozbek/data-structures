@@ -3,15 +3,17 @@
 //
 
 #include <queue>
+#include <stack>
 
-#include "../include/tests/TestDeque.h"
 #include "../include/utils/Timer.h"
 #include "../include/tests/TestSharedPointer.h"
 #include "../include/tests/TestUniquePointer.h"
 #include "../include/tests/TestString.h"
 #include "../include/tests/TestVector.h"
 #include "../include/tests/TestRingBufferQueue.h"
-// #include "../include/tests/TestStack.h"
+#include "../include/tests/TestDeque.h"
+#include "../include/tests/TestQueue.h"
+#include "../include/tests/TestStack.h"
 
 int main() {
     std::cout << "--- START OF BENCHMARK ---" << "\n\n";
@@ -26,6 +28,8 @@ int main() {
         TestVector{};
         TestRingBufferQueue{};
         TestDeque{};
+        TestQueue{};
+        TestStack{};
     }
 
     std::cout << "\nSuccessful test(s): " << TEST_RAN - TEST_ERRORS << ", error(s): " << TEST_ERRORS << "\n\n";
@@ -38,6 +42,8 @@ int main() {
     std::cout << "Sizeof std::vector: " << sizeof(std::vector<int>) << ", sizeof dsa::Vector: " << sizeof(dsa::Vector<int>) << "\n";
     std::cout << "Sizeof std::queue: " << sizeof(std::queue<int>) << ", sizeof dsa::Queue: " << sizeof(dsa::RingBufferQueue<int>) << "\n";
     std::cout << "Sizeof std::deque: " << sizeof(std::deque<int>) << ", sizeof dsa::Deque: " << sizeof(dsa::Deque<int>) << "\n";
+    std::cout << "Sizeof std::queue: " << sizeof(std::queue<int>) << ", sizeof dsa::Queue: " << sizeof(dsa::Queue<int>) << "\n";
+    std::cout << "Sizeof std::stack: " << sizeof(std::stack<int>) << ", sizeof dsa::Stack: " << sizeof(dsa::Stack<int>) << "\n";
 
     return 0;
 }

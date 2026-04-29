@@ -374,14 +374,14 @@ namespace dsa {
          * Time complexity: O(1) if the deque is not full, and O(n) if the deque is full since it needs to resize the deque.
          * @param item
          */
-        template<typename... Args>
-        void EmplaceFront(Args&&... args) {
+        template<typename... TArgs>
+        void EmplaceFront(TArgs&&... args) {
             if (IsFull()) {
                 Resize(m_capacity * 2);
             }
 
             m_front = (m_front + m_capacity - 1) % m_capacity;
-            new (&m_data[m_front]) TValue(std::forward<Args>(args)...);
+            new (&m_data[m_front]) TValue(std::forward<TArgs>(args)...);
             ++m_size;
         }
 
@@ -392,13 +392,13 @@ namespace dsa {
          * Time complexity: O(1) if the deque is not full, and O(n) if the deque is full since it needs to resize the deque.
          * @param item
          */
-        template<typename... Args>
-        void EmplaceBack(Args&&... args) {
+        template<typename... TArgs>
+        void EmplaceBack(TArgs&&... args) {
             if (IsFull()) {
                 Resize(m_capacity * 2);
             }
 
-            new (&m_data[m_back]) TValue(std::forward<Args>(args)...);
+            new (&m_data[m_back]) TValue(std::forward<TArgs>(args)...);
 
             m_back = (m_back + 1) % m_capacity;
             ++m_size;
