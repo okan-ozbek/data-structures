@@ -21,6 +21,7 @@ add_executable(data-structures
     tests/TestDeque.cpp
     tests/TestQueue.cpp
     tests/TestStack.cpp
+    tests/TestLinkedList.cpp
 )
 
 target_link_libraries(data-structures
