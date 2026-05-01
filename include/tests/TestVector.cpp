@@ -11,13 +11,13 @@ constexpr std::size_t DEFAULT_CAPACITY{ 10 };
 constexpr std::size_t TEST_CAPACITY{ 3 };
 constexpr int TEST_VALUE{ 3 };
 
-struct TestVector2D {
+struct Vector2D {
     int x;
     int y;
 
-    TestVector2D() : x{0}, y{0} {}
-    explicit TestVector2D(const int scalar) : x{scalar}, y{scalar} {}
-    explicit TestVector2D(const int x, const int y) : x{x}, y{y} {}
+    Vector2D() : x{0}, y{0} {}
+    explicit Vector2D(const int scalar) : x{scalar}, y{scalar} {}
+    explicit Vector2D(const int x, const int y) : x{x}, y{y} {}
 };
 
 TEST(VectorTest, TestDefaultConstructor) {
@@ -150,7 +150,7 @@ TEST(VectorTest, TestPushBack) {
 }
 
 TEST(VectorTest, TestEmplaceBack) {
-    dsa::Vector<TestVector2D> v{};
+    dsa::Vector<Vector2D> v{};
 
     v.EmplaceBack(5, 10);
     v.EmplaceBack(5);
