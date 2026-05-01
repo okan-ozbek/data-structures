@@ -19,7 +19,6 @@
 |---|---------------|--------|
 | 5 | Set | ⬜ Not started |
 | 6 | Map | ⬜ Not started |
-| 9 | Linked List | ⬜ Not started |
 | 10 | Binary Tree | ⬜ Not started |
 | 11 | Graph | ⬜ Not started |
 | 12 | Heap | ⬜ Not started |

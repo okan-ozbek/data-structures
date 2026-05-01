@@ -50,14 +50,14 @@ The **documentation** (README files) is mainly AI-generated, because AI can expl
 | 5 | **Deque** | `std::deque` | [`Deque.h`](include/Deque.h) | [📄 DEQUE.md](readme/DEQUE.md) |
 | 6 | **Queue** | `std::queue` | [`Queue.h`](include/Queue.h) | [📄 QUEUE.md](readme/QUEUE.md) |
 | 7 | **Stack** | `std::stack` | [`Stack.h`](include/Stack.h) | [📄 STACK.md](readme/STACK.md) |
+| 8 | **LinkedList** | `std::list` | [`LinkedList.h`](include/LinkedList.h) | [📄 LINKED_LIST.md](readme/LINKED_LIST.md) |
 
 ### Upcoming
 
 | # | Structure | Description |
 |---|-----------|-------------|
-| 8 | **Set** | Unique-element container with fast lookup |
-| 9 | **Map** | Key-value associative container |
-| 10 | **Linked List** | Node-based sequential container |
+| 9 | **Set** | Unique-element container with fast lookup |
+| 10 | **Map** | Key-value associative container |
 | 11 | **Binary Tree** | Hierarchical node-based structure |
 | 12 | **Graph** | Vertex and edge-based structure |
 | 13 | **Heap** | Priority-based tree structure |
@@ -87,7 +87,9 @@ data-structures/
 │   ├── Deque.h             # Double-ended circular buffer queue
 │   ├── DequeIterator.h     # Ring-buffer-aware iterator for Deque
 │   ├── Queue.h             # FIFO queue (Deque wrapper)
-│   └── Stack.h             # LIFO stack (Deque wrapper)
+│   ├── Stack.h             # LIFO stack (Deque wrapper)
+│   ├── LinkedList.h        # Doubly linked list
+│   └── LinkedListIterator.h# Iterator for LinkedList
 ├── readme/                 # Documentation per data structure
 │   ├── VECTOR.md
 │   ├── STRING.md
@@ -95,7 +97,8 @@ data-structures/
 │   ├── SHARED_POINTER.md
 │   ├── DEQUE.md
 │   ├── QUEUE.md
-│   └── STACK.md
+│   ├── STACK.md
+│   └── LINKED_LIST.md
 ├── tests/                  # GTest test files
 │   ├── TestVector.cpp
 │   ├── TestString.cpp
@@ -103,7 +106,8 @@ data-structures/
 │   ├── TestSharedPointer.cpp
 │   ├── TestDeque.cpp
 │   ├── TestQueue.cpp
-│   └── TestStack.cpp
+│   ├── TestStack.cpp
+│   └── TestLinkedList.cpp
 ├── src/
 │   └── main.cpp            # GTest runner
 └── README.md               # This file
