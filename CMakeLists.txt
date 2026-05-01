@@ -14,6 +14,13 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(data-structures
     src/main.cpp
+    tests/TestVector.cpp
+    tests/TestString.cpp
+    tests/TestUniquePointer.cpp
+    tests/TestSharedPointer.cpp
+    tests/TestDeque.cpp
+    tests/TestQueue.cpp
+    tests/TestStack.cpp
 )
 
 target_link_libraries(data-structures
@@ -24,6 +31,3 @@ enable_testing()
 add_test (NAME data-structures-test
     COMMAND data-structures
 )
-
-# add_subdirectory(vector)
-# add_subdirectory(string)

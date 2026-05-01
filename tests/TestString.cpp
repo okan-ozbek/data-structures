@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "../String.h"
+#include "../include/String.h"
 
 constexpr std::size_t ZERO{ 0 };
 constexpr std::size_t DEFAULT_CAPACITY{ 10 };

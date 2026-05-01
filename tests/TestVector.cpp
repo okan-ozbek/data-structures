@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "../Vector.h"
+#include "../include/Vector.h"
 
 constexpr std::size_t ZERO{ 0 };
 constexpr std::size_t DEFAULT_CAPACITY{ 10 };

@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "../UniquePointer.h"
+#include "../include/UniquePointer.h"
 
 struct Vector2D {
     int x;
