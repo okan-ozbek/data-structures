@@ -78,7 +78,7 @@ The `Queue` class is a **thin wrapper** around `Deque<TValue>`. It owns a privat
 template<typename TValue>
 class Queue {
 public:
-    void Push(const TValue& item) { m_deque.PushBack(item);   }  // Add to back
+    void Push(const TValue& item) { m_deque.PushBack(item);    }  // Add to back
     TValue Pop()                  { return m_deque.PopFront(); }  // Remove from front
     TValue& Front() const         { return m_deque.Front();    }  // Peek at front
     TValue& Back()  const         { return m_deque.Back();     }  // Peek at back
@@ -108,7 +108,7 @@ This design mirrors exactly how the C++ Standard Library implements `std::queue`
 template<typename T, typename Container = std::deque<T>>
 class queue {
 public:
-    void push(const T& value) { c.push_back(value);  }
+    void push(const T& value) { c.push_back(value);   }
     void pop()                { c.pop_front();        }
     T& front()                { return c.front();     }
     T& back()                 { return c.back();      }

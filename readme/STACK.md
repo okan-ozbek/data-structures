@@ -80,7 +80,7 @@ The `Stack` class is a **thin wrapper** around `Deque<TValue>`. It owns a privat
 template<typename TValue>
 class Stack {
 public:
-    void Push(const TValue& item) { m_deque.PushBack(item);  }  // Add to top (back)
+    void Push(const TValue& item) { m_deque.PushBack(item);   }  // Add to top (back)
     TValue Pop()                  { return m_deque.PopBack(); }  // Remove from top (back)
     TValue& Front() const         { return m_deque.Front();   }  // Peek at bottom
     TValue& Back()  const         { return m_deque.Back();    }  // Peek at top
@@ -110,7 +110,7 @@ This design mirrors exactly how the C++ Standard Library implements `std::stack`
 template<typename T, typename Container = std::deque<T>>
 class stack {
 public:
-    void push(const T& value) { c.push_back(value);  }
+    void push(const T& value) { c.push_back(value);   }
     void pop()                { c.pop_back();         }
     T& top()                  { return c.back();      }
 

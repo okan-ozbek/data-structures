@@ -340,17 +340,17 @@ The iterator lives in: [`include/DequeIterator.h`](../include/DequeIterator.h)
 PushBack(value):
     ┌──────────────────────────────────────────┐
     │ 1. If full → Resize(m_capacity * 2)      │
-    │ 2. Placement new at m_data[m_back]        │
+    │ 2. Placement new at m_data[m_back]       │
     │ 3. m_back = (m_back + 1) % m_capacity    │
-    │ 4. ++m_size                               │
+    │ 4. ++m_size                              │
     └──────────────────────────────────────────┘
 
 PushFront(value):
     ┌──────────────────────────────────────────────────────────┐
     │ 1. If full → Resize(m_capacity * 2)                      │
     │ 2. m_front = (m_front + m_capacity - 1) % m_capacity     │
-    │ 3. Placement new at m_data[m_front]                       │
-    │ 4. ++m_size                                               │
+    │ 3. Placement new at m_data[m_front]                      │
+    │ 4. ++m_size                                              │
     └──────────────────────────────────────────────────────────┘
 
 PopFront():
@@ -358,17 +358,17 @@ PopFront():
     │ 1. Read & move element at m_data[m_front]             │
     │ 2. Call m_data[m_front].~TValue()                     │
     │ 3. m_front = (m_front + 1) % m_capacity               │
-    │ 4. --m_size                                            │
-    │ 5. Return moved value                                  │
+    │ 4. --m_size                                           │
+    │ 5. Return moved value                                 │
     └───────────────────────────────────────────────────────┘
 
 PopBack():
     ┌──────────────────────────────────────────────────────────┐
     │ 1. m_back = (m_back + m_capacity - 1) % m_capacity       │
-    │ 2. Read & move element at m_data[m_back]                  │
-    │ 3. Call m_data[m_back].~TValue()                          │
-    │ 4. --m_size                                               │
-    │ 5. Return moved value                                     │
+    │ 2. Read & move element at m_data[m_back]                 │
+    │ 3. Call m_data[m_back].~TValue()                         │
+    │ 4. --m_size                                              │
+    │ 5. Return moved value                                    │
     └──────────────────────────────────────────────────────────┘
 
 Resize(newCapacity):
